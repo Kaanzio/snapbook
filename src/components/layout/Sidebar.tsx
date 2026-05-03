@@ -76,7 +76,7 @@ export default function Sidebar() {
               className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200
                 ${active ? 'nav-item-active shadow-sm' : 'hover:opacity-80'}`}
               style={{
-                color: active ? 'var(--accent)' : 'var(--text-secondary)',
+                // Removed inline color to allow nav-item-active class to control it
               }}
             >
               {item.icon(active)}

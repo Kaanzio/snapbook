@@ -100,7 +100,7 @@ export default function CustomCategoryModal({ onClose, onSelect }: Props) {
           <button
             onClick={handleSave}
             disabled={!name.trim() || !icon.trim()}
-            className="flex-1 py-2 rounded-xl text-sm font-medium btn-accent text-white disabled:opacity-50"
+            className="flex-1 py-2 rounded-xl text-sm font-medium btn-accent disabled:opacity-50"
           >
             Oluştur
           </button>

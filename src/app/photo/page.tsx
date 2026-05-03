@@ -226,11 +226,16 @@ function PhotoDetailContent() {
                     <button
                       key={cat.key}
                       onClick={() => setEditCategory(cat.key)}
-                      className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all
+                      className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all haptic-tap
                         ${editCategory === cat.key
-                          ? 'bg-indigo-100 text-indigo-700 ring-1 ring-indigo-300'
-                          : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
+                          ? 'shadow-sm'
+                          : 'hover:opacity-80'
                         }`}
+                      style={{
+                        background: editCategory === cat.key ? 'var(--accent)' : 'var(--bg-secondary)',
+                        color: editCategory === cat.key ? 'var(--accent-foreground, white)' : 'var(--text-secondary)',
+                        border: editCategory === cat.key ? '1px solid var(--accent)' : '1px solid var(--border-primary)'
+                      }}
                     >
                       {cat.icon} {cat.label}
                     </button>
@@ -257,7 +262,7 @@ function PhotoDetailContent() {
               <div className="flex gap-2">
                 <button
                   onClick={handleSave}
-                  className="px-5 py-2 rounded-xl btn-accent text-white text-sm font-medium haptic-tap"
+                  className="px-5 py-2 rounded-xl btn-accent text-sm font-medium haptic-tap"
                 >
                   Kaydet
                 </button>
@@ -287,7 +292,7 @@ function PhotoDetailContent() {
               {photo.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   {photo.tags.map((tag) => (
-                    <span key={tag} className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-600 text-xs font-medium" style={{ background: 'var(--bg-secondary)', color: 'var(--accent)' }}>
+                    <span key={tag} className="px-2.5 py-1 rounded-lg text-xs font-medium" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-primary)' }}>
                       #{tag}
                     </span>
                   ))}

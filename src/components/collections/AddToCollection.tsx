@@ -39,26 +39,34 @@ export default function AddToCollection({ isOpen, onClose, photo, collections }:
               <button
                 key={coll.id}
                 onClick={() => toggleCollection(coll.id)}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left
-                  ${isSelected
-                    ? 'bg-indigo-50 border border-indigo-200'
-                    : 'bg-white border border-slate-100 hover:bg-slate-50'
-                  }`}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left border haptic-tap
+                  ${isSelected ? 'shadow-sm' : 'hover:opacity-80'}`}
+                style={{
+                  background: isSelected ? 'var(--accent)' : 'var(--bg-card)',
+                  borderColor: isSelected ? 'var(--accent)' : 'var(--border-primary)',
+                }}
               >
                 <div
-                  className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all
-                    ${isSelected ? 'bg-indigo-500 border-indigo-500' : 'border-slate-300'}`}
+                  className="w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all"
+                  style={{
+                    background: isSelected ? 'rgba(255,255,255,0.2)' : 'transparent',
+                    borderColor: isSelected ? 'var(--accent-foreground, white)' : 'var(--border-primary)'
+                  }}
                 >
                   {isSelected && (
-                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <svg className="w-3 h-3" style={{ color: 'var(--accent-foreground, white)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-700 truncate">{coll.name}</p>
+                  <p className="text-sm font-medium truncate" style={{ color: isSelected ? 'var(--accent-foreground, white)' : 'var(--text-primary)' }}>
+                    {coll.name}
+                  </p>
                   {coll.description && (
-                    <p className="text-xs text-slate-400 truncate">{coll.description}</p>
+                    <p className="text-xs truncate opacity-70" style={{ color: isSelected ? 'var(--accent-foreground, white)' : 'var(--text-secondary)' }}>
+                      {coll.description}
+                    </p>
                   )}
                 </div>
               </button>

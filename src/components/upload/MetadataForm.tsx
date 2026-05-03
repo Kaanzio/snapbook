@@ -56,11 +56,11 @@ export default function MetadataForm({ formData, onChange }: MetadataFormProps) 
                 }`}
               style={{ 
                 borderColor: formData.category === cat.key ? 'var(--accent)' : 'var(--border-primary)', 
-                background: formData.category === cat.key ? 'var(--bg-accent-soft)' : 'var(--bg-card)' 
+                background: formData.category === cat.key ? 'var(--accent)' : 'var(--bg-card)' 
               }}
             >
               <span className="text-xl">{cat.icon}</span>
-              <span className={`text-[10px] font-bold uppercase tracking-wider`} style={{ color: formData.category === cat.key ? 'var(--accent)' : 'var(--text-tertiary)' }}>
+              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: formData.category === cat.key ? 'var(--accent-foreground, white)' : 'var(--text-tertiary)' }}>
                 {cat.label}
               </span>
             </button>
@@ -87,7 +87,7 @@ export default function MetadataForm({ formData, onChange }: MetadataFormProps) 
                   style={{ 
                     borderColor: isSelected ? 'var(--accent)' : 'var(--border-primary)',
                     background: isSelected ? 'var(--accent)' : 'var(--bg-card)',
-                    color: isSelected ? '#fff' : 'var(--text-secondary)'
+                    color: isSelected ? 'var(--accent-foreground, white)' : 'var(--text-secondary)'
                   }}
                 >
                   {coll.name}

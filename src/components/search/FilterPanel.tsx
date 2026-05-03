@@ -33,7 +33,7 @@ export default function FilterPanel({ filters, onChange, collections }: FilterPa
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all haptic-tap"
             style={{
               background: filters.category === cat.key ? 'var(--accent)' : 'var(--bg-secondary)',
-              color: filters.category === cat.key ? 'white' : 'var(--text-secondary)'
+              color: filters.category === cat.key ? 'var(--accent-foreground, white)' : 'var(--text-secondary)'
             }}
           >
             <span>{cat.icon}</span>
@@ -48,8 +48,8 @@ export default function FilterPanel({ filters, onChange, collections }: FilterPa
           onClick={() => update({ starred: filters.starred ? null : true })}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all haptic-tap"
           style={{
-            background: filters.starred ? '#fef3c7' : 'var(--bg-secondary)',
-            color: filters.starred ? '#b45309' : 'var(--text-secondary)'
+            background: filters.starred ? 'var(--accent)' : 'var(--bg-secondary)',
+            color: filters.starred ? 'var(--accent-foreground, white)' : 'var(--text-secondary)'
           }}
         >
           ⭐ Favoriler

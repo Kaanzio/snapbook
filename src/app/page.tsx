@@ -37,7 +37,7 @@ export default function HomePage() {
             </div>
             <Link
               href="/add"
-              className="hidden lg:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium btn-accent"
+              className="hidden lg:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium btn-accent"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -75,7 +75,7 @@ export default function HomePage() {
               photos.length === 0 ? (
                 <Link
                   href="/add"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-medium btn-accent"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium btn-accent"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

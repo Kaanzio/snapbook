@@ -411,8 +411,8 @@ html {
 
 /* Nav item */
 .nav-item-active {
-  background: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.1);
-  color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-foreground, white) !important;
 }
 
 /* Accent text */
