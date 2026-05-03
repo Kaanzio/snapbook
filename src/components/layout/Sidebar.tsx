@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Logo from '@/components/ui/Logo';
 
 const navItems = [
   {
@@ -58,18 +59,9 @@ export default function Sidebar() {
     <aside className="hidden lg:flex flex-col w-[260px] h-screen fixed left-0 top-0 z-40 transition-colors duration-300"
       style={{ background: 'var(--bg-primary)', borderRight: '1px solid var(--border-secondary)' }}>
       {/* Logo */}
-      <div className="px-6 py-6" style={{ borderBottom: '1px solid var(--border-secondary)' }}>
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl btn-accent flex items-center justify-center">
-            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
-            </svg>
-          </div>
-          <div>
-            <h1 className="text-xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Snapbook</h1>
-            <p className="text-[11px] font-medium" style={{ color: 'var(--text-tertiary)' }}>Fotoğraf Not Defteri</p>
-          </div>
+      <div className="px-6 py-8" style={{ borderBottom: '1px solid var(--border-secondary)' }}>
+        <Link href="/" className="flex items-center group">
+          <Logo className="w-full h-auto max-w-[180px]" />
         </Link>
       </div>
 
