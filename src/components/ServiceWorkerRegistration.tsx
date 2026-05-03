@@ -5,25 +5,22 @@ import { useEffect } from 'react';
 export default function ServiceWorkerRegistration() {
   useEffect(() => {
     if ('serviceWorker' in navigator) {
-      if (process.env.NODE_ENV === 'development') {
-        // Unregister service workers in development to prevent HMR and caching issues
-        navigator.serviceWorker.getRegistrations().then((registrations) => {
-          for (const registration of registrations) {
-            registration.unregister();
-            console.log('SW unregistered in development mode');
-          }
+      const basePath = '/snapbook';
+      
+      // Register SW
+      navigator.serviceWorker
+        .register(`${basePath}/sw.js`, { scope: `${basePath}/` })
+        .then((registration) => {
+          console.log('SW registered:', registration.scope);
+        })
+        .catch((error) => {
+          console.error('SW registration failed:', error);
         });
-        // Register in production/development
-        const basePath = '/snapbook';
-        navigator.serviceWorker
-          .register(`${basePath}/sw.js`)
-          .then((registration) => {
-            console.log('SW registered:', registration.scope);
-          })
-          .catch((error) => {
-            console.error('SW registration failed:', error);
-          });
-      }
+
+      // Handle updates
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+      });
     }
   }, []);
 

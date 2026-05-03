@@ -61,8 +61,11 @@ export default function FloatingActionButton() {
         style={{ animation: isOpen ? 'none' : 'springIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)' }}
       >
         <svg
-          className="w-6 h-6 text-white transition-transform duration-300"
-          style={{ transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)' }}
+          className="w-6 h-6 transition-transform duration-300"
+          style={{ 
+            transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)',
+            color: 'var(--accent-foreground)'
+          }}
           fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

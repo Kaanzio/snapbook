@@ -40,9 +40,9 @@
   --skeleton-base: #f1f5f9;
   --skeleton-highlight: #e2e8f0;
 
-  --scrollbar-track: #f1f5f9;
-  --scrollbar-thumb: #cbd5e1;
-  --scrollbar-thumb-hover: #94a3b8;
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: rgba(0, 0, 0, 0.1);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.2);
 
   color-scheme: light;
 }
@@ -73,9 +73,9 @@
   --skeleton-base: #253352;
   --skeleton-highlight: #2d3a5c;
 
-  --scrollbar-track: #2a2a2a;
-  --scrollbar-thumb: #444444;
-  --scrollbar-thumb-hover: #555555;
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.25);
 
   color-scheme: dark;
 }
@@ -106,9 +106,9 @@
   --skeleton-base: #1a1a1a;
   --skeleton-highlight: #222222;
 
-  --scrollbar-track: #000000;
-  --scrollbar-thumb: #222222;
-  --scrollbar-thumb-hover: #333333;
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: rgba(255, 255, 255, 0.1);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.2);
 
   color-scheme: dark;
 }
@@ -142,26 +142,31 @@ body {
 /* ==================== SCROLLBAR ==================== */
 html {
   scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
   border-radius: 10px;
+  border: 1px solid transparent;
+  background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-thumb-hover);
 }
+
+/* Hide scrollbar when not scrolling on some devices if possible, 
+   but for now just making it very subtle */
 
 /* ==================== ANIMATIONS ==================== */
 @keyframes slideIn {

@@ -4,8 +4,8 @@ const BASE_PATH = '/snapbook';
 const STATIC_ASSETS = [
   BASE_PATH + '/',
   BASE_PATH + '/manifest.json',
-  BASE_PATH + '/icons/icon-192x192.png',
-  BASE_PATH + '/icons/icon-512x512.png',
+  BASE_PATH + '/icons/icon-192.png',
+  BASE_PATH + '/icons/icon-512.png',
 ];
 
 // Install: cache static assets
