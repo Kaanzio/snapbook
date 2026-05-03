@@ -12,8 +12,8 @@ export const metadata: Metadata = {
     title: "Snapbook",
   },
   icons: {
-    icon: "/snapbook/icons/icon-192x192.png",
-    apple: "/snapbook/icons/apple-touch-icon.png",
+    icon: "/snapbook/icon-192.png",
+    apple: "/snapbook/icon-192.png",
   },
 };
 
