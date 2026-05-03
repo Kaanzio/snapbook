@@ -1,5 +1,5 @@
-const CACHE_NAME = 'snapbook-v4';
-const BASE_PATH = '';
+const CACHE_NAME = 'snapbook-v6';
+const BASE_PATH = '/snapbook';
 
 const STATIC_ASSETS = [
   BASE_PATH + '/',

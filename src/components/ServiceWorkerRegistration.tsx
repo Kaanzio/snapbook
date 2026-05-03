@@ -14,7 +14,7 @@ export default function ServiceWorkerRegistration() {
           }
         });
         // Register in production/development
-        const basePath = '';
+        const basePath = '/snapbook';
         navigator.serviceWorker
           .register(`${basePath}/sw.js`)
           .then((registration) => {
