@@ -3,18 +3,8 @@ import "./globals.css";
 import AppShell from "@/components/layout/AppShell";
 
 export const metadata: Metadata = {
-  title: "Snapbook — Fotoğraf Not Defteri",
-  description: "Kişisel fotoğraf not defteriniz. Fotoğraflarınızı kategorize edin, notlar ekleyin, koleksiyonlar oluşturun.",
-  manifest: "/snapbook/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "Snapbook",
-  },
-  icons: {
-    icon: "/snapbook/icon-192.png",
-    apple: "/snapbook/icon-180.png",
-  },
+  title: "Snapbook",
+  description: "Your personal photo notebook",
 };
 
 export const viewport: Viewport = {
@@ -22,7 +12,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#ffffff",
+  themeColor: "#1A1A1A",
 };
 
 export default function RootLayout({
@@ -35,7 +25,15 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="apple-touch-icon" href="/snapbook/icon-180.png" />
+        
+        {/* PWA Tags */}
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#1A1A1A" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Snapbook" />
+        <link rel="apple-touch-icon" href="/icon-180.png" />
       </head>
       <body className="min-h-full flex flex-col" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
         <AppShell>{children}</AppShell>

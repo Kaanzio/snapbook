@@ -13,9 +13,8 @@ export default function ServiceWorkerRegistration() {
             console.log('SW unregistered in development mode');
           }
         });
-      } else {
-        // Register in production/development (since basePath is set in next.config.ts)
-        const basePath = '/snapbook';
+        // Register in production/development
+        const basePath = '';
         navigator.serviceWorker
           .register(`${basePath}/sw.js`)
           .then((registration) => {
