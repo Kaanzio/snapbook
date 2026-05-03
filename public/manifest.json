@@ -1,13 +1,16 @@
 {
+  "id": "/snapbook/",
   "name": "Snapbook",
   "short_name": "Snapbook",
   "description": "Kişisel fotoğraf not defteri",
   "start_url": "/snapbook/",
   "display": "standalone",
+  "display_override": ["standalone", "window-controls-overlay"],
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "orientation": "portrait-primary",
   "categories": ["photo", "productivity"],
+  "target_sdk": 34,
   "icons": [
     {
       "src": "/snapbook/icon-192.png",
