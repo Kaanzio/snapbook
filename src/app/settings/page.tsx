@@ -4,14 +4,22 @@ import { useState } from 'react';
 import { usePreferences } from '@/components/providers/PreferencesProvider';
 import { ThemeMode, GridDensity, FontSize, ACCENT_PRESETS } from '@/types';
 import { useCategories } from '@/hooks/useCategories';
-import { deleteCustomCategory, notifyDataChange } from '@/lib/indexeddb';
+import { deleteCustomCategory, notifyDataChange, getStorageUsage } from '@/lib/indexeddb';
 import { showToast } from '@/components/ui/Toast';
+import { exportAllData } from '@/lib/backup';
+import { useEffect } from 'react';
 
 export default function SettingsPage() {
   const { prefs, updatePrefs, resolvedTheme } = usePreferences();
   const { allCategories } = useCategories();
   const [customHex, setCustomHex] = useState('');
   const [showCustomInput, setShowCustomInput] = useState(false);
+  const [storage, setStorage] = useState<{ used: number; total: number | null }>({ used: 0, total: null });
+  const [isExporting, setIsExporting] = useState(false);
+
+  useEffect(() => {
+    getStorageUsage().then(setStorage);
+  }, []);
 
   async function toggleCategoryVisibility(key: string) {
     const hidden = prefs.hiddenCategories || [];
@@ -301,6 +309,58 @@ export default function SettingsPage() {
                 </div>
               );
             })}
+          </div>
+        </section>
+
+        {/* ==================== STORAGE & BACKUP ==================== */}
+        <section>
+          <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+            💾 Depolama ve Yedekleme
+          </h2>
+          <div className="space-y-3">
+            <div className="p-4 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}>
+              <div className="flex justify-between items-end mb-2">
+                <p className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Depolama Kullanımı</p>
+                <p className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
+                  {(storage.used / (1024 * 1024)).toFixed(1)} MB 
+                  {storage.total && ` / ${(storage.total / (1024 * 1024 * 1024)).toFixed(1)} GB`}
+                </p>
+              </div>
+              {storage.total && (
+                <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-accent transition-all duration-500" 
+                    style={{ width: `${Math.min(100, (storage.used / storage.total) * 100)}%` }} 
+                  />
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={async () => {
+                setIsExporting(true);
+                try {
+                  await exportAllData();
+                  showToast('Yedekleme dosyası hazırlandı');
+                } catch (err) {
+                  showToast('Yedekleme başarısız oldu');
+                } finally {
+                  setIsExporting(false);
+                }
+              }}
+              disabled={isExporting}
+              className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl font-medium transition-all haptic-tap disabled:opacity-50"
+              style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)' }}
+            >
+              {isExporting ? (
+                <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+              )}
+              {isExporting ? 'Yedek hazırlanıyor...' : 'Tüm Verileri Yedekle (.zip)'}
+            </button>
           </div>
         </section>
 

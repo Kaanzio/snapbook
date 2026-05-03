@@ -12,6 +12,7 @@ import TagInput from '@/components/ui/TagInput';
 import StarToggle from '@/components/ui/StarToggle';
 import AddToCollection from '@/components/collections/AddToCollection';
 import { showToast } from '@/components/ui/Toast';
+import { savePhotoToDevice } from '@/lib/backup';
 import { PhotoMetadata } from '@/types';
 import Link from 'next/link';
 
@@ -162,6 +163,20 @@ function PhotoDetailContent() {
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+              </svg>
+            </button>
+
+            <button
+              onClick={async () => {
+                const success = await savePhotoToDevice(photo.id, photo.note || undefined);
+                if (success) showToast('Fotoğraf kaydedildi');
+              }}
+              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              style={{ color: 'var(--text-secondary)' }}
+              title="Cihaza kaydet"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
               </svg>
             </button>
 
@@ -346,6 +361,20 @@ function PhotoDetailContent() {
                 {photo.collection_ids.length} koleksiyonda
               </div>
             )}
+
+            <button
+              onClick={async () => {
+                const success = await savePhotoToDevice(photo.id, photo.note || undefined);
+                if (success) showToast('Fotoğraf kaydedildi');
+              }}
+              className="w-full flex items-center justify-center gap-2 p-3 rounded-xl text-xs font-medium transition-all haptic-tap mt-4"
+              style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-primary)' }}
+            >
+              <svg className="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              Fotoğrafı Galeriye Kaydet / Paylaş
+            </button>
           </div>
         </div>
       </div>
