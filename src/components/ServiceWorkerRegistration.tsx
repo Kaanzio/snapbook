@@ -15,8 +15,9 @@ export default function ServiceWorkerRegistration() {
         });
       } else {
         // Register in production
+        const basePath = process.env.NODE_ENV === 'production' ? '/snapbook' : '';
         navigator.serviceWorker
-          .register('/sw.js')
+          .register(`${basePath}/sw.js`)
           .then((registration) => {
             console.log('SW registered:', registration.scope);
           })
