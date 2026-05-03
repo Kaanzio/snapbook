@@ -74,6 +74,8 @@ export const ACCENT_PRESETS = [
   { name: 'Turuncu', value: '#f97316' },
   { name: 'Pembe', value: '#ec4899' },
   { name: 'Mor', value: '#8b5cf6' },
+  { name: 'Kırık Beyaz', value: '#E0E0E0' },
+  { name: 'Beyaz', value: '#FFFFFF' },
 ] as const;
 
 export interface AppPreferences {

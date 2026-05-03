@@ -52,14 +52,13 @@ function hexToHSL(hex: string): { h: number; s: number; l: number } {
   return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
 }
 
-function getSystemTheme(): 'light' | 'dark' {
-  if (typeof window === 'undefined') return 'light';
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
-
-function resolveTheme(mode: ThemeMode): 'light' | 'dark' | 'oled' {
-  if (mode === 'system') return getSystemTheme();
-  return mode;
+function getContrastColor(hex: string): string {
+  // Simple luminance check to decide between black and white text
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.6 ? '#000000' : '#FFFFFF';
 }
 
 export default function PreferencesProvider({ children }: { children: ReactNode }) {
@@ -89,8 +88,8 @@ export default function PreferencesProvider({ children }: { children: ReactNode 
   }, []);
 
   const resolvedTheme = prefs.theme === 'system' ? systemTheme : (prefs.theme as 'light' | 'dark' | 'oled');
-  const activeAccent = resolvedTheme === 'oled' ? '#FFFFFF' : (resolvedTheme === 'dark' ? '#E0E0E0' : prefs.accentColor);
-  const accentHSL = hexToHSL(activeAccent);
+  const accentHSL = hexToHSL(prefs.accentColor);
+  const accentForeground = getContrastColor(prefs.accentColor);
 
   // Apply theme to document
   useEffect(() => {
@@ -105,7 +104,8 @@ export default function PreferencesProvider({ children }: { children: ReactNode 
     html.style.setProperty('--accent-h', String(accentHSL.h));
     html.style.setProperty('--accent-s', `${accentHSL.s}%`);
     html.style.setProperty('--accent-l', `${accentHSL.l}%`);
-    html.style.setProperty('--accent', activeAccent);
+    html.style.setProperty('--accent', prefs.accentColor);
+    html.style.setProperty('--accent-foreground', accentForeground);
 
     // Set font size
     const fontSizeMap: Record<FontSize, string> = {

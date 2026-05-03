@@ -394,7 +394,7 @@ html {
   background: linear-gradient(135deg, 
     hsl(var(--accent-h), var(--accent-s), var(--accent-l)), 
     hsl(calc(var(--accent-h) + 20), var(--accent-s), calc(var(--accent-l) - 8%)));
-  color: white;
+  color: var(--accent-foreground, white);
   border: none;
   box-shadow: var(--shadow-accent);
   transition: transform 0.2s ease, box-shadow 0.3s ease, opacity 0.2s ease;
