@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="40" viewBox="0 0 160 40">
+  <!-- Koyu tema ikon: beyaz arka plan -->
+  <rect x="0" y="0" width="40" height="40" rx="9" fill="#ffffff"/>
+  <rect x="6" y="9" width="10" height="18" rx="2" fill="#DDD"/>
+  <rect x="20" y="9" width="10" height="18" rx="2" fill="#E8E8E8"/>
+  <rect x="16.5" y="9" width="3" height="18" rx="1" fill="#C0C0C0"/>
+  <circle cx="25" cy="16" r="5" fill="none" stroke="#1A1A1A" stroke-width="1.5"/>
+  <circle cx="25" cy="16" r="2" fill="#1A1A1A"/>
+  <!-- Wordmark -->
+  <text x="50" y="26" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="700" fill="#ffffff" letter-spacing="-0.4">snap</text>
+  <text x="95" y="26" font-family="system-ui,-apple-system,sans-serif" font-size="19" font-weight="300" fill="#888" letter-spacing="-0.4">book</text>
+</svg>
