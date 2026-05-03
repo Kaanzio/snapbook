@@ -9,9 +9,10 @@ interface FilterPanelProps {
   filters: FilterState;
   onChange: (filters: FilterState) => void;
   collections: Collection[];
+  totalPhotos?: number;
 }
 
-export default function FilterPanel({ filters, onChange, collections }: FilterPanelProps) {
+export default function FilterPanel({ filters, onChange, collections, totalPhotos }: FilterPanelProps) {
   const { categories } = useCategories();
   function update(partial: Partial<FilterState>) {
     onChange({ ...filters, ...partial });
@@ -54,6 +55,12 @@ export default function FilterPanel({ filters, onChange, collections }: FilterPa
         >
           ⭐ Favoriler
         </button>
+
+        {totalPhotos !== undefined && (
+          <span className="ml-auto text-[10px] font-black uppercase tracking-widest opacity-40" style={{ color: 'var(--text-primary)' }}>
+            {totalPhotos} FOTOĞRAF
+          </span>
+        )}
 
         {collections.length > 0 && (
           <select

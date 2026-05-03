@@ -28,25 +28,12 @@ export default function HomePage() {
       {/* Header */}
       <header className="sticky top-0 z-30 themed-header">
         <div className="px-4 lg:px-6 py-4">
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <h1 className="text-xl font-bold lg:hidden" style={{ color: 'var(--text-primary)' }}>Snapbook</h1>
-              <p className="text-sm mt-0.5" style={{ color: 'var(--text-tertiary)' }}>
-                {loading ? 'Yükleniyor...' : `${photos.length} fotoğraf`}
-              </p>
-            </div>
-            <Link
-              href="/add"
-              className="hidden lg:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium btn-accent"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
-              Fotoğraf Ekle
-            </Link>
-          </div>
-
-          <FilterPanel filters={filters} onChange={setFilters} collections={collections} />
+          <FilterPanel 
+            filters={filters} 
+            onChange={setFilters} 
+            collections={collections} 
+            totalPhotos={photos.length}
+          />
         </div>
       </header>
 
