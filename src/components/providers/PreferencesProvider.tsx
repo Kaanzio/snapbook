@@ -89,7 +89,8 @@ export default function PreferencesProvider({ children }: { children: ReactNode 
   }, []);
 
   const resolvedTheme = prefs.theme === 'system' ? systemTheme : (prefs.theme as 'light' | 'dark' | 'oled');
-  const accentHSL = hexToHSL(prefs.accentColor);
+  const activeAccent = resolvedTheme === 'oled' ? '#FFFFFF' : (resolvedTheme === 'dark' ? '#E0E0E0' : prefs.accentColor);
+  const accentHSL = hexToHSL(activeAccent);
 
   // Apply theme to document
   useEffect(() => {
@@ -104,7 +105,7 @@ export default function PreferencesProvider({ children }: { children: ReactNode 
     html.style.setProperty('--accent-h', String(accentHSL.h));
     html.style.setProperty('--accent-s', `${accentHSL.s}%`);
     html.style.setProperty('--accent-l', `${accentHSL.l}%`);
-    html.style.setProperty('--accent', prefs.accentColor);
+    html.style.setProperty('--accent', activeAccent);
 
     // Set font size
     const fontSizeMap: Record<FontSize, string> = {

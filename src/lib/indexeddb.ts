@@ -1,3 +1,16 @@
+/**
+ * SNAPBOOK LOCAL DATA STORAGE
+ * 
+ * All user data (photos, metadata, collections, and preferences) is stored 
+ * exclusively in IndexedDB on the local device. 
+ * 
+ * - NO external API calls for data synchronization.
+ * - NO tracking or analytics scripts.
+ * - NO third-party cloud storage.
+ * 
+ * Your photos never leave your device.
+ */
+
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { DB_NAME, DB_VERSION, PHOTO_STORE, META_STORE, COLLECTION_STORE, CANVAS_STORE, PREFS_STORE, CATEGORY_STORE, THUMBNAIL_MAX_WIDTH, THUMBNAIL_QUALITY } from './constants';
 import { PhotoMetadata, Collection, CanvasData, AppPreferences, DEFAULT_PREFERENCES, CategoryInfo } from '@/types';
