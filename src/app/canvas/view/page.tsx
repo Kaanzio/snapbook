@@ -148,7 +148,7 @@ function FlowCanvas({
       id: uuidv4(),
       type: 'text',
       position: { x: window.innerWidth / 2 - 60, y: window.innerHeight / 2 - 40 },
-      data: { text: 'Yeni Metin' },
+      data: { text: 'Yeni Metin', isNew: true },
     };
     setNodes((nds) => nds.concat(newNode));
   };
@@ -273,12 +273,6 @@ function FlowCanvas({
             <Controls 
               showFitView={false}
               style={{ background: 'var(--bg-card)', borderColor: 'var(--border-primary)', fill: 'var(--text-primary)' }} 
-            />
-            <MiniMap 
-              nodeStrokeColor="var(--accent)" 
-              nodeColor="var(--bg-card)" 
-              maskColor="var(--bg-overlay)" 
-              style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}
             />
             {menu && <CanvasContextMenu {...menu} onClose={() => setMenu(null)} />}
           </ReactFlow>

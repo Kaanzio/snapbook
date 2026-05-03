@@ -6,16 +6,17 @@ import { usePreferences } from '@/components/providers/PreferencesProvider';
 
 interface MasonryGridProps {
   photos: PhotoMetadata[];
+  forceCompact?: boolean;
 }
 
-export default function MasonryGrid({ photos }: MasonryGridProps) {
+export default function MasonryGrid({ photos, forceCompact }: MasonryGridProps) {
   const { prefs } = usePreferences();
 
   if (photos.length === 0) return null;
 
   // Real Masonry Columns
   let gridClass = "columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-4 px-4 lg:px-6";
-  if (prefs.gridDensity === 'compact') {
+  if (forceCompact || prefs.gridDensity === 'compact') {
     gridClass = "columns-3 sm:columns-4 md:columns-6 lg:columns-8 gap-2 px-2 lg:px-4";
   } else if (prefs.gridDensity === 'large') {
     return <FocusView photos={photos} />;

@@ -23,14 +23,14 @@ export default function FilterPanel({ filters, onChange, collections }: FilterPa
   ];
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {/* Category chips */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex overflow-x-auto gap-2 pb-1 no-scrollbar -mx-1 px-1">
         {allCategories.map((cat) => (
           <button
             key={cat.key}
             onClick={() => update({ category: cat.key })}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all haptic-tap"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all haptic-tap shrink-0"
             style={{
               background: filters.category === cat.key ? 'var(--accent)' : 'var(--bg-secondary)',
               color: filters.category === cat.key ? 'var(--accent-foreground, white)' : 'var(--text-secondary)'

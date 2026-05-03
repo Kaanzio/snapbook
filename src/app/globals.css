@@ -343,6 +343,14 @@ html {
   break-inside: avoid;
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* ==================== THEMED COMPONENTS ==================== */
 
 /* Page animation */

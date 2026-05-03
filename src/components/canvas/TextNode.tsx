@@ -4,13 +4,14 @@ import { Handle, Position, NodeProps, useReactFlow } from '@xyflow/react';
 export default function TextNode({ id, data, selected }: NodeProps) {
   const { setNodes } = useReactFlow();
   const nodeData = data as any;
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(nodeData.isNew || false);
   const [text, setText] = useState(nodeData.text || 'Metin ekle...');
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
+      inputRef.current.select();
       // Auto-resize
       inputRef.current.style.height = 'auto';
       inputRef.current.style.height = inputRef.current.scrollHeight + 'px';
@@ -27,6 +28,7 @@ export default function TextNode({ id, data, selected }: NodeProps) {
             data: {
               ...node.data,
               text,
+              isNew: false,
             },
           };
         }
