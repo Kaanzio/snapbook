@@ -89,7 +89,7 @@ export default function CollectionsPage() {
               return (
                 <Link
                   key={coll.id}
-                  href={`/collections/${coll.id}`}
+                  href={`/collections/view?id=${coll.id}`}
                   className="group relative block haptic-tap"
                 >
                   <div className="themed-card overflow-hidden transition-all duration-300 group-hover:translate-y-[-4px] group-hover:shadow-shadow-accent">

@@ -41,7 +41,7 @@ export default function CanvasListPage() {
     };
     await saveCanvas(newCanvas);
     notifyDataChange('canvases');
-    router.push(`/canvas/${id}`);
+    router.push(`/canvas/view?id=${id}`);
   }
 
   async function handleDelete(id: string, e: React.MouseEvent) {
@@ -115,7 +115,7 @@ export default function CanvasListPage() {
             {canvases.map((canvas) => (
               <div
                 key={canvas.id}
-                onClick={() => router.push(`/canvas/${canvas.id}`)}
+                onClick={() => router.push(`/canvas/view?id=${canvas.id}`)}
                 className="group relative themed-card p-5 cursor-pointer"
               >
                 <div className="flex items-start justify-between">

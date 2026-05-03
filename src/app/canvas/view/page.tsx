@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import {
   ReactFlow,
@@ -14,19 +14,14 @@ import {
   Connection,
   Edge,
   Node,
-  applyNodeChanges,
-  applyEdgeChanges,
-  NodeChange,
-  EdgeChange,
   ReactFlowProvider,
   useReactFlow,
-  Panel,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import { getCanvas, saveCanvas, notifyDataChange } from '@/lib/indexeddb';
 import { usePhotos } from '@/hooks/usePhotos';
-import { CanvasData, PhotoMetadata } from '@/types';
+import { PhotoMetadata } from '@/types';
 import { showToast } from '@/components/ui/Toast';
 
 import PhotoNode from '@/components/canvas/PhotoNode';
@@ -71,9 +66,9 @@ function FlowCanvas({
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [showPhotoDrawer, setShowPhotoDrawer] = useState(false);
   const [menu, setMenu] = useState<{ id: string; top?: number; left?: number; right?: number; bottom?: number } | null>(null);
-  const { fitView, getEdge, setEdges: updateEdges } = useReactFlow();
+  const { fitView, setEdges: updateEdges } = useReactFlow();
 
-  // Initial cleanup (one-time fix for existing data)
+  // Initial cleanup
   useEffect(() => {
     setNodes((nds) => nds.map(n => {
       if (n.data && (n.data as any).onUpdate) {
@@ -223,43 +218,6 @@ function FlowCanvas({
             </svg>
           </button>
           <div className="w-px h-5 bg-slate-200 mx-1 dark:bg-slate-700" />
-          
-          {/* Edge style selection */}
-          <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
-            <button 
-              onClick={() => setEdgeType('smoothstep')}
-              className={`p-1.5 rounded-lg text-xs font-medium transition-all ${edges.some(e => e.selected && (e.data as any)?.edgeType === 'smoothstep') ? 'bg-white dark:bg-slate-700 shadow-sm' : ''}`}
-              title="Kavisli"
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                <path d="M4 12 C 4 12, 12 4, 20 12" stroke="currentColor" strokeWidth="2" fill="none" />
-              </svg>
-            </button>
-            <button 
-              onClick={() => setEdgeType('step')}
-              className={`p-1.5 rounded-lg text-xs font-medium transition-all ${edges.some(e => e.selected && (e.data as any)?.edgeType === 'step') ? 'bg-white dark:bg-slate-700 shadow-sm' : ''}`}
-              title="Basamaklı"
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path d="M4 16 L 12 16 L 12 8 L 20 8" stroke="currentColor" />
-              </svg>
-            </button>
-            <button 
-              onClick={() => setEdgeType('straight')}
-              className={`p-1.5 rounded-lg text-xs font-medium transition-all ${edges.some(e => e.selected && (e.data as any)?.edgeType === 'straight') ? 'bg-white dark:bg-slate-700 shadow-sm' : ''}`}
-              title="Düz"
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path d="M4 16 L 20 8" stroke="currentColor" />
-              </svg>
-            </button>
-          </div>
-
-          <div className="w-px h-5 bg-slate-200 mx-1 dark:bg-slate-700" />
           <button onClick={() => fitView({ duration: 800 })} className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 haptic-tap" title="Ekrana Sığdır" style={{ color: 'var(--text-secondary)' }}>
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
@@ -330,51 +288,32 @@ function FlowCanvas({
   );
 }
 
-export default function CanvasEditorPage() {
-  const params = useParams();
-  const canvasId = params.id as string;
+function CanvasEditorContent() {
+  const searchParams = useSearchParams();
+  const canvasId = searchParams.get('id') || '';
   const [initialData, setInitialData] = useState<{ nodes: Node[], edges: Edge[] } | null>(null);
 
   useEffect(() => {
+    if (!canvasId) {
+      setInitialData({ nodes: [], edges: [] });
+      return;
+    }
+
     async function load() {
       const data = await getCanvas(canvasId);
       if (data) {
-        // Migrate old node format to React Flow format if needed
         const migratedNodes = (data.nodes || []).map((node: any) => {
           const newNode = { ...node };
-          
-          // Ensure position exists
           if (!newNode.position) {
-            newNode.position = { 
-              x: node.x !== undefined ? node.x : 0, 
-              y: node.y !== undefined ? node.y : 0 
-            };
+            newNode.position = { x: node.x || 0, y: node.y || 0 };
           }
-
-          // Ensure type exists (old code used 'photo' and 'text')
-          if (!newNode.type) {
-            newNode.type = 'text'; // Default to text
-          }
-
-          // Ensure data exists and has required fields
-          if (!newNode.data) {
-            newNode.data = {};
-          }
-          
-          // Move flat fields to data if they exist
+          if (!newNode.type) newNode.type = 'text';
+          if (!newNode.data) newNode.data = {};
           if (node.photoId && !newNode.data.photoId) newNode.data.photoId = node.photoId;
           if (node.text && !newNode.data.text) newNode.data.text = node.text;
-
-          // Cleanup old flat fields to avoid confusion
-          delete newNode.x;
-          delete newNode.y;
-          delete newNode.photoId;
-          delete newNode.text;
-
           return newNode;
         });
 
-        // Migrate old edge format
         const migratedEdges = (data.edges || []).map((edge: any) => {
           if (edge.fromNodeId && !edge.source) {
             return {
@@ -388,10 +327,7 @@ export default function CanvasEditorPage() {
           return edge;
         });
 
-        setInitialData({
-          nodes: migratedNodes,
-          edges: migratedEdges,
-        });
+        setInitialData({ nodes: migratedNodes, edges: migratedEdges });
       } else {
         setInitialData({ nodes: [], edges: [] });
       }
@@ -407,5 +343,13 @@ export default function CanvasEditorPage() {
     <ReactFlowProvider>
       <FlowCanvas canvasId={canvasId} initialNodes={initialData.nodes} initialEdges={initialData.edges} />
     </ReactFlowProvider>
+  );
+}
+
+export default function CanvasEditorPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen skeleton" />}>
+      <CanvasEditorContent />
+    </Suspense>
   );
 }

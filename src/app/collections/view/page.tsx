@@ -1,20 +1,20 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { usePhotos } from '@/hooks/usePhotos';
 import { useCollections } from '@/hooks/useCollections';
 import MasonryGrid from '@/components/photos/MasonryGrid';
 import EmptyState from '@/components/ui/EmptyState';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, Suspense } from 'react';
 import PhotoSelectorModal from '@/components/collections/PhotoSelectorModal';
 import CollectionForm from '@/components/collections/CollectionForm';
 import { updateCollection, notifyDataChange } from '@/lib/indexeddb';
 import { showToast } from '@/components/ui/Toast';
 
-export default function CollectionDetailPage() {
-  const params = useParams();
-  const collectionId = params.id as string;
+function CollectionDetailContent() {
+  const searchParams = useSearchParams();
+  const collectionId = searchParams.get('id') || '';
   const { photos, loading: photosLoading } = usePhotos();
   const { collections, loading: collectionsLoading } = useCollections();
   const [showAddModal, setShowAddModal] = useState(false);
@@ -41,6 +41,20 @@ export default function CollectionDetailPage() {
   const loading = photosLoading || collectionsLoading;
   const photoIdsInCollection = useMemo(() => collectionPhotos.map(p => p.id), [collectionPhotos]);
 
+  if (!loading && !collection) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="text-center">
+          <p className="text-6xl mb-4">📁</p>
+          <p className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Koleksiyon bulunamadı</p>
+          <Link href="/collections" className="text-sm text-accent hover:underline mt-2 inline-block">
+            Koleksiyonlara dön
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -49,7 +63,7 @@ export default function CollectionDetailPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/collections"
-              className="p-2 -ml-2 rounded-xl transition-colors text-slate-500 hover:bg-slate-100 haptic-tap"
+              className="p-2 -ml-2 rounded-xl transition-colors text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 haptic-tap"
               style={{ color: 'var(--text-secondary)' }}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -136,5 +150,13 @@ export default function CollectionDetailPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function CollectionDetailPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen skeleton" />}>
+      <CollectionDetailContent />
+    </Suspense>
   );
 }

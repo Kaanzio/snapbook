@@ -21,7 +21,7 @@ export default function PhotoCard({ photo }: PhotoCardProps) {
   }
 
   return (
-    <Link href={`/photo/${photo.id}`} className="block break-inside-avoid mb-3 group haptic-tap">
+    <Link href={`/photo?id=${photo.id}`} className="block break-inside-avoid mb-3 group haptic-tap">
       <div className="relative themed-card overflow-hidden">
         {/* Image */}
         <div className="relative overflow-hidden">

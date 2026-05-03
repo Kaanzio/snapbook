@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect, useRef, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { usePhotoImage } from '@/hooks/usePhotoImage';
 import { useCollections } from '@/hooks/useCollections';
 import { getPhotoMetadata } from '@/lib/indexeddb';
@@ -12,15 +12,15 @@ import TagInput from '@/components/ui/TagInput';
 import StarToggle from '@/components/ui/StarToggle';
 import AddToCollection from '@/components/collections/AddToCollection';
 import { showToast } from '@/components/ui/Toast';
-import { PhotoMetadata, PhotoCategory } from '@/types';
+import { PhotoMetadata } from '@/types';
 import Link from 'next/link';
 
-export default function PhotoDetailPage() {
-  const params = useParams();
+function PhotoDetailContent() {
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const photoId = params.id as string;
+  const photoId = searchParams.get('id');
 
-  const { imageUrl, isLocal, loading: imageLoading } = usePhotoImage(photoId, true);
+  const { imageUrl, isLocal, loading: imageLoading } = usePhotoImage(photoId || '', true);
   const { collections } = useCollections();
   const { categories, getCategoryInfo } = useCategories();
   const [photo, setPhoto] = useState<PhotoMetadata | null>(null);
@@ -36,10 +36,15 @@ export default function PhotoDetailPage() {
   editingRef.current = editing;
 
   useEffect(() => {
+    if (!photoId) {
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
 
     async function load() {
-      const data = await getPhotoMetadata(photoId);
+      const data = await getPhotoMetadata(photoId!);
       if (!cancelled && data) {
         setPhoto(data);
         if (!editingRef.current) {
@@ -108,13 +113,13 @@ export default function PhotoDetailPage() {
     );
   }
 
-  if (!photo) {
+  if (!photoId || !photo) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
           <p className="text-6xl mb-4">😕</p>
-          <p className="text-lg font-semibold text-slate-700">Fotoğraf bulunamadı</p>
-          <Link href="/" className="text-sm text-indigo-500 hover:underline mt-2 inline-block">
+          <p className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Fotoğraf bulunamadı</p>
+          <Link href="/" className="text-sm text-accent hover:underline mt-2 inline-block">
             Ana sayfaya dön
           </Link>
         </div>
@@ -138,7 +143,7 @@ export default function PhotoDetailPage() {
         <div className="px-4 lg:px-6 py-3 flex items-center justify-between">
           <button
             onClick={() => router.back()}
-            className="p-2 -ml-2 rounded-xl transition-colors text-slate-500 haptic-tap hover:bg-slate-100"
+            className="p-2 -ml-2 rounded-xl transition-colors text-slate-500 haptic-tap hover:bg-slate-100 dark:hover:bg-slate-800"
             style={{ color: 'var(--text-secondary)' }}
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -151,7 +156,8 @@ export default function PhotoDetailPage() {
 
             <button
               onClick={() => setShowCollections(true)}
-              className="p-2 rounded-xl hover:bg-slate-100 transition-colors text-slate-500"
+              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              style={{ color: 'var(--text-secondary)' }}
               title="Koleksiyona ekle"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -281,7 +287,7 @@ export default function PhotoDetailPage() {
               {photo.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   {photo.tags.map((tag) => (
-                    <span key={tag} className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-600 text-xs font-medium">
+                    <span key={tag} className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-600 text-xs font-medium" style={{ background: 'var(--bg-secondary)', color: 'var(--accent)' }}>
                       #{tag}
                     </span>
                   ))}
@@ -320,7 +326,7 @@ export default function PhotoDetailPage() {
                   href={`https://www.google.com/maps?q=${photo.latitude},${photo.longitude}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-indigo-500 hover:underline"
+                  className="text-accent hover:underline"
                 >
                   Haritada göster
                 </a>
@@ -349,5 +355,13 @@ export default function PhotoDetailPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function PhotoDetailPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen skeleton" />}>
+      <PhotoDetailContent />
+    </Suspense>
   );
 }
