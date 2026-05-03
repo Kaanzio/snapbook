@@ -70,7 +70,7 @@ function FocusView({ photos }: { photos: PhotoMetadata[] }) {
         </button>
 
         {/* Content */}
-        <Link href={`/photo/${current.id}`} className="w-full h-full flex flex-col items-center justify-center group">
+        <Link href={`/photo?id=${current.id}`} className="w-full h-full flex flex-col items-center justify-center group">
           <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl transition-transform duration-500 group-hover:scale-[1.01]">
             {loading ? (
               <div className="absolute inset-0 skeleton" />
