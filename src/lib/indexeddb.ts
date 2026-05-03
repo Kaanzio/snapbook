@@ -1,0 +1,310 @@
+import { openDB, DBSchema, IDBPDatabase } from 'idb';
+import { DB_NAME, DB_VERSION, PHOTO_STORE, META_STORE, COLLECTION_STORE, CANVAS_STORE, PREFS_STORE, CATEGORY_STORE, THUMBNAIL_MAX_WIDTH, THUMBNAIL_QUALITY } from './constants';
+import { PhotoMetadata, Collection, CanvasData, AppPreferences, DEFAULT_PREFERENCES, CategoryInfo } from '@/types';
+
+interface SnapbookDB extends DBSchema {
+  [PHOTO_STORE]: {
+    key: string;
+    value: {
+      id: string;
+      blob: Blob;
+      thumbnail: Blob;
+      mimeType: string;
+      size: number;
+      storedAt: number;
+    };
+  };
+  [META_STORE]: {
+    key: string;
+    value: PhotoMetadata;
+    indexes: { 'by-created': number };
+  };
+  [COLLECTION_STORE]: {
+    key: string;
+    value: Collection;
+    indexes: { 'by-created': number };
+  };
+  [CANVAS_STORE]: {
+    key: string;
+    value: CanvasData;
+    indexes: { 'by-updated': number };
+  };
+  [PREFS_STORE]: {
+    key: string;
+    value: { key: string; data: AppPreferences };
+  };
+  [CATEGORY_STORE]: {
+    key: string;
+    value: CategoryInfo;
+  };
+}
+
+let dbPromise: Promise<IDBPDatabase<SnapbookDB>> | null = null;
+
+function getDB(): Promise<IDBPDatabase<SnapbookDB>> {
+  if (!dbPromise) {
+    dbPromise = openDB<SnapbookDB>(DB_NAME, DB_VERSION, {
+      upgrade(db, oldVersion, newVersion, transaction) {
+        if (!db.objectStoreNames.contains(PHOTO_STORE)) {
+          db.createObjectStore(PHOTO_STORE, { keyPath: 'id' });
+        }
+        if (!db.objectStoreNames.contains(META_STORE)) {
+          const metaStore = db.createObjectStore(META_STORE, { keyPath: 'id' });
+          metaStore.createIndex('by-created', 'created_at');
+        }
+        if (!db.objectStoreNames.contains(COLLECTION_STORE)) {
+          const collStore = db.createObjectStore(COLLECTION_STORE, { keyPath: 'id' });
+          collStore.createIndex('by-created', 'created_at');
+        }
+        if (!db.objectStoreNames.contains(CANVAS_STORE)) {
+          const canvasStore = db.createObjectStore(CANVAS_STORE, { keyPath: 'id' });
+          canvasStore.createIndex('by-updated', 'updated_at');
+        }
+        if (!db.objectStoreNames.contains(PREFS_STORE)) {
+          db.createObjectStore(PREFS_STORE, { keyPath: 'key' });
+        }
+        if (!db.objectStoreNames.contains(CATEGORY_STORE)) {
+          db.createObjectStore(CATEGORY_STORE, { keyPath: 'key' });
+        }
+      },
+    });
+  }
+  return dbPromise;
+}
+
+// Generate a thumbnail from an image file
+export async function generateThumbnail(file: File | Blob): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('Canvas context not available'));
+        return;
+      }
+
+      let width = img.width;
+      let height = img.height;
+
+      if (width > THUMBNAIL_MAX_WIDTH) {
+        height = Math.round((height * THUMBNAIL_MAX_WIDTH) / width);
+        width = THUMBNAIL_MAX_WIDTH;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('Failed to generate thumbnail'));
+        },
+        'image/jpeg',
+        THUMBNAIL_QUALITY
+      );
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Failed to load image'));
+    };
+
+    img.src = url;
+  });
+}
+
+// Save a photo binary to IndexedDB
+export async function savePhoto(id: string, file: File | Blob): Promise<void> {
+  const db = await getDB();
+  const thumbnail = await generateThumbnail(file);
+
+  await db.put(PHOTO_STORE, {
+    id,
+    blob: file,
+    thumbnail,
+    mimeType: file.type || 'image/jpeg',
+    size: file.size,
+    storedAt: Date.now(),
+  });
+}
+
+// Get full-resolution photo
+export async function getPhoto(id: string): Promise<Blob | null> {
+  const db = await getDB();
+  const record = await db.get(PHOTO_STORE, id);
+  return record?.blob || null;
+}
+
+// Get thumbnail
+export async function getThumbnail(id: string): Promise<Blob | null> {
+  const db = await getDB();
+  const record = await db.get(PHOTO_STORE, id);
+  return record?.thumbnail || null;
+}
+
+// Check if photo exists locally
+export async function hasPhoto(id: string): Promise<boolean> {
+  const db = await getDB();
+  const record = await db.get(PHOTO_STORE, id);
+  return !!record;
+}
+
+// Delete photo binary from IndexedDB
+export async function deleteLocalPhoto(id: string): Promise<void> {
+  const db = await getDB();
+  await db.delete(PHOTO_STORE, id);
+}
+
+// Get all local photo IDs
+export async function getAllLocalPhotoIds(): Promise<string[]> {
+  const db = await getDB();
+  return db.getAllKeys(PHOTO_STORE);
+}
+
+// Get storage usage estimate
+export async function getStorageUsage(): Promise<{ used: number; total: number | null }> {
+  if (navigator.storage && navigator.storage.estimate) {
+    const estimate = await navigator.storage.estimate();
+    return {
+      used: estimate.usage || 0,
+      total: estimate.quota || null,
+    };
+  }
+  return { used: 0, total: null };
+}
+
+// ==================== METADATA CRUD ====================
+
+export async function getAllPhotosMeta(): Promise<PhotoMetadata[]> {
+  const db = await getDB();
+  const all = await db.getAllFromIndex(META_STORE, 'by-created');
+  // Return sorted descending by created_at
+  return all.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+}
+
+export async function createPhotoMetadata(photo: PhotoMetadata): Promise<void> {
+  const db = await getDB();
+  await db.put(META_STORE, photo);
+}
+
+export async function updatePhotoMetadata(id: string, updates: Partial<Omit<PhotoMetadata, 'id' | 'created_at'>>): Promise<void> {
+  const db = await getDB();
+  const existing = await db.get(META_STORE, id);
+  if (existing) {
+    await db.put(META_STORE, { ...existing, ...updates });
+  }
+}
+
+export async function getPhotoMetadata(id: string): Promise<PhotoMetadata | null> {
+  const db = await getDB();
+  const meta = await db.get(META_STORE, id);
+  return meta || null;
+}
+
+export async function deletePhotoMetadata(id: string): Promise<void> {
+  const db = await getDB();
+  await db.delete(META_STORE, id);
+}
+
+// ==================== COLLECTIONS CRUD ====================
+
+export async function getAllCollections(): Promise<Collection[]> {
+  const db = await getDB();
+  const all = await db.getAllFromIndex(COLLECTION_STORE, 'by-created');
+  // Return sorted descending by created_at
+  return all.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+}
+
+export async function createCollection(coll: Collection): Promise<void> {
+  const db = await getDB();
+  await db.put(COLLECTION_STORE, coll);
+}
+
+export async function updateCollection(id: string, updates: Partial<Omit<Collection, 'id' | 'created_at'>>): Promise<void> {
+  const db = await getDB();
+  const existing = await db.get(COLLECTION_STORE, id);
+  if (existing) {
+    await db.put(COLLECTION_STORE, { ...existing, ...updates });
+  }
+}
+
+export async function deleteCollection(id: string): Promise<void> {
+  const db = await getDB();
+  await db.delete(COLLECTION_STORE, id);
+}
+
+// ==================== CANVAS CRUD ====================
+
+export async function getAllCanvases(): Promise<CanvasData[]> {
+  const db = await getDB();
+  const all = await db.getAll(CANVAS_STORE);
+  return all.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+}
+
+export async function getCanvas(id: string): Promise<CanvasData | null> {
+  const db = await getDB();
+  const canvas = await db.get(CANVAS_STORE, id);
+  return canvas || null;
+}
+
+export async function saveCanvas(canvas: CanvasData): Promise<void> {
+  const db = await getDB();
+  await db.put(CANVAS_STORE, canvas);
+}
+
+export async function deleteCanvas(id: string): Promise<void> {
+  const db = await getDB();
+  await db.delete(CANVAS_STORE, id);
+}
+
+// ==================== PREFERENCES ====================
+
+const PREFS_KEY = 'user_prefs';
+
+export async function getPreferences(): Promise<AppPreferences> {
+  const db = await getDB();
+  const record = await db.get(PREFS_STORE, PREFS_KEY);
+  return record?.data || { ...DEFAULT_PREFERENCES };
+}
+
+export async function savePreferences(prefs: AppPreferences): Promise<void> {
+  const db = await getDB();
+  await db.put(PREFS_STORE, { key: PREFS_KEY, data: prefs });
+}
+
+// ==================== CUSTOM CATEGORIES ====================
+
+export async function getCustomCategories(): Promise<CategoryInfo[]> {
+  try {
+    const db = await getDB();
+    if (!db.objectStoreNames.contains(CATEGORY_STORE)) return [];
+    return await db.getAll(CATEGORY_STORE);
+  } catch (error) {
+    console.error('Error fetching custom categories:', error);
+    return [];
+  }
+}
+
+export async function saveCustomCategory(category: CategoryInfo): Promise<void> {
+  const db = await getDB();
+  await db.put(CATEGORY_STORE, category);
+}
+
+export async function deleteCustomCategory(key: string): Promise<void> {
+  const db = await getDB();
+  await db.delete(CATEGORY_STORE, key);
+}
+
+// Subscribe/Listen equivalents for hooks
+// Since IndexedDB doesn't have real-time listeners, we dispatch custom window events
+export function notifyDataChange(type: 'photos' | 'collections' | 'canvases' | 'preferences' | 'categories') {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event(`snapbook-${type}-changed`));
+  }
+}
