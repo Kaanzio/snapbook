@@ -1,17 +1,22 @@
-const CACHE_NAME = 'snapbook-v2'; // Bumped version to force cache clear
+const CACHE_NAME = 'snapbook-v3';
+const BASE_PATH = '/snapbook';
+
 const STATIC_ASSETS = [
-  '/',
-  '/add',
-  '/search',
-  '/collections',
-  '/manifest.json',
+  BASE_PATH + '/',
+  BASE_PATH + '/manifest.json',
+  BASE_PATH + '/icons/icon-192x192.png',
+  BASE_PATH + '/icons/icon-512x512.png',
 ];
 
 // Install: cache static assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
+      // Use a more resilient approach: try to add all, but don't fail if some optional ones fail
+      return cache.addAll(STATIC_ASSETS).catch(err => {
+        console.warn('Some static assets failed to cache during install:', err);
+        // Still proceed with install
+      });
     })
   );
   self.skipWaiting();
@@ -43,7 +48,6 @@ self.addEventListener('fetch', (event) => {
   if (!url.origin.includes(self.location.origin)) return;
 
   // NEVER cache Next.js HMR or development chunks cache-first
-  // This causes "module factory is not available" errors in dev
   if (url.pathname.startsWith('/_next/')) {
     event.respondWith(fetch(request));
     return;
@@ -51,8 +55,8 @@ self.addEventListener('fetch', (event) => {
 
   // Static assets: cache-first
   if (
-    url.pathname.startsWith('/icons/') ||
-    url.pathname === '/manifest.json'
+    url.pathname.includes('/icons/') ||
+    url.pathname.endsWith('/manifest.json')
   ) {
     event.respondWith(
       caches.match(request).then((cached) => {

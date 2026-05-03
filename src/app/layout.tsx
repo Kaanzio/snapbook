@@ -5,15 +5,15 @@ import AppShell from "@/components/layout/AppShell";
 export const metadata: Metadata = {
   title: "Snapbook — Fotoğraf Not Defteri",
   description: "Kişisel fotoğraf not defteriniz. Fotoğraflarınızı kategorize edin, notlar ekleyin, koleksiyonlar oluşturun.",
-  manifest: "/manifest.json",
+  manifest: "/snapbook/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "Snapbook",
   },
   icons: {
-    icon: "/icons/icon-192x192.png",
-    apple: "/icons/apple-touch-icon.png",
+    icon: "/snapbook/icons/icon-192x192.png",
+    apple: "/snapbook/icons/apple-touch-icon.png",
   },
 };
 

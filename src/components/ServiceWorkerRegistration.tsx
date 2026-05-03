@@ -14,15 +14,15 @@ export default function ServiceWorkerRegistration() {
           }
         });
       } else {
-        // Register in production
-        const basePath = process.env.NODE_ENV === 'production' ? '/snapbook' : '';
+        // Register in production/development (since basePath is set in next.config.ts)
+        const basePath = '/snapbook';
         navigator.serviceWorker
           .register(`${basePath}/sw.js`)
           .then((registration) => {
             console.log('SW registered:', registration.scope);
           })
           .catch((error) => {
-            console.log('SW registration failed:', error);
+            console.error('SW registration failed:', error);
           });
       }
     }

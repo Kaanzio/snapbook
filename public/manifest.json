@@ -2,7 +2,7 @@
   "name": "Snapbook",
   "short_name": "Snapbook",
   "description": "Kişisel fotoğraf not defteri",
-  "start_url": "./",
+  "start_url": "/snapbook/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
@@ -10,16 +10,28 @@
   "categories": ["photo", "productivity"],
   "icons": [
     {
-      "src": "icons/icon-192x192.png",
+      "src": "/snapbook/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "icons/icon-512x512.png",
+      "src": "/snapbook/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/snapbook/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/snapbook/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
