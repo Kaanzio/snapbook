@@ -53,31 +53,50 @@ export async function exportAllData() {
 export async function savePhotoToDevice(id: string, note?: string) {
   const blob = await getPhoto(id);
   if (!blob) return;
+
+  // Get correct extension from mime type
+  let ext = 'jpg';
+  if (blob.type === 'image/png') ext = 'png';
+  else if (blob.type === 'image/gif') ext = 'gif';
+  else if (blob.type === 'image/webp') ext = 'webp';
+
+  const filename = `snapbook-${id.slice(0, 8)}.${ext}`;
+
+  // If we are on a mobile device and the user might want the share sheet (which has "Save Image")
+  // we could use share, but the user specifically asked for a direct download.
+  // So we use the anchor tag method which is the standard "Download" behavior.
   
-  // On mobile, try to use the Share API if available, as it allows "Save Image"
-  if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'photo.jpg', { type: blob.type })] })) {
-    try {
-      const file = new File([blob], `snapbook-${id.slice(0, 8)}.jpg`, { type: blob.type });
-      await navigator.share({
-        files: [file],
-        title: 'Snapbook Fotoğraf',
-        text: note || '',
-      });
-      return true;
-    } catch (err) {
-      console.error('Share failed', err);
-      // Fallback to download
+  try {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+    return true;
+  } catch (err) {
+    console.error('Download failed, trying share as fallback', err);
+    
+    // Fallback to Share API if download fails (some mobile browsers block it)
+    if (navigator.share && navigator.canShare) {
+      try {
+        const file = new File([blob], filename, { type: blob.type });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: 'Snapbook Fotoğraf',
+            text: note || '',
+          });
+          return true;
+        }
+      } catch (shareErr) {
+        console.error('Share fallback also failed', shareErr);
+      }
     }
   }
-  
-  // Fallback: Direct download
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `snapbook-${id.slice(0, 8)}.jpg`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  return true;
+  return false;
 }
