@@ -1,5 +1,5 @@
 const CACHE_NAME = 'snapbook-v6';
-const BASE_PATH = '';
+const BASE_PATH = '/snapbook';
 
 const STATIC_ASSETS = [
   BASE_PATH + '/',
@@ -48,7 +48,7 @@ self.addEventListener('fetch', (event) => {
   if (!url.origin.includes(self.location.origin)) return;
 
   // NEVER cache Next.js HMR or development chunks cache-first
-  if (url.pathname.startsWith('/_next/')) {
+  if (url.pathname.includes('/_next/')) {
     event.respondWith(fetch(request));
     return;
   }
