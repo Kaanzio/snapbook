@@ -6,7 +6,7 @@ import { usePhotoImage } from '@/hooks/usePhotoImage';
 import { useCollections } from '@/hooks/useCollections';
 import { getPhotoMetadata } from '@/lib/indexeddb';
 import { deletePhoto } from '@/lib/storage';
-import { updatePhotoMetadata, notifyDataChange } from '@/lib/indexeddb';
+import { updatePhotoMetadata, updateCollection, notifyDataChange } from '@/lib/indexeddb';
 import { useCategories } from '@/hooks/useCategories';
 import TagInput from '@/components/ui/TagInput';
 import StarToggle from '@/components/ui/StarToggle';
@@ -98,6 +98,16 @@ function PhotoDetailContent() {
     notifyDataChange('photos');
   }
 
+  async function handleSetAsCover() {
+    if (!photo || photo.collection_ids.length === 0) return;
+    
+    // Set as cover for the first collection it belongs to
+    // (If in multiple, we could add a selector, but for now we pick the first/main one)
+    await updateCollection(photo.collection_ids[0], { cover_photo_id: photo.id });
+    notifyDataChange('collections');
+    showToast('Koleksiyon kapağı yapıldı');
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen p-4 max-w-4xl mx-auto space-y-6">
@@ -165,6 +175,19 @@ function PhotoDetailContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
               </svg>
             </button>
+
+            {photo.collection_ids.length > 0 && (
+              <button
+                onClick={handleSetAsCover}
+                className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                style={{ color: 'var(--text-secondary)' }}
+                title="Koleksiyon kapağı yap"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v12a2.25 2.25 0 002.25 2.25z" />
+                </svg>
+              </button>
+            )}
 
             <button
               onClick={async () => {

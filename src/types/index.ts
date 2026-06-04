@@ -17,6 +17,7 @@ export interface Collection {
   id: string;
   name: string;
   description: string | null;
+  cover_photo_id?: string;
   created_at: Date;
 }
 
@@ -102,6 +103,7 @@ export interface CanvasData {
   created_at: Date;
   updated_at: Date;
   viewport: { x: number; y: number; zoom: number };
+  coverPhotoId?: string;
   nodes: CanvasNode[];
   edges: CanvasEdge[];
 }

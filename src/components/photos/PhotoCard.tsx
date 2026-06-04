@@ -9,9 +9,10 @@ import { updatePhotoMetadata, notifyDataChange } from '@/lib/indexeddb';
 
 interface PhotoCardProps {
   photo: PhotoMetadata;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
-export default function PhotoCard({ photo }: PhotoCardProps) {
+export default function PhotoCard({ photo, onClick }: PhotoCardProps) {
   const { imageUrl, isLocal, loading } = usePhotoImage(photo.id);
   const { getCategoryInfo } = useCategories();
   const category = getCategoryInfo(photo.category);
@@ -21,7 +22,16 @@ export default function PhotoCard({ photo }: PhotoCardProps) {
   }
 
   return (
-    <Link href={`/photo/?id=${photo.id}`} className="block break-inside-avoid mb-3 group haptic-tap">
+    <Link 
+      href={`/photo/?id=${photo.id}`} 
+      className="block break-inside-avoid mb-3 group haptic-tap"
+      onClick={(e) => {
+        if (onClick) {
+          e.preventDefault();
+          onClick(e);
+        }
+      }}
+    >
       <div className="relative themed-card overflow-hidden">
         {/* Image */}
         <div className="relative overflow-hidden">
@@ -31,7 +41,7 @@ export default function PhotoCard({ photo }: PhotoCardProps) {
             <img
               src={imageUrl || ''}
               alt={photo.note || 'Fotoğraf'}
-              className="w-full h-auto object-cover group-hover:scale-[1.03] transition-transform duration-500"
+              className="w-full h-auto object-cover transition-transform duration-500"
               loading="lazy"
             />
           )}

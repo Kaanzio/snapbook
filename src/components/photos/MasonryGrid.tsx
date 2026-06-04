@@ -7,9 +7,10 @@ import { usePreferences } from '@/components/providers/PreferencesProvider';
 interface MasonryGridProps {
   photos: PhotoMetadata[];
   forceCompact?: boolean;
+  onPhotoClick?: (photoId: string) => void;
 }
 
-export default function MasonryGrid({ photos, forceCompact }: MasonryGridProps) {
+export default function MasonryGrid({ photos, forceCompact, onPhotoClick }: MasonryGridProps) {
   const { prefs } = usePreferences();
 
   if (photos.length === 0) return null;
@@ -19,13 +20,42 @@ export default function MasonryGrid({ photos, forceCompact }: MasonryGridProps) 
   if (forceCompact || prefs.gridDensity === 'compact') {
     gridClass = "columns-3 sm:columns-4 md:columns-6 lg:columns-8 gap-2 px-2 lg:px-4";
   } else if (prefs.gridDensity === 'large') {
-    return <FocusView photos={photos} />;
+    return <FocusView photos={photos} onPhotoClick={onPhotoClick} />;
   }
 
+  const groups: { title: string, items: PhotoMetadata[] }[] = [];
+  let currentGroup: { title: string, items: PhotoMetadata[] } | null = null;
+
+  photos.forEach(photo => {
+    const d = new Date(photo.created_at);
+    const monthYear = d.toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' });
+    
+    if (!currentGroup || currentGroup.title !== monthYear) {
+      currentGroup = { title: monthYear, items: [] };
+      groups.push(currentGroup);
+    }
+    currentGroup.items.push(photo);
+  });
+
   return (
-    <div className={gridClass}>
-      {photos.map((photo) => (
-        <PhotoCard key={photo.id} photo={photo} />
+    <div>
+      {groups.map((group) => (
+        <div key={group.title} className="mb-8">
+          <div className="sticky top-[72px] z-20 backdrop-blur-md px-4 lg:px-6 py-2 mb-4" style={{ background: 'var(--bg-primary-transparent)' }}>
+            <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
+              {group.title}
+            </h2>
+          </div>
+          <div className={gridClass}>
+            {group.items.map((photo) => (
+              <PhotoCard 
+                key={photo.id} 
+                photo={photo} 
+                onClick={onPhotoClick ? () => onPhotoClick(photo.id) : undefined}
+              />
+            ))}
+          </div>
+        </div>
       ))}
     </div>
   );
@@ -35,7 +65,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePhotoImage } from '@/hooks/usePhotoImage';
 
-function FocusView({ photos }: { photos: PhotoMetadata[] }) {
+function FocusView({ photos, onPhotoClick }: { photos: PhotoMetadata[], onPhotoClick?: (photoId: string) => void }) {
   const [index, setIndex] = useState(0);
   const current = photos[index];
   const { imageUrl, loading } = usePhotoImage(current?.id || '', true);
@@ -46,7 +76,7 @@ function FocusView({ photos }: { photos: PhotoMetadata[] }) {
   if (!current) return null;
 
   return (
-    <div className="fixed inset-0 top-14 bottom-16 lg:bottom-0 flex items-center justify-center bg-black/5 z-0 p-4 lg:p-10">
+    <div className="relative w-full h-[65vh] min-h-[400px] flex items-center justify-center z-0 px-4 lg:px-6 mb-8">
       <div className="relative w-full h-full max-w-5xl flex flex-col items-center justify-center">
         {/* Navigation Buttons */}
         <button 
@@ -70,8 +100,17 @@ function FocusView({ photos }: { photos: PhotoMetadata[] }) {
         </button>
 
         {/* Content */}
-        <Link href={`/photo/?id=${current.id}`} className="w-full h-full flex flex-col items-center justify-center group">
-          <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl transition-transform duration-500 group-hover:scale-[1.01]">
+        <Link 
+          href={`/photo/?id=${current.id}`} 
+          className="w-full h-full flex flex-col items-center justify-center group"
+          onClick={(e) => {
+            if (onPhotoClick) {
+              e.preventDefault();
+              onPhotoClick(current.id);
+            }
+          }}
+        >
+          <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl">
             {loading ? (
               <div className="absolute inset-0 skeleton" />
             ) : (

@@ -18,7 +18,7 @@ export default function StarToggle({ starred, onChange, size = 'md' }: StarToggl
       type="button"
       onClick={() => onChange(!starred)}
       className={`transition-all duration-200 hover:scale-110 active:scale-95 ${
-        starred ? 'text-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.5)]' : 'text-slate-300 hover:text-amber-300'
+        starred ? 'text-amber-400' : 'text-slate-300 hover:text-amber-300'
       }`}
       title={starred ? 'Favorilerden çıkar' : 'Favorilere ekle'}
     >

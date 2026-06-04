@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 export default function ServiceWorkerRegistration() {
   useEffect(() => {
     if ('serviceWorker' in navigator) {
-      const basePath = '/snapbook';
+      const basePath = '';
       
       // Register SW
       navigator.serviceWorker
