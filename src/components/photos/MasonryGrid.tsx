@@ -115,7 +115,7 @@ function FocusView({ photos, onPhotoClick }: { photos: PhotoMetadata[], onPhotoC
               <div className="absolute inset-0 skeleton" />
             ) : (
               <img 
-                src={imageUrl || ''} 
+                src={imageUrl || undefined} 
                 className="w-full h-full object-contain bg-black/20 dark:bg-black/40" 
                 alt={current.note || ''} 
               />

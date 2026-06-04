@@ -28,15 +28,6 @@
   <text x="50" y="26"
     font-family="system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
     font-size="19"
-    font-weight="700"
-    fill="currentColor"
-    letter-spacing="-0.4">snap</text>
-  <text x="93" y="26"
-    font-family="system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
-    font-size="19"
-    font-weight="300"
-    fill="currentColor"
-    opacity="0.5"
-    letter-spacing="-0.4">book</text>
+    letter-spacing="-0.4"><tspan font-weight="700" fill="currentColor">snap</tspan><tspan font-weight="300" fill="currentColor" opacity="0.5">book</tspan></text>
 
 </svg>

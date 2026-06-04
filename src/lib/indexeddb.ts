@@ -12,8 +12,8 @@
  */
 
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
-import { DB_NAME, DB_VERSION, PHOTO_STORE, META_STORE, COLLECTION_STORE, CANVAS_STORE, PREFS_STORE, CATEGORY_STORE, THUMBNAIL_MAX_WIDTH, THUMBNAIL_QUALITY } from './constants';
-import { PhotoMetadata, Collection, CanvasData, AppPreferences, DEFAULT_PREFERENCES, CategoryInfo } from '@/types';
+import { DB_NAME, DB_VERSION, PHOTO_STORE, META_STORE, COLLECTION_STORE, CANVAS_STORE, PREFS_STORE, CATEGORY_STORE, WATCHLIST_STORE, WATCHLIST_CUSTOM_STORE, THUMBNAIL_MAX_WIDTH, THUMBNAIL_QUALITY } from './constants';
+import { PhotoMetadata, Collection, CanvasData, AppPreferences, DEFAULT_PREFERENCES, CategoryInfo, WatchItem, CustomWatchList } from '@/types';
 
 interface SnapbookDB extends DBSchema {
   [PHOTO_STORE]: {
@@ -50,6 +50,16 @@ interface SnapbookDB extends DBSchema {
     key: string;
     value: CategoryInfo;
   };
+  [WATCHLIST_STORE]: {
+    key: string;
+    value: WatchItem;
+    indexes: { 'by-updated': number };
+  };
+  [WATCHLIST_CUSTOM_STORE]: {
+    key: string;
+    value: CustomWatchList;
+    indexes: { 'by-created': number };
+  };
 }
 
 let dbPromise: Promise<IDBPDatabase<SnapbookDB>> | null = null;
@@ -57,7 +67,7 @@ let dbPromise: Promise<IDBPDatabase<SnapbookDB>> | null = null;
 function getDB(): Promise<IDBPDatabase<SnapbookDB>> {
   if (!dbPromise) {
     dbPromise = openDB<SnapbookDB>(DB_NAME, DB_VERSION, {
-      upgrade(db, oldVersion, newVersion, transaction) {
+      upgrade(db) {
         if (!db.objectStoreNames.contains(PHOTO_STORE)) {
           db.createObjectStore(PHOTO_STORE, { keyPath: 'id' });
         }
@@ -78,6 +88,14 @@ function getDB(): Promise<IDBPDatabase<SnapbookDB>> {
         }
         if (!db.objectStoreNames.contains(CATEGORY_STORE)) {
           db.createObjectStore(CATEGORY_STORE, { keyPath: 'key' });
+        }
+        if (!db.objectStoreNames.contains(WATCHLIST_STORE)) {
+          const watchStore = db.createObjectStore(WATCHLIST_STORE, { keyPath: 'id' });
+          watchStore.createIndex('by-updated', 'updated_at');
+        }
+        if (!db.objectStoreNames.contains(WATCHLIST_CUSTOM_STORE)) {
+          const watchCustomStore = db.createObjectStore(WATCHLIST_CUSTOM_STORE, { keyPath: 'id' });
+          watchCustomStore.createIndex('by-created', 'created_at');
         }
       },
     });
@@ -316,8 +334,83 @@ export async function deleteCustomCategory(key: string): Promise<void> {
 
 // Subscribe/Listen equivalents for hooks
 // Since IndexedDB doesn't have real-time listeners, we dispatch custom window events
-export function notifyDataChange(type: 'photos' | 'collections' | 'canvases' | 'preferences' | 'categories') {
+export function notifyDataChange(type: 'photos' | 'collections' | 'canvases' | 'preferences' | 'categories' | 'watchlist') {
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new Event(`snapbook-${type}-changed`));
+  }
+}
+
+// ==================== WATCHLIST CRUD ====================
+
+export async function getAllWatchItems(): Promise<WatchItem[]> {
+  const db = await getDB();
+  const all = await db.getAll(WATCHLIST_STORE);
+  return all.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+}
+
+export async function getWatchItem(id: string): Promise<WatchItem | null> {
+  const db = await getDB();
+  const item = await db.get(WATCHLIST_STORE, id);
+  return item || null;
+}
+
+export async function createWatchItem(item: WatchItem): Promise<void> {
+  const db = await getDB();
+  await db.put(WATCHLIST_STORE, item);
+}
+
+export async function updateWatchItem(id: string, updates: Partial<Omit<WatchItem, 'id' | 'created_at'>>): Promise<void> {
+  const db = await getDB();
+  const existing = await db.get(WATCHLIST_STORE, id);
+  if (existing) {
+    await db.put(WATCHLIST_STORE, { ...existing, ...updates, updated_at: new Date() });
+  }
+}
+
+export async function deleteWatchItem(id: string): Promise<void> {
+  const db = await getDB();
+  await db.delete(WATCHLIST_STORE, id);
+}
+
+// ==================== WATCHLIST CUSTOM LISTS CRUD ====================
+
+export async function getAllCustomLists(): Promise<CustomWatchList[]> {
+  const db = await getDB();
+  if (!db.objectStoreNames.contains(WATCHLIST_CUSTOM_STORE)) return [];
+  const all = await db.getAllFromIndex(WATCHLIST_CUSTOM_STORE, 'by-created');
+  return all.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+}
+
+export async function createCustomList(list: CustomWatchList): Promise<void> {
+  const db = await getDB();
+  await db.put(WATCHLIST_CUSTOM_STORE, list);
+}
+
+export async function updateCustomList(id: string, name: string): Promise<void> {
+  const db = await getDB();
+  const existing = await db.get(WATCHLIST_CUSTOM_STORE, id);
+  if (existing) {
+    await db.put(WATCHLIST_CUSTOM_STORE, { ...existing, name });
+  }
+}
+
+export async function deleteCustomList(id: string): Promise<void> {
+  const db = await getDB();
+  await db.delete(WATCHLIST_CUSTOM_STORE, id);
+}
+
+// ==================== DATABASE MAINTENANCE ====================
+
+export async function clearAllDatabase(): Promise<void> {
+  const db = await getDB();
+  await db.clear(PHOTO_STORE);
+  await db.clear(META_STORE);
+  await db.clear(COLLECTION_STORE);
+  await db.clear(CANVAS_STORE);
+  await db.clear(PREFS_STORE);
+  await db.clear(CATEGORY_STORE);
+  await db.clear(WATCHLIST_STORE);
+  if (db.objectStoreNames.contains(WATCHLIST_CUSTOM_STORE)) {
+    await db.clear(WATCHLIST_CUSTOM_STORE);
   }
 }

@@ -6,6 +6,7 @@ import BottomNav from './BottomNav';
 import { ToastProvider } from '@/components/ui/Toast';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import PreferencesProvider from '@/components/providers/PreferencesProvider';
+import { DialogProvider } from '@/components/providers/DialogProvider';
 import FloatingActionButton from '@/components/ui/FloatingActionButton';
 
 interface AppShellProps {
@@ -15,15 +16,17 @@ interface AppShellProps {
 export default function AppShell({ children }: AppShellProps) {
   return (
     <PreferencesProvider>
-      <ServiceWorkerRegistration />
-      <TopBar />
-      <Sidebar />
-      <main className="lg:ml-[260px] min-h-screen pt-16 lg:pt-0 pb-20 lg:pb-0 page-enter">
-        {children}
-      </main>
-      <FloatingActionButton />
-      <BottomNav />
-      <ToastProvider />
+      <DialogProvider>
+        <ServiceWorkerRegistration />
+        <TopBar />
+        <Sidebar />
+        <main className="lg:ml-[260px] min-h-screen pt-16 lg:pt-0 pb-20 lg:pb-0 page-enter">
+          {children}
+        </main>
+        <FloatingActionButton />
+        <BottomNav />
+        <ToastProvider />
+      </DialogProvider>
     </PreferencesProvider>
   );
 }

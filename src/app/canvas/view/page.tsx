@@ -14,6 +14,7 @@ import { getCanvas, saveCanvas, notifyDataChange } from '@/lib/indexeddb';
 import { usePhotos } from '@/hooks/usePhotos';
 import { PhotoMetadata } from '@/types';
 import { showToast } from '@/components/ui/Toast';
+import { useDialog } from '@/components/providers/DialogProvider';
 import PhotoNode from '@/components/canvas/PhotoNode';
 import TextNode from '@/components/canvas/TextNode';
 import StickyNode from '@/components/canvas/StickyNode';
@@ -66,6 +67,7 @@ function FlowCanvas({ canvasId, initialNodes, initialEdges }: { canvasId: string
   const [showBgPicker, setShowBgPicker] = useState(false);
   const [canvasBg, setCanvasBg] = useState('#0a0a0a');
   const { fitView, screenToFlowPosition } = useReactFlow();
+  const { confirm } = useDialog();
 
   const BG_COLORS = [
     '#0a0a0a', '#111111', '#1a1a2e', '#0f0f23', '#1a0a0a',
@@ -139,7 +141,7 @@ function FlowCanvas({ canvasId, initialNodes, initialEdges }: { canvasId: string
     } catch { showToast('Export failed', 'error'); }
   };
 
-  const clearCanvas = () => { if (confirm('Clear entire canvas?')) { setNodes([]); setEdges([]); showToast('Canvas cleared'); } };
+  const clearCanvas = async () => { if (await confirm('Clear entire canvas?')) { setNodes([]); setEdges([]); showToast('Canvas cleared'); } };
 
   // Command palette actions
   const commands = [
@@ -267,8 +269,6 @@ function FlowCanvas({ canvasId, initialNodes, initialEdges }: { canvasId: string
         </div>
       )}
 
-      {/* Sidebar already in left panel */}
-
       {/* ── Command Palette ── */}
       {showCmd && (
         <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh]" onClick={() => setShowCmd(false)}>
@@ -301,7 +301,7 @@ function FlowCanvas({ canvasId, initialNodes, initialEdges }: { canvasId: string
           fitView defaultEdgeOptions={{ type: 'custom' }}
           colorMode="dark" panOnScroll selectionOnDrag elevateNodesOnSelect
           style={{ background: canvasBg }}
-          onEdgeDoubleClick={(_, edge) => { if (confirm('Delete this connection?')) setEdges((e) => e.filter((x) => x.id !== edge.id)); }}
+          onEdgeDoubleClick={async (_, edge) => { if (await confirm('Delete this connection?')) setEdges((e) => e.filter((x) => x.id !== edge.id)); }}
         >
           <Background variant={BackgroundVariant.Dots} gap={20} size={1.5} color="rgba(255,255,255,0.08)" style={{ backgroundColor: 'transparent' }} />
           <MiniMap

@@ -118,7 +118,7 @@ export interface CanvasNode {
     photoId?: string;
     text?: string;
     onDelete?: (id: string) => void;
-    onUpdate?: (id: string, data: any) => void;
+    onUpdate?: (id: string, data: Record<string, unknown>) => void;
     photoData?: PhotoMetadata | null; // For display
   };
   width?: number;
@@ -133,6 +133,54 @@ export interface CanvasEdge {
   sourceHandle?: string | null;
   targetHandle?: string | null;
   type?: string;
-  label?: any;
+  label?: string | React.ReactNode;
   animated?: boolean;
 }
+
+// ==================== WATCHLIST (MOVIE/SERIES TRACKING) ====================
+
+export type WatchItemType = 'movie' | 'series';
+export type WatchStatus = 'watching' | 'completed' | 'planned' | 'dropped';
+
+export interface CustomWatchList {
+  id: string;
+  name: string;
+  created_at: Date;
+}
+
+export interface WatchItem {
+  id: string;
+  title: string;
+  description?: string;
+  type: WatchItemType;
+  status: WatchStatus;
+  rating?: number; // 1-10
+  currentSeason?: number;
+  currentEpisode?: number;
+  totalSeasons?: number;
+  totalEpisodes?: number;
+  genre?: string;
+  tags: string[];
+  note?: string;
+  listIds?: string[];
+  created_at: Date;
+  updated_at: Date;
+}
+
+export const WATCH_STATUS_INFO: Record<WatchStatus, { label: string; icon: string; color: string }> = {
+  watching: { label: 'İzleniyor', icon: '▶️', color: '#3b82f6' },
+  completed: { label: 'Tamamlandı', icon: '✅', color: '#10b981' },
+  planned: { label: 'Planlandı', icon: '📋', color: '#f59e0b' },
+  dropped: { label: 'Bırakıldı', icon: '⏹️', color: '#ef4444' },
+};
+
+export const WATCH_TYPE_INFO: Record<WatchItemType, { label: string; icon: string }> = {
+  movie: { label: 'Film', icon: '🎬' },
+  series: { label: 'Dizi', icon: '📺' },
+};
+
+export const GENRE_OPTIONS = [
+  'Aksiyon', 'Macera', 'Animasyon', 'Komedi', 'Suç', 'Belgesel',
+  'Drama', 'Fantastik', 'Korku', 'Müzikal', 'Gizem', 'Romantik',
+  'Bilim Kurgu', 'Gerilim', 'Savaş', 'Western', 'Anime',
+] as const;

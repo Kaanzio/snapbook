@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { UploadFormData, PhotoMetadata } from '@/types';
 import { getDeviceName } from './device';
-import { savePhoto, deleteLocalPhoto, createPhotoMetadata, updatePhotoMetadata, notifyDataChange } from './indexeddb';
+import { savePhoto, deleteLocalPhoto, createPhotoMetadata, notifyDataChange } from './indexeddb';
 
 export async function uploadPhoto(file: File, formData: UploadFormData): Promise<string> {
   const id = uuidv4();

@@ -15,6 +15,7 @@ import { showToast } from '@/components/ui/Toast';
 import { savePhotoToDevice } from '@/lib/backup';
 import { PhotoMetadata } from '@/types';
 import Link from 'next/link';
+import { useDialog } from '@/components/providers/DialogProvider';
 
 function PhotoDetailContent() {
   const searchParams = useSearchParams();
@@ -28,6 +29,7 @@ function PhotoDetailContent() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [showCollections, setShowCollections] = useState(false);
+  const { confirm } = useDialog();
 
   // Edit state
   const [editNote, setEditNote] = useState('');
@@ -83,9 +85,9 @@ function PhotoDetailContent() {
     showToast('Değişiklikler kaydedildi');
   }
 
-  async function handleDelete() {
+  const handleDelete = async () => {
     if (!photo) return;
-    if (!confirm('Bu fotoğrafı silmek istediğinize emin misiniz?')) return;
+    if (!(await confirm('Bu fotoğrafı silmek istediğinize emin misiniz?'))) return;
 
     await deletePhoto(photo.id);
     showToast('Fotoğraf silindi');
@@ -223,7 +225,7 @@ function PhotoDetailContent() {
             <div className="aspect-[4/3] skeleton" />
           ) : isLocal ? (
             <img
-              src={imageUrl || ''}
+              src={imageUrl || undefined}
               alt={photo.note || 'Fotoğraf'}
               className="w-full h-auto max-h-[70vh] object-contain mx-auto"
             />

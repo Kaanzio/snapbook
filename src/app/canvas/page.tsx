@@ -7,12 +7,14 @@ import { getAllCanvases, saveCanvas, deleteCanvas, notifyDataChange } from '@/li
 import { CanvasData } from '@/types';
 import EmptyState from '@/components/ui/EmptyState';
 import { showToast } from '@/components/ui/Toast';
+import { useDialog } from '@/components/providers/DialogProvider';
 import { usePhotos } from '@/hooks/usePhotos';
 import { usePhotoImage } from '@/hooks/usePhotoImage';
 
 export default function CanvasListPage() {
   const router = useRouter();
   const { photos } = usePhotos();
+  const { confirm } = useDialog();
   const [canvases, setCanvases] = useState<CanvasData[]>([]);
   const [loading, setLoading] = useState(true);
   const [showRename, setShowRename] = useState<string | null>(null);
@@ -73,7 +75,7 @@ export default function CanvasListPage() {
 
   async function handleDelete(id: string, e: React.MouseEvent) {
     e.stopPropagation();
-    if (confirm('Bu canvas\'ı silmek istediğinize emin misiniz?')) {
+    if (await confirm('Bu canvas\'ı silmek istediğinize emin misiniz?')) {
       await deleteCanvas(id);
       notifyDataChange('canvases');
       showToast('Canvas silindi');
@@ -291,7 +293,7 @@ function CoverPhotoOption({ photoId, isSelected, onSelect }: { photoId: string; 
       onClick={onSelect}
       className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${isSelected ? 'border-accent ring-2 ring-accent/30 scale-[1.05]' : 'border-transparent hover:border-white/20'}`}
     >
-      {loading ? <div className="w-full h-full skeleton" /> : <img src={imageUrl || ''} alt="" className="w-full h-full object-cover" />}
+      {loading ? <div className="w-full h-full skeleton" /> : (imageUrl ? <img src={imageUrl} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full" style={{ background: 'var(--bg-secondary)' }} />)}
     </button>
   );
 }
@@ -300,7 +302,7 @@ function CanvasThumbnail({ photoId }: { photoId: string }) {
   const { imageUrl, loading } = usePhotoImage(photoId, true);
   return (
     <div className="w-full h-full">
-      {loading ? <div className="w-full h-full skeleton" /> : <img src={imageUrl || ''} alt="" className="w-full h-full object-cover transition-opacity duration-300" />}
+      {loading ? <div className="w-full h-full skeleton" /> : (imageUrl ? <img src={imageUrl} alt="" className="w-full h-full object-cover transition-opacity duration-300" /> : <div className="w-full h-full" style={{ background: 'var(--bg-secondary)' }} />)}
     </div>
   );
 }

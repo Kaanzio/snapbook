@@ -12,11 +12,13 @@ import Link from 'next/link';
 import { usePhotoImage } from '@/hooks/usePhotoImage';
 import Modal from '@/components/ui/Modal';
 import { PhotoMetadata } from '@/types';
+import { useDialog } from '@/components/providers/DialogProvider';
 
 export default function CollectionsPage() {
   const { photos } = usePhotos();
   const { collections, loading } = useCollections();
   const [showForm, setShowForm] = useState(false);
+  const { confirm } = useDialog();
   const [editingCollection, setEditingCollection] = useState<{ id: string, name: string, description: string | null } | null>(null);
   const [selectingCoverForId, setSelectingCoverForId] = useState<string | null>(null);
 
@@ -32,7 +34,7 @@ export default function CollectionsPage() {
   }
 
   async function handleDelete(id: string) {
-    if (confirm('Bu koleksiyonu silmek istediğinize emin misiniz?')) {
+    if (await confirm('Bu koleksiyonu silmek istediğinize emin misiniz?')) {
       await deleteCollection(id);
       notifyDataChange('collections');
       showToast('Koleksiyon silindi');
@@ -240,7 +242,7 @@ function ThumbnailItem({ photoId }: { photoId: string }) {
       {loading ? (
         <div className="w-full h-full skeleton" />
       ) : (
-        <img src={imageUrl || ''} alt="" className="w-full h-full object-cover transition-opacity duration-300" />
+        imageUrl ? <img src={imageUrl} alt="" className="w-full h-full object-cover transition-opacity duration-300" /> : <div className="w-full h-full" style={{ background: 'var(--bg-secondary)' }} />
       )}
     </div>
   );

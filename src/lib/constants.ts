@@ -1,4 +1,4 @@
-import { CategoryInfo, PhotoCategory } from '@/types';
+import { CategoryInfo } from '@/types';
 
 export const CATEGORIES: CategoryInfo[] = [
   { key: 'food', label: 'Yemek', icon: '🍽️', color: '#f97316' },
@@ -23,13 +23,15 @@ export const getCategoryInfo = (key: string): CategoryInfo => {
 };
 
 export const DB_NAME = 'snapbook-db';
-export const DB_VERSION = 4; // Bump version for new categories store
+export const DB_VERSION = 6; // Bump version for custom lists
 export const PHOTO_STORE = 'photos';
 export const META_STORE = 'photos_meta';
 export const COLLECTION_STORE = 'collections';
 export const CANVAS_STORE = 'canvases';
 export const PREFS_STORE = 'preferences';
 export const CATEGORY_STORE = 'categories';
+export const WATCHLIST_STORE = 'watchlist';
+export const WATCHLIST_CUSTOM_STORE = 'watchlist_custom';
 
 export const THUMBNAIL_MAX_WIDTH = 400;
 export const THUMBNAIL_QUALITY = 0.7;

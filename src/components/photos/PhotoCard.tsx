@@ -39,7 +39,7 @@ export default function PhotoCard({ photo, onClick }: PhotoCardProps) {
             <div className="aspect-square skeleton" />
           ) : (
             <img
-              src={imageUrl || ''}
+              src={imageUrl || undefined}
               alt={photo.note || 'Fotoğraf'}
               className="w-full h-auto object-cover transition-transform duration-500"
               loading="lazy"

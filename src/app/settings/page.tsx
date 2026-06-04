@@ -1,16 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePreferences } from '@/components/providers/PreferencesProvider';
 import { ThemeMode, GridDensity, FontSize, ACCENT_PRESETS } from '@/types';
 import { useCategories } from '@/hooks/useCategories';
-import { deleteCustomCategory, notifyDataChange, getStorageUsage } from '@/lib/indexeddb';
+import { deleteCustomCategory, notifyDataChange, getStorageUsage, clearAllDatabase } from '@/lib/indexeddb';
 import { showToast } from '@/components/ui/Toast';
+import { useDialog } from '@/components/providers/DialogProvider';
 import { exportAllData } from '@/lib/backup';
-import { useEffect } from 'react';
 
 export default function SettingsPage() {
   const { prefs, updatePrefs, resolvedTheme } = usePreferences();
+  const { confirm } = useDialog();
   const { allCategories } = useCategories();
   const [customHex, setCustomHex] = useState('');
   const [showCustomInput, setShowCustomInput] = useState(false);
@@ -49,13 +50,24 @@ export default function SettingsPage() {
     { key: 'large', label: 'Büyük', size: '18px' },
   ];
 
-  async function handleDeleteCategory(key: string) {
-    if (confirm('Bu özel kategoriyi kalıcı olarak silmek istediğinize emin misiniz?')) {
+  async function handleDeleteCategory(key: string, name: string) {
+    if (await confirm(`"${name}" kategorisini kalıcı olarak silmek istediğinize emin misiniz?`)) {
       await deleteCustomCategory(key);
       notifyDataChange('categories');
       showToast('Kategori silindi');
     }
   }
+
+  const handleClearDatabase = async () => {
+    if (await confirm('DİKKAT! Tüm verileriniz kalıcı olarak silinecek. Bu işlem geri alınamaz. Emin misiniz?')) {
+      try {
+        await clearAllDatabase();
+        window.location.reload();
+      } catch (error) {
+        showToast('Veriler silinirken bir hata oluştu');
+      }
+    }
+  };
 
   function getContrastColor(hex: string): string {
     const r = parseInt(hex.slice(1, 3), 16);
@@ -296,7 +308,7 @@ export default function SettingsPage() {
                     </button>
                     {cat.isCustom && (
                       <button 
-                        onClick={() => handleDeleteCategory(cat.key)}
+                        onClick={() => handleDeleteCategory(cat.key, cat.label)}
                         className="p-2 text-red-500 hover:bg-red-50/10 rounded-lg transition-colors"
                         title="Sil"
                       >

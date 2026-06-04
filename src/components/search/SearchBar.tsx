@@ -13,6 +13,7 @@ export default function SearchBar({ value, onChange, placeholder = 'Fotoğraflar
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocalValue(value);
   }, [value]);
 

@@ -129,5 +129,5 @@ export default function PhotoSelectorModal({
 function PhotoThumb({ photoId }: { photoId: string }) {
   const { imageUrl, loading } = usePhotoImage(photoId);
   if (loading) return <div className="w-full h-full skeleton" />;
-  return <img src={imageUrl || ''} className="w-full h-full object-cover" alt="" />;
+  return imageUrl ? <img src={imageUrl} className="w-full h-full object-cover" alt="" /> : <div className="w-full h-full" style={{ background: 'var(--bg-secondary)' }} />;
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { AppPreferences, ThemeMode, GridDensity, FontSize, DEFAULT_PREFERENCES } from '@/types';
+import { AppPreferences, FontSize, DEFAULT_PREFERENCES } from '@/types';
 import { getPreferences, savePreferences, notifyDataChange } from '@/lib/indexeddb';
 
 interface PreferencesContextValue {
@@ -78,6 +78,7 @@ export default function PreferencesProvider({ children }: { children: ReactNode 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSystemTheme(mq.matches ? 'dark' : 'light');
     
     const handler = (e: MediaQueryListEvent) => {
@@ -125,7 +126,7 @@ export default function PreferencesProvider({ children }: { children: ReactNode 
     if (metaTheme) {
       metaTheme.setAttribute('content', themeColorMap[resolvedTheme]);
     }
-  }, [resolvedTheme, prefs.accentColor, prefs.fontSize, accentHSL, loaded]);
+  }, [resolvedTheme, prefs.accentColor, prefs.fontSize, accentHSL, accentForeground, loaded]);
 
   const updatePrefs = useCallback((updates: Partial<AppPreferences>) => {
     setPrefs((prev) => {

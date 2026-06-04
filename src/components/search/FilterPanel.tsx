@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { FilterState, CategoryInfo } from '@/types';
 import { useCategories } from '@/hooks/useCategories';
 import { Collection } from '@/types';
