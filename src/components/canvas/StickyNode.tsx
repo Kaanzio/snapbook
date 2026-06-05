@@ -11,7 +11,7 @@ const STICKY_COLORS = [
 
 export default function StickyNode({ id, data, selected }: NodeProps) {
   const { setNodes } = useReactFlow();
-  const nodeData = data as Record<string, unknown>;
+  const nodeData = data as { isNew?: boolean; text?: string; colorIndex?: number; rotation?: number };
   const [isEditing, setIsEditing] = useState(nodeData.isNew || false);
   const [text, setText] = useState(nodeData.text || '');
   const inputRef = useRef<HTMLTextAreaElement>(null);

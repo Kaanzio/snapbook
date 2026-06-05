@@ -3,7 +3,7 @@ import { Handle, Position, NodeProps, useReactFlow, NodeResizer } from '@xyflow/
 
 export default function TextNode({ id, data, selected }: NodeProps) {
   const { setNodes } = useReactFlow();
-  const nodeData = data as Record<string, unknown>;
+  const nodeData = data as { isNew?: boolean; text?: string; variant?: string; fontSize?: string };
   const [isEditing, setIsEditing] = useState(nodeData.isNew || false);
   const [text, setText] = useState(nodeData.text || '');
   const inputRef = useRef<HTMLTextAreaElement>(null);
