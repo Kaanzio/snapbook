@@ -12,9 +12,9 @@ export default function SearchPage() {
   const { prefs, updatePrefs } = usePreferences();
 
   const toggleDensity = () => {
-    const modes = ['compact', 'normal', 'large'];
+    const modes = ['compact', 'comfortable', 'large'];
     const currentIndex = modes.indexOf(prefs.gridDensity);
-    const nextMode = modes[(currentIndex + 1) % modes.length] as 'compact' | 'normal' | 'large';
+    const nextMode = modes[(currentIndex + 1) % modes.length] as 'compact' | 'comfortable' | 'large';
     updatePrefs({ gridDensity: nextMode });
   };
   
