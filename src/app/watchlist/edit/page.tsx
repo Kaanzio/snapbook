@@ -9,6 +9,7 @@ import { showToast } from '@/components/ui/Toast';
 import TagInput from '@/components/ui/TagInput';
 import { usePhotoImage } from '@/hooks/usePhotoImage';
 import { useWatchlist } from '@/hooks/useWatchlist';
+import { WatchStatusIcon } from '@/components/watchlist/WatchIcons';
 
 function EditForm() {
   const router = useRouter();
@@ -29,16 +30,26 @@ function EditForm() {
   const [status, setStatus] = useState<WatchStatus>('planned');
   const [genre, setGenre] = useState('');
   const [rating, setRating] = useState<number>(0);
+  const [releaseYear, setReleaseYear] = useState<number | ''>('');
   const [description, setDescription] = useState('');
   const [note, setNote] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [listIds, setListIds] = useState<string[]>([]);
+  const [duration, setDuration] = useState<number | ''>('');
+  const [trailerUrl, setTrailerUrl] = useState('');
 
   // Series only
   const [currentSeason, setCurrentSeason] = useState<number | ''>('');
   const [currentEpisode, setCurrentEpisode] = useState<number | ''>('');
   const [totalSeasons, setTotalSeasons] = useState<number | ''>('');
   const [totalEpisodes, setTotalEpisodes] = useState<number | ''>('');
+
+  // Cleanup object URLs on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (posterPreview) URL.revokeObjectURL(posterPreview);
+    };
+  }, [posterPreview]);
 
   useEffect(() => {
     if (!id) {
@@ -55,8 +66,11 @@ function EditForm() {
           setStatus(item.status);
           setGenre(item.genre || '');
           setRating(item.rating || 0);
+          setReleaseYear(item.releaseYear || '');
+          setDuration(item.duration || '');
           setDescription(item.description || '');
           setNote(item.note || '');
+          setTrailerUrl(item.trailerUrl || '');
           setTags(item.tags || []);
           setListIds(item.listIds || []);
           if (item.type === 'series') {
@@ -80,11 +94,7 @@ function EditForm() {
     loadData();
   }, [id, router]);
 
-  useEffect(() => {
-    if (imageUrl && !posterPreview) {
-      setPosterPreview(imageUrl);
-    }
-  }, [imageUrl]);
+  const displayPoster = posterPreview || imageUrl;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -115,8 +125,11 @@ function EditForm() {
         status,
         genre: genre || undefined,
         rating: rating > 0 ? rating : undefined,
+        releaseYear: releaseYear !== '' ? Number(releaseYear) : undefined,
+        duration: duration !== '' ? Number(duration) : undefined,
         description: description.trim() || undefined,
         note: note.trim() || undefined,
+        trailerUrl: trailerUrl.trim() || undefined,
         tags,
         listIds,
         currentSeason: type === 'series' && currentSeason !== '' ? Number(currentSeason) : undefined,
@@ -152,15 +165,15 @@ function EditForm() {
   return (
     <div className="min-h-screen page-enter pb-24">
       <header className="sticky top-0 z-30 themed-header shadow-sm">
-        <div className="px-4 lg:px-6 py-4 flex items-center gap-3">
+        <div className="px-4 lg:px-6 py-6 mb-2 flex items-center gap-3">
           <Link href={`/watchlist?v=${id}`} className="p-2 -ml-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors haptic-tap">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </Link>
           <div>
-            <h1 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>Düzenle</h1>
-            <p className="text-sm mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{title}</p>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight" style={{ color: 'var(--text-primary)' }}>Düzenle</h1>
+            <p className="text-sm mt-1 font-medium" style={{ color: 'var(--text-tertiary)' }}>{title}</p>
           </div>
         </div>
       </header>
@@ -174,9 +187,9 @@ function EditForm() {
               className="w-40 h-60 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all hover:scale-[1.02] haptic-tap overflow-hidden relative group"
               style={{ borderColor: 'var(--border-primary)', background: 'var(--bg-secondary)' }}
             >
-              {posterPreview ? (
+              {displayPoster ? (
                 <>
-                  <img src={posterPreview} alt="Afiş" className="w-full h-full object-cover" />
+                  <img src={displayPoster} alt="Afiş" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="text-white text-sm font-medium">Değiştir</span>
                   </div>
@@ -207,7 +220,7 @@ function EditForm() {
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                 </svg>
-                Afiş bulmak için TMDB'de ara
+                Afiş bulmak için TMDB&apos;de ara
               </a>
             </div>
           </div>
@@ -238,7 +251,7 @@ function EditForm() {
                       ${type === key ? 'bg-white dark:bg-black shadow-sm' : 'opacity-70'}`}
                     style={{ color: type === key ? 'var(--text-primary)' : 'var(--text-secondary)' }}
                   >
-                    <span>{info.icon}</span>
+                    <WatchStatusIcon icon={info.icon} className="w-4 h-4" />
                     {info.label}
                   </button>
                 ))}
@@ -260,7 +273,7 @@ function EditForm() {
                       color: status === key ? info.color : 'var(--text-secondary)'
                     }}
                   >
-                    <span className="text-xl mb-1">{info.icon}</span>
+                    <WatchStatusIcon icon={info.icon} className="w-5 h-5 mb-1" />
                     <span className="text-xs font-medium">{info.label}</span>
                   </button>
                 ))}
@@ -294,45 +307,82 @@ function EditForm() {
               </div>
             )}
 
-            <div>
-              <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>Kategori</label>
-              <select
-                value={genre}
-                onChange={e => setGenre(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl text-sm themed-input appearance-none bg-no-repeat"
-                style={{ 
-                  backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
-                  backgroundPosition: 'right 1rem center',
-                  backgroundSize: '1em'
-                }}
-              >
-                <option value="">Seçiniz...</option>
-                {GENRE_OPTIONS.map(g => (
-                  <option key={g} value={g}>{g}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>Puan</label>
-              <div className="flex gap-1 justify-between">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(star => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => setRating(rating === star ? 0 : star)}
-                    className="flex-1 aspect-square rounded-lg flex items-center justify-center transition-all haptic-tap text-sm"
-                    style={{
-                      background: rating >= star ? '#facc15' : 'var(--bg-secondary)',
-                      color: rating >= star ? '#000' : 'var(--text-tertiary)'
-                    }}
-                  >
-                    {star}
-                  </button>
-                ))}
+            {/* Release Year & Duration */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>Yayın Yılı</label>
+                <input
+                  type="number"
+                  min="1900"
+                  max={new Date().getFullYear() + 2}
+                  value={releaseYear}
+                  onChange={e => setReleaseYear(e.target.value === '' ? '' : Number(e.target.value))}
+                  className="w-full px-4 py-3 rounded-xl text-sm themed-input"
+                  placeholder="Örn: 2023"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>Süre (dk)</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={duration}
+                  onChange={e => setDuration(e.target.value === '' ? '' : Number(e.target.value))}
+                  className="w-full px-4 py-3 rounded-xl text-sm themed-input"
+                  placeholder="Örn: 120"
+                />
               </div>
             </div>
 
+            <div>
+              <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>Kategori</label>
+              <div className="relative">
+                <select
+                  value={genre}
+                  onChange={e => setGenre(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl text-sm themed-input appearance-none"
+                >
+                  <option value="">Seçiniz...</option>
+                  {GENRE_OPTIONS.map(g => (
+                    <option key={g} value={g}>{g}</option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4" style={{ color: 'var(--text-tertiary)' }}>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>IMDb Puanı</label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-[#f5c518]">IMDb</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  value={rating || ''}
+                  onChange={e => setRating(e.target.value === '' ? 0 : Number(e.target.value))}
+                  className="w-full pl-16 pr-4 py-3 rounded-xl text-sm themed-input"
+                  placeholder="Örn: 8.5"
+                />
+              </div>
+            </div>
+
+            {/* Trailer URL */}
+            <div>
+              <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>Fragman Linki (İsteğe Bağlı)</label>
+              <input
+                type="url"
+                value={trailerUrl}
+                onChange={e => setTrailerUrl(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl text-sm themed-input"
+                placeholder="Örn: https://youtube.com/watch?v=..."
+              />
+            </div>
             {/* Custom Lists */}
             {customLists && customLists.length > 0 && (
               <div>

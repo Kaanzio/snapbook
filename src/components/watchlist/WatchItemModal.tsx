@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-import Link from 'next/link';
+import { useEffect, useState, useRef } from 'react';
 import { WatchItem, WATCH_STATUS_INFO, WATCH_TYPE_INFO, WatchStatus } from '@/types';
 import { getWatchItem, deleteWatchItem, deleteLocalPhoto, updateWatchItem, notifyDataChange } from '@/lib/indexeddb';
 import { usePhotoImage } from '@/hooks/usePhotoImage';
 import { showToast } from '@/components/ui/Toast';
 import { useDialog } from '@/components/providers/DialogProvider';
+import { WatchStatusIcon } from '@/components/watchlist/WatchIcons';
 
 interface WatchItemModalProps {
   id: string;
@@ -18,6 +17,7 @@ export default function WatchItemModal({ id, onClose }: WatchItemModalProps) {
   const [item, setItem] = useState<WatchItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
+  const statusRef = useRef<HTMLDivElement>(null);
 
   const { imageUrl, loading: imageLoading } = usePhotoImage(`watch-poster-${id}`);
   const { confirm } = useDialog();
@@ -31,22 +31,26 @@ export default function WatchItemModal({ id, onClose }: WatchItemModalProps) {
     } else {
       setTimeout(() => setLoading(false), 0);
     }
-    
-    // Prevent background scrolling when modal is open
     document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
+    return () => { document.body.style.overflow = 'auto'; };
   }, [id]);
+
+  // Close status menu on outside click
+  useEffect(() => {
+    if (!showStatusMenu) return;
+    const handler = (e: MouseEvent) => {
+      if (statusRef.current && !statusRef.current.contains(e.target as Node)) {
+        setShowStatusMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showStatusMenu]);
 
   const handleDelete = async () => {
     if (!id || !(await confirm('Bu kaydı silmek istediğinize emin misiniz?'))) return;
-    
     await deleteWatchItem(id);
-    try {
-      await deleteLocalPhoto(`watch-poster-${id}`);
-    } catch { } // Ignore if no photo
-    
+    try { await deleteLocalPhoto(`watch-poster-${id}`); } catch {}
     notifyDataChange('watchlist');
     showToast('Kayıt silindi');
     onClose();
@@ -61,206 +65,211 @@ export default function WatchItemModal({ id, onClose }: WatchItemModalProps) {
     showToast('Durum güncellendi');
   };
 
-  if (loading) return null; // Or a subtle loader
+  if (loading) return null;
 
   if (!item) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-        <div className="bg-[var(--bg-card)] p-6 rounded-2xl max-w-sm w-full text-center">
-          <p>Kayıt bulunamadı.</p>
-          <button onClick={onClose} className="mt-4 px-4 py-2 bg-white/10 rounded-lg">Kapat</button>
+        <div className="p-6 rounded-2xl max-w-sm w-full text-center" style={{ background: 'var(--bg-card)' }}>
+          <p style={{ color: 'var(--text-primary)' }}>Kayıt bulunamadı.</p>
+          <button onClick={onClose} className="mt-4 px-4 py-2 rounded-lg text-sm" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>Kapat</button>
         </div>
       </div>
     );
   }
 
   const typeInfo = WATCH_TYPE_INFO[item.type];
-  const year = new Date(item.created_at).getFullYear();
-
+  const statusInfo = WATCH_STATUS_INFO[item.status];
+  const displayYear = item.releaseYear ?? new Date(item.created_at).getFullYear();
+  const hasProgress = item.type === 'series' && (item.currentSeason || item.currentEpisode);
   return (
-    <div className="fixed inset-0 z-50 flex justify-center p-0 sm:p-4 md:p-8 lg:p-12 animate-[fadeIn_0.2s_ease-out]">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center animate-[fadeIn_0.2s_ease-out]"
+      style={{ background: 'rgba(0,0,0,0.8)' }}
+    >
+      <div className="absolute inset-0" onClick={onClose} />
 
-      {/* Modal Container */}
-      <div 
-        className="relative w-full max-w-3xl h-full sm:h-auto sm:max-h-[90vh] bg-[#141414] text-white overflow-y-auto sm:rounded-2xl shadow-2xl hide-scrollbar animate-[slideUp_0.3s_ease-out]"
-        style={{ border: '1px solid rgba(255,255,255,0.1)' }}
+      <div
+        className="relative w-full sm:max-w-[600px] text-white overflow-y-auto hide-scrollbar rounded-t-[32px] sm:rounded-3xl shadow-2xl animate-[slideUp_0.35s_cubic-bezier(0.34,1.56,0.64,1)] max-h-[90vh]"
+        style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}
       >
-        {/* Close Button */}
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-[#181818]/60 text-white hover:bg-white hover:text-black transition-colors"
-        >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-
-        {/* Hero Image Section */}
-        <div className="relative w-full h-[40vh] sm:h-[45vh] min-h-[300px]">
+        {/* Hero Section */}
+        <div className="relative w-full h-[55vw] sm:h-[380px] overflow-hidden">
           {imageLoading ? (
             <div className="absolute inset-0 skeleton" />
           ) : imageUrl ? (
-            <img src={imageUrl} alt={item.title} className="absolute inset-0 w-full h-full object-cover object-top" />
+            <img
+              src={imageUrl}
+              alt={item.title}
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ objectPosition: 'center 20%' }}
+            />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#181818]">
-              <span className="text-6xl opacity-20">{typeInfo.icon}</span>
+            <div className="absolute inset-0 flex items-center justify-center bg-black/10 dark:bg-white/5">
+              <WatchStatusIcon icon={typeInfo.icon} className="w-16 h-16 opacity-20" />
             </div>
           )}
-          {/* Gradient overlay to fade into content background */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/40 to-transparent" />
           
-          {/* Title and main info superimposed on the image bottom */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
-            <h1 className="text-3xl sm:text-5xl font-bold mb-4 drop-shadow-xl">{item.title}</h1>
-            
-            <div className="flex flex-wrap items-center gap-3 text-sm sm:text-base font-medium">
-              <span className="text-green-500 font-bold">{year}</span>
-              {item.rating && (
-                <span className="px-1.5 py-0.5 border border-white/40 rounded-sm text-xs opacity-90">⭐ {item.rating}</span>
-              )}
-              {item.type === 'series' && item.currentSeason && (
-                <span className="opacity-90">{item.currentSeason}. Sezon</span>
-              )}
-              <span className="px-1.5 py-0.5 border border-white/40 rounded-sm text-xs opacity-90 uppercase tracking-widest">{typeInfo.label}</span>
-              {item.genre && (
-                <span className="opacity-90">{item.genre}</span>
-              )}
+          {/* Refined Gradient Overlay */}
+          <div 
+            className="absolute inset-0" 
+            style={{
+              background: 'linear-gradient(to top, var(--bg-card) 0%, rgba(0,0,0,0) 80%)'
+            }} 
+          />
+
+          {/* Play Trailer Button */}
+          {item.trailerUrl && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+              <a
+                href={item.trailerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="pointer-events-auto transition-transform duration-300 hover:scale-105 mt-8"
+                title="Fragmanı İzle"
+              >
+                <div className="flex items-center gap-2 px-5 py-2.5 bg-black/60 backdrop-blur-md rounded-full text-white/95 transition-colors duration-300 hover:bg-[#ff0000] shadow-2xl border border-white/20">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                  <span className="text-[13px] font-bold tracking-wider uppercase">Fragmanı İzle</span>
+                </div>
+              </a>
             </div>
-          </div>
+          )}
+
+          <button
+            onClick={onClose}
+            className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-black/70 haptic-tap"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
         {/* Content Section */}
-        <div className="p-6 sm:p-10 pt-0 flex flex-col md:flex-row gap-8">
-          
-          {/* Main Info Column */}
-          <div className="flex-1 space-y-6">
-            
-            {/* Description */}
-            <div className="text-sm sm:text-base leading-relaxed opacity-90">
-              {item.description ? item.description : 'Bu kayıt için bir konu açıklaması girilmemiş.'}
+        <div className="px-6 sm:px-10 -mt-16 relative z-10 pb-10">
+          {/* Header Info */}
+          <div className="mb-6">
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2" style={{ color: 'var(--text-primary)' }}>
+              {item.title}
+            </h1>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
+              <span>{displayYear}</span>
+              <span className="w-1 h-1 rounded-full" style={{ background: 'var(--text-tertiary)' }} />
+              <span>{typeInfo.label}</span>
+              {item.genre && (
+                <>
+                  <span className="w-1 h-1 rounded-full" style={{ background: 'var(--text-tertiary)' }} />
+                  <span>{item.genre}</span>
+                </>
+              )}
             </div>
-            
-            {/* Note */}
-            {item.note && (
-              <div className="text-sm opacity-70 italic border-l-2 border-accent pl-4">
-                &quot;{item.note}&quot;
-              </div>
+          </div>
+
+          {/* Action Row */}
+          <div className="flex items-center gap-3 mb-8">
+            <div ref={statusRef} className="relative flex-1">
+              <button
+                onClick={() => setShowStatusMenu(v => !v)}
+                className="w-full py-3 px-4 flex items-center justify-center gap-2 rounded-2xl transition-all haptic-tap font-bold text-sm"
+                style={{ background: `${statusInfo.color}15`, color: statusInfo.color }}
+              >
+                <WatchStatusIcon icon={statusInfo.icon} className="w-5 h-5" />
+                {statusInfo.label}
+              </button>
+              {showStatusMenu && (
+                <div 
+                  className="absolute bottom-full right-0 mb-2 w-48 p-2 rounded-2xl shadow-xl z-50 animate-[slideDown_0.15s_ease-out]"
+                  style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
+                >
+                  {(Object.entries(WATCH_STATUS_INFO) as [WatchStatus, typeof WATCH_STATUS_INFO[WatchStatus]][]).map(([key, info]) => (
+                    <button
+                      key={key}
+                      onClick={() => handleStatusChange(key)}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors text-left"
+                      style={{ 
+                        color: item.status === key ? info.color : 'var(--text-primary)', 
+                        background: item.status === key ? `${info.color}15` : 'transparent' 
+                      }}
+                    >
+                      <WatchStatusIcon icon={info.icon} className="w-4 h-4 shrink-0" />
+                      <span className="font-medium">{info.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={handleDelete}
+              className="w-12 h-12 flex items-center justify-center rounded-2xl transition-all haptic-tap"
+              style={{ background: 'var(--bg-secondary)', color: '#ef4444' }}
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="space-y-6">
+            {/* Quick Stats Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {item.rating && (
+                <div className="p-4 rounded-2xl" style={{ background: 'var(--bg-secondary)' }}>
+                  <div className="text-xs font-semibold mb-1" style={{ color: 'var(--text-tertiary)' }}>PUAN</div>
+                  <div className="font-bold flex items-center gap-1.5" style={{ color: 'var(--text-primary)' }}>
+                    <span className="text-[#f5c518]">IMDb</span> {item.rating}/10
+                  </div>
+                </div>
+              )}
+              {item.duration && (
+                <div className="p-4 rounded-2xl" style={{ background: 'var(--bg-secondary)' }}>
+                  <div className="text-xs font-semibold mb-1" style={{ color: 'var(--text-tertiary)' }}>SÜRE</div>
+                  <div className="font-bold" style={{ color: 'var(--text-primary)' }}>
+                    {Math.floor(item.duration / 60) > 0 ? `${Math.floor(item.duration / 60)}s ` : ''}
+                    {item.duration % 60 > 0 ? `${item.duration % 60}dk` : ''}
+                  </div>
+                </div>
+              )}
+              {hasProgress && (
+                <div className="p-4 rounded-2xl" style={{ background: 'var(--bg-secondary)' }}>
+                  <div className="text-xs font-semibold mb-1" style={{ color: 'var(--text-tertiary)' }}>İLERLEME</div>
+                  <div className="font-bold" style={{ color: 'var(--text-primary)' }}>
+                    {item.currentSeason ? `S${item.currentSeason} ` : ''}
+                    {item.currentEpisode ? `E${item.currentEpisode}` : ''}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Description */}
+            {item.description && (
+              <p className="text-[15px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                {item.description}
+              </p>
             )}
 
-            {/* Progress (Series Only) */}
-            {item.type === 'series' && (item.currentSeason || item.currentEpisode) && (
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10">
-                <div className="text-xs uppercase tracking-widest opacity-60 mb-2">İlerleme</div>
-                <div className="flex items-center gap-6">
-                  {item.currentSeason && (
-                    <div>
-                      <span className="text-xl font-bold">{item.currentSeason}</span>
-                      <span className="opacity-60 text-sm ml-1">Sezon</span>
-                    </div>
-                  )}
-                  {item.currentEpisode && (
-                    <div>
-                      <span className="text-xl font-bold">{item.currentEpisode}</span>
-                      <span className="opacity-60 text-sm ml-1">Bölüm</span>
-                    </div>
-                  )}
-                </div>
+            {/* Note */}
+            {item.note && (
+              <div className="p-4 rounded-2xl border-l-4" style={{ background: 'var(--bg-secondary)', borderLeftColor: 'var(--accent)' }}>
+                <p className="text-sm italic" style={{ color: 'var(--text-secondary)' }}>{item.note}</p>
               </div>
             )}
 
             {/* Tags */}
             {item.tags && item.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 pt-2">
                 {item.tags.map(tag => (
-                  <span key={tag} className="px-3 py-1 rounded-full text-xs font-medium bg-white/10 opacity-80">
-                    #{tag}
+                  <span key={tag} className="px-3 py-1.5 rounded-xl text-xs font-medium" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                    {tag}
                   </span>
                 ))}
               </div>
             )}
-
-            {/* Action Buttons */}
-            <div className="flex items-center gap-3 pt-4">
-              <Link 
-                href={`/watchlist/edit?id=${id}`}
-                className="flex items-center gap-2 px-6 py-3 bg-[#E50914] hover:bg-[#b80710] text-white font-bold rounded-md transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-                </svg>
-                Düzenle
-              </Link>
-              
-              <div className="relative">
-                <button 
-                  onClick={() => setShowStatusMenu(!showStatusMenu)}
-                  className="flex items-center justify-center w-12 h-12 rounded-full border border-white/40 hover:border-white transition-colors bg-black/40"
-                  title="Durumu Değiştir"
-                >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                  </svg>
-                </button>
-                
-                {showStatusMenu && (
-                  <div className="absolute bottom-full left-0 mb-2 w-48 p-2 rounded-xl bg-[#2b2b2b] shadow-2xl border border-white/10 z-50">
-                    {(Object.entries(WATCH_STATUS_INFO) as [WatchStatus, { label: string; icon: string; color: string }][]).map(([key, info]) => (
-                      <button
-                        key={key}
-                        onClick={() => handleStatusChange(key)}
-                        className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-white/10 text-left"
-                        style={{ color: item.status === key ? info.color : 'white' }}
-                      >
-                        <span className="text-lg">{info.icon}</span>
-                        {info.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <button 
-                onClick={handleDelete}
-                className="flex items-center justify-center w-12 h-12 rounded-full border border-white/40 hover:border-white hover:text-red-500 hover:border-red-500 transition-colors bg-black/40 ml-auto"
-                title="Sil"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </div>
-            
           </div>
-          
-          {/* Metadata Column */}
-          <div className="md:w-64 space-y-4 text-sm">
-            <div>
-              <span className="opacity-60 block mb-1">Durum:</span>
-              <span className="font-medium flex items-center gap-2">
-                <span className="text-xl">{WATCH_STATUS_INFO[item.status].icon}</span>
-                {WATCH_STATUS_INFO[item.status].label}
-              </span>
-            </div>
-            {item.totalSeasons && (
-              <div>
-                <span className="opacity-60 block mb-1">Toplam Sezon:</span>
-                <span className="font-medium">{item.totalSeasons}</span>
-              </div>
-            )}
-            {item.totalEpisodes && (
-              <div>
-                <span className="opacity-60 block mb-1">Toplam Bölüm:</span>
-                <span className="font-medium">{item.totalEpisodes}</span>
-              </div>
-            )}
-            <div>
-              <span className="opacity-60 block mb-1">Listeye Eklenme:</span>
-              <span className="font-medium">{new Date(item.created_at).toLocaleDateString('tr-TR')}</span>
-            </div>
-          </div>
-
         </div>
       </div>
     </div>

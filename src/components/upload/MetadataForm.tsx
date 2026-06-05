@@ -5,6 +5,7 @@ import { useState } from 'react';
 import TagInput from '@/components/ui/TagInput';
 import StarToggle from '@/components/ui/StarToggle';
 import CustomCategoryModal from './CustomCategoryModal';
+import { CategoryIcon } from '@/components/ui/CategoryIcon';
 
 interface MetadataFormProps {
   formData: UploadFormData;
@@ -59,7 +60,7 @@ export default function MetadataForm({ formData, onChange }: MetadataFormProps) 
                 background: formData.category === cat.key ? 'var(--accent)' : 'var(--bg-card)' 
               }}
             >
-              <span className="text-xl">{cat.icon}</span>
+              <CategoryIcon categoryKey={cat.key} className="w-6 h-6 mb-1" />
               <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: formData.category === cat.key ? 'var(--accent-foreground, white)' : 'var(--text-tertiary)' }}>
                 {cat.label}
               </span>

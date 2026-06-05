@@ -23,7 +23,25 @@ export function useWatchlist() {
       ]);
       if (isMounted) {
         setItems(data);
-        setCustomLists(lists);
+        // Apply saved order if available
+        try {
+          const savedOrder = localStorage.getItem('snapbook-list-order');
+          if (savedOrder) {
+            const orderIds: string[] = JSON.parse(savedOrder);
+            const ordered = [...lists].sort((a, b) => {
+              const ai = orderIds.indexOf(a.id);
+              const bi = orderIds.indexOf(b.id);
+              if (ai === -1) return 1;
+              if (bi === -1) return -1;
+              return ai - bi;
+            });
+            setCustomLists(ordered);
+          } else {
+            setCustomLists(lists);
+          }
+        } catch {
+          setCustomLists(lists);
+        }
         setLoading(false);
       }
     }
@@ -155,6 +173,19 @@ export function useWatchlist() {
     notifyDataChange('watchlist');
   }
 
+  function reorderCustomLists(fromIndex: number, toIndex: number): void {
+    setCustomLists(prev => {
+      const newLists = [...prev];
+      const [moved] = newLists.splice(fromIndex, 1);
+      newLists.splice(toIndex, 0, moved);
+      // Persist order to localStorage
+      try {
+        localStorage.setItem('snapbook-list-order', JSON.stringify(newLists.map(l => l.id)));
+      } catch {}
+      return newLists;
+    });
+  }
+
   return {
     items,
     customLists,
@@ -168,6 +199,7 @@ export function useWatchlist() {
     addCustomList,
     editCustomList,
     removeCustomList,
-    toggleItemInList
+    toggleItemInList,
+    reorderCustomLists,
   };
 }

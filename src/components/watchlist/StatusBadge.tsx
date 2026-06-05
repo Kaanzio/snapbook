@@ -1,4 +1,5 @@
 import { WatchStatus, WATCH_STATUS_INFO } from '@/types';
+import { WatchStatusIcon } from './WatchIcons';
 
 interface StatusBadgeProps {
   status: WatchStatus;
@@ -22,7 +23,7 @@ export default function StatusBadge({ status, size = 'sm', className = '' }: Sta
         border: `1px solid ${info.color}40`,
       }}
     >
-      <span>{info.icon}</span>
+      <WatchStatusIcon icon={info.icon} className={size === 'sm' ? 'w-3 h-3' : 'w-3.5 h-3.5'} />
       {info.label}
     </span>
   );

@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePreferences } from '@/components/providers/PreferencesProvider';
 import { ThemeMode, GridDensity, FontSize, ACCENT_PRESETS } from '@/types';
 import { useCategories } from '@/hooks/useCategories';
 import { deleteCustomCategory, notifyDataChange, getStorageUsage, clearAllDatabase } from '@/lib/indexeddb';
 import { showToast } from '@/components/ui/Toast';
 import { useDialog } from '@/components/providers/DialogProvider';
-import { exportAllData } from '@/lib/backup';
+import { exportAllData, importAllData } from '@/lib/backup';
+import { CategoryIcon } from '@/components/ui/CategoryIcon';
 
 export default function SettingsPage() {
   const { prefs, updatePrefs, resolvedTheme } = usePreferences();
@@ -17,10 +18,51 @@ export default function SettingsPage() {
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [storage, setStorage] = useState<{ used: number; total: number | null }>({ used: 0, total: null });
   const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const [importProgress, setImportProgress] = useState(0);
 
   useEffect(() => {
     getStorageUsage().then(setStorage);
   }, []);
+
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!await confirm('Bu yedek dosyasını içe aktarmak istediğinize emin misiniz? Mevcut verilerle birleştirilecektir.')) {
+      e.target.value = '';
+      return;
+    }
+
+    setIsImporting(true);
+    setImportProgress(0);
+    try {
+      await importAllData(file, (progress) => {
+        setImportProgress(progress);
+      });
+      showToast('Yedek başarıyla içe aktarıldı! Sayfa yenileniyor...');
+      setTimeout(() => window.location.reload(), 1500);
+    } catch (err) {
+      console.error(err);
+      showToast('Yedek içe aktarılamadı. Dosya bozuk olabilir.', 'error');
+    } finally {
+      setIsImporting(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleClearDatabase = async () => {
+    if (!await confirm('DİKKAT: Cihazınızdaki tüm fotoğraflar, listeler ve ayarlar SİLİNECEKTİR. Bu işlem geri alınamaz! Tüm verileri silmek istediğinize emin misiniz?')) return;
+
+    try {
+      await clearAllDatabase();
+      showToast('Tüm veriler başarıyla silindi.');
+      setTimeout(() => window.location.reload(), 1500);
+    } catch (err) {
+      console.error(err);
+      showToast('Veriler silinirken hata oluştu.', 'error');
+    }
+  };
 
   async function toggleCategoryVisibility(key: string) {
     const hidden = prefs.hiddenCategories || [];
@@ -31,11 +73,28 @@ export default function SettingsPage() {
     }
   }
 
-  const themeOptions: { key: ThemeMode; label: string; desc: string; icon: string }[] = [
-    { key: 'system', label: 'Sistem', desc: 'İşletim sistemi ayarını takip eder', icon: '💻' },
-    { key: 'light', label: 'Açık', desc: 'Aydınlık tema', icon: '☀️' },
-    { key: 'dark', label: 'Koyu', desc: 'Karanlık tema', icon: '🌙' },
-    { key: 'oled', label: 'OLED Siyah', desc: 'Saf siyah, pil tasarrufu', icon: '⚫' },
+  const themeOptions: { key: ThemeMode; label: string; desc: string; icon: React.ReactNode }[] = [
+    { key: 'system', label: 'Sistem', desc: 'İşletim sistemi ayarını takip eder', icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0H3" />
+      </svg>
+    ) },
+    { key: 'light', label: 'Açık', desc: 'Aydınlık tema', icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+      </svg>
+    ) },
+    { key: 'dark', label: 'Koyu', desc: 'Karanlık tema', icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+      </svg>
+    ) },
+    { key: 'oled', label: 'OLED Siyah', desc: 'Saf siyah, pil tasarrufu', icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.564A.562.562 0 019 14.437V9.564z" />
+      </svg>
+    ) },
   ];
 
   const gridOptions: { key: GridDensity; label: string; desc: string }[] = [
@@ -58,16 +117,7 @@ export default function SettingsPage() {
     }
   }
 
-  const handleClearDatabase = async () => {
-    if (await confirm('DİKKAT! Tüm verileriniz kalıcı olarak silinecek. Bu işlem geri alınamaz. Emin misiniz?')) {
-      try {
-        await clearAllDatabase();
-        window.location.reload();
-      } catch (error) {
-        showToast('Veriler silinirken bir hata oluştu');
-      }
-    }
-  };
+
 
   function getContrastColor(hex: string): string {
     const r = parseInt(hex.slice(1, 3), 16);
@@ -90,9 +140,9 @@ export default function SettingsPage() {
     <div className="min-h-screen page-enter">
       {/* Header */}
       <header className="sticky top-0 z-30 themed-header">
-        <div className="px-4 lg:px-6 py-4">
-          <h1 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>Ayarlar</h1>
-          <p className="text-sm mt-0.5" style={{ color: 'var(--text-tertiary)' }}>Tema ve görünüm ayarları</p>
+        <div className="px-4 lg:px-6 py-6 mb-2">
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight" style={{ color: 'var(--text-primary)' }}>Ayarlar</h1>
+          <p className="text-sm mt-1 font-medium" style={{ color: 'var(--text-tertiary)' }}>Tema ve görünüm ayarları</p>
         </div>
       </header>
 
@@ -100,8 +150,11 @@ export default function SettingsPage() {
 
         {/* ==================== THEME ==================== */}
         <section>
-          <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
-            🎨 Tema
+          <h2 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z" />
+            </svg>
+            Tema
           </h2>
           <div className="grid grid-cols-2 gap-2">
             {themeOptions.map((opt) => (
@@ -114,7 +167,7 @@ export default function SettingsPage() {
                   border: prefs.theme === opt.key ? '2px solid var(--accent)' : '2px solid var(--border-primary)',
                 }}
               >
-                <span className="text-2xl">{opt.icon}</span>
+                <span style={{ color: prefs.theme === opt.key ? 'var(--accent)' : 'var(--text-secondary)' }}>{opt.icon}</span>
                 <p className="text-sm font-medium mt-2" style={{ color: prefs.theme === opt.key ? 'var(--accent)' : 'var(--text-primary)' }}>
                   {opt.label}
                 </p>
@@ -129,8 +182,12 @@ export default function SettingsPage() {
 
         {/* ==================== ACCENT COLOR ==================== */}
         <section>
-          <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
-            🌈 Vurgu Rengi
+          <h2 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z" />
+            </svg>
+            Vurgu Rengi
           </h2>
           <div className="flex flex-wrap gap-3 items-center">
             {ACCENT_PRESETS.map((preset) => (
@@ -195,8 +252,11 @@ export default function SettingsPage() {
 
         {/* ==================== GRID DENSITY ==================== */}
         <section>
-          <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
-            📐 Izgara Yoğunluğu
+          <h2 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+            </svg>
+            Izgara Yoğunluğu
           </h2>
           <div className="grid grid-cols-3 gap-2">
             {gridOptions.map((opt) => (
@@ -240,8 +300,11 @@ export default function SettingsPage() {
 
         {/* ==================== FONT SIZE ==================== */}
         <section>
-          <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
-            🔤 Yazı Boyutu
+          <h2 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+            </svg>
+            Yazı Boyutu
           </h2>
           <div className="grid grid-cols-3 gap-2">
             {fontOptions.map((opt) => (
@@ -267,8 +330,12 @@ export default function SettingsPage() {
 
         {/* ==================== CATEGORY MANAGEMENT ==================== */}
         <section>
-          <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
-            🏷️ Kategori Yönetimi
+          <h2 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
+            </svg>
+            Kategori Yönetimi
           </h2>
           <div className="space-y-2">
             {allCategories.map((cat) => {
@@ -280,8 +347,8 @@ export default function SettingsPage() {
                   style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-xl w-10 h-10 flex items-center justify-center rounded-xl" style={{ background: `${cat.color}15`, color: cat.color }}>
-                      {cat.icon}
+                    <span className="w-9 h-9 flex items-center justify-center rounded-xl" style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>
+                      <CategoryIcon categoryKey={cat.key} className="w-4 h-4" />
                     </span>
                     <div>
                       <p className="text-sm font-medium" style={{ color: isHidden ? 'var(--text-tertiary)' : 'var(--text-primary)' }}>{cat.label}</p>
@@ -326,8 +393,12 @@ export default function SettingsPage() {
 
         {/* ==================== STORAGE & BACKUP ==================== */}
         <section>
-          <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
-            💾 Depolama ve Yedekleme
+          <h2 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 8.485-7.5 11.9-7.5 11.9s-7.5-3.415-7.5-11.9a7.5 7.5 0 1115 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+            </svg>
+            Depolama ve Yedekleme
           </h2>
           <div className="space-y-3">
             <div className="p-4 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}>
@@ -355,12 +426,12 @@ export default function SettingsPage() {
                   await exportAllData();
                   showToast('Yedekleme dosyası hazırlandı');
                 } catch (err) {
-                  showToast('Yedekleme başarısız oldu');
+                  showToast('Yedekleme başarısız oldu', 'error');
                 } finally {
                   setIsExporting(false);
                 }
               }}
-              disabled={isExporting}
+              disabled={isExporting || isImporting}
               className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl font-medium transition-all haptic-tap disabled:opacity-50"
               style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)' }}
             >
@@ -373,13 +444,58 @@ export default function SettingsPage() {
               )}
               {isExporting ? 'Yedek hazırlanıyor...' : 'Tüm Verileri Yedekle (.zip)'}
             </button>
+
+            <div className="relative">
+              <input
+                type="file"
+                accept=".zip"
+                onChange={handleImport}
+                disabled={isExporting || isImporting}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+              />
+              <button
+                disabled={isExporting || isImporting}
+                className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl font-medium transition-all haptic-tap disabled:opacity-50"
+                style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)' }}
+              >
+                {isImporting ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                    <span>İçe aktarılıyor... %{importProgress}</span>
+                  </div>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                    <span>Yedekten Geri Yükle (.zip)</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            <button
+              onClick={handleClearDatabase}
+              disabled={isExporting || isImporting}
+              className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl font-medium transition-all hover:bg-red-500/10 haptic-tap disabled:opacity-50"
+              style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)', color: '#ef4444' }}
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+              </svg>
+              Tüm Verileri Sıfırla
+            </button>
           </div>
         </section>
 
         {/* Info */}
         <div className="rounded-2xl p-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}>
-          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-            💾 Tüm tercihler otomatik olarak cihazınızda saklanır (IndexedDB). Hiçbir veri sunucuya gönderilmez.
+          <p className="text-xs flex items-start gap-2" style={{ color: 'var(--text-tertiary)' }}>
+            <svg className="w-3.5 h-3.5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 8.485-7.5 11.9-7.5 11.9s-7.5-3.415-7.5-11.9a7.5 7.5 0 1115 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+            </svg>
+            Tüm tercihler otomatik olarak cihazınızda saklanır (IndexedDB). Hiçbir veri sunucuya gönderilmez.
           </p>
         </div>
       </div>

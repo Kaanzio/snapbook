@@ -8,30 +8,36 @@ interface MasonryGridProps {
   photos: PhotoMetadata[];
   forceCompact?: boolean;
   onPhotoClick?: (photoId: string) => void;
+  sortBy?: string;
 }
 
-export default function MasonryGrid({ photos, forceCompact, onPhotoClick }: MasonryGridProps) {
+export default function MasonryGrid({ photos, forceCompact, onPhotoClick, sortBy = 'date_desc' }: MasonryGridProps) {
   const { prefs } = usePreferences();
 
   if (photos.length === 0) return null;
 
-  // Real Masonry Columns
-  let gridClass = "columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-4 px-4 lg:px-6";
+  // Premium Square Grid Layout (Apple Photos/Instagram Style)
+  let gridClass = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 lg:gap-3 px-4 lg:px-6";
   if (forceCompact || prefs.gridDensity === 'compact') {
-    gridClass = "columns-3 sm:columns-4 md:columns-6 lg:columns-8 gap-2 px-2 lg:px-4";
+    gridClass = "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-9 gap-1 lg:gap-1.5 px-2 lg:px-4";
   } else if (prefs.gridDensity === 'large') {
     return <FocusView photos={photos} onPhotoClick={onPhotoClick} />;
   }
 
-  const groups: { title: string, items: PhotoMetadata[] }[] = [];
-  let currentGroup: { title: string, items: PhotoMetadata[] } | null = null;
+  const isDateSort = sortBy === 'date_desc' || sortBy === 'date_asc';
+  
+  const groups: { title: string | null, items: PhotoMetadata[] }[] = [];
+  let currentGroup: { title: string | null, items: PhotoMetadata[] } | null = null;
 
   photos.forEach(photo => {
-    const d = new Date(photo.created_at);
-    const monthYear = d.toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' });
+    let groupTitle = null;
+    if (isDateSort) {
+      const d = new Date(photo.created_at);
+      groupTitle = d.toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' });
+    }
     
-    if (!currentGroup || currentGroup.title !== monthYear) {
-      currentGroup = { title: monthYear, items: [] };
+    if (!currentGroup || currentGroup.title !== groupTitle) {
+      currentGroup = { title: groupTitle, items: [] };
       groups.push(currentGroup);
     }
     currentGroup.items.push(photo);
@@ -39,13 +45,15 @@ export default function MasonryGrid({ photos, forceCompact, onPhotoClick }: Maso
 
   return (
     <div>
-      {groups.map((group) => (
-        <div key={group.title} className="mb-8">
-          <div className="sticky top-[72px] z-20 backdrop-blur-md px-4 lg:px-6 py-2 mb-4" style={{ background: 'var(--bg-primary-transparent)' }}>
-            <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
-              {group.title}
-            </h2>
-          </div>
+      {groups.map((group, index) => (
+        <div key={group.title || `group-${index}`} className={group.title ? "mb-8" : "mb-2"}>
+          {group.title && (
+            <div className="sticky top-[72px] z-20 backdrop-blur-md px-4 lg:px-6 py-2 mb-4" style={{ background: 'var(--bg-primary-transparent)' }}>
+              <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                {group.title}
+              </h2>
+            </div>
+          )}
           <div className={gridClass}>
             {group.items.map((photo) => (
               <PhotoCard 

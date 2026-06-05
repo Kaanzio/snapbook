@@ -12,7 +12,7 @@ import PhotoSelectorModal from '@/components/collections/PhotoSelectorModal';
 import CollectionForm from '@/components/collections/CollectionForm';
 import { updateCollection, notifyDataChange } from '@/lib/indexeddb';
 import { showToast } from '@/components/ui/Toast';
-import { Collection } from '@/types';
+import { Collection, PhotoSortOption } from '@/types';
 
 function CollectionDetailContent() {
   const searchParams = useSearchParams();
@@ -22,6 +22,7 @@ function CollectionDetailContent() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
+  const [sortBy, setSortBy] = useState<PhotoSortOption>('date_desc');
   const [isSelectingCover, setIsSelectingCover] = useState(false);
   const { prefs, updatePrefs } = usePreferences();
 
@@ -60,9 +61,21 @@ function CollectionDetailContent() {
       if (showFavorites) {
         filtered = filtered.filter(p => p.is_starred);
       }
+      
+      // Sort logic
+      filtered.sort((a, b) => {
+        switch (sortBy) {
+          case 'date_asc': return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          case 'note_asc': return (a.note || '').localeCompare(b.note || '');
+          case 'note_desc': return (b.note || '').localeCompare(a.note || '');
+          case 'date_desc':
+          default: return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        }
+      });
+      
       return filtered;
     },
-    [photos, collectionId, showFavorites]
+    [photos, collectionId, showFavorites, sortBy]
   );
 
   const loading = photosLoading || collectionsLoading;
@@ -133,6 +146,19 @@ function CollectionDetailContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
               </svg>
             </button>
+
+            {/* Sort Menu */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as PhotoSortOption)}
+              className="px-2 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-colors border-0"
+              style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
+            >
+              <option value="date_desc">En Yeni</option>
+              <option value="date_asc">En Eski</option>
+              <option value="note_asc">A-Z</option>
+              <option value="note_desc">Z-A</option>
+            </select>
 
             <button
               onClick={toggleDensity}
@@ -208,6 +234,7 @@ function CollectionDetailContent() {
             )}
             <MasonryGrid 
               photos={collectionPhotos} 
+              sortBy={sortBy}
               onPhotoClick={isSelectingCover ? handleSetCover : undefined}
             />
           </>

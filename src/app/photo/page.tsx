@@ -36,7 +36,10 @@ function PhotoDetailContent() {
   const [editTags, setEditTags] = useState<string[]>([]);
   const [editCategory, setEditCategory] = useState<string>('other');
   const editingRef = useRef(editing);
-  editingRef.current = editing;
+  
+  useEffect(() => {
+    editingRef.current = editing;
+  }, [editing]);
 
   useEffect(() => {
     if (!photoId) {

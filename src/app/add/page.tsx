@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import DropZone from '@/components/upload/DropZone';
 import MetadataForm from '@/components/upload/MetadataForm';
@@ -21,6 +21,13 @@ export default function AddPage() {
     collection_ids: [],
     captureLocation: false,
   });
+
+  // Cleanup object URLs on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      previews.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [previews]);
 
   const handleFilesSelected = useCallback((files: File[]) => {
     setSelectedFiles(files);
@@ -82,9 +89,9 @@ export default function AddPage() {
     <div className="min-h-screen">
       {/* Header */}
       <header className="sticky top-0 z-30 themed-header">
-        <div className="px-4 lg:px-6 py-4">
-          <h1 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>Fotoğraf Ekle</h1>
-          <p className="text-sm mt-0.5" style={{ color: 'var(--text-tertiary)' }}>Yeni fotoğraflar yükleyin</p>
+        <div className="px-4 lg:px-6 py-6 mb-2">
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight" style={{ color: 'var(--text-primary)' }}>Fotoğraf Ekle</h1>
+          <p className="text-sm mt-1 font-medium" style={{ color: 'var(--text-tertiary)' }}>Yeni fotoğraflar yükleyin</p>
         </div>
       </header>
 

@@ -33,6 +33,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Snapbook" />
+        <link rel="icon" type="image/svg+xml" href="/snapbook/icon.svg" />
         <link rel="apple-touch-icon" href="/snapbook/icon-180.png" />
       </head>
       <body className="min-h-full flex flex-col" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>

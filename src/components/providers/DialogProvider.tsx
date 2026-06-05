@@ -32,6 +32,13 @@ export function DialogProvider({ children }: { children: ReactNode }) {
   
   const resolver = useRef<((value: boolean | string | null) => void) | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const confirm = useCallback((message: string): Promise<boolean> => {
     return new Promise((resolve) => {
@@ -56,7 +63,10 @@ export function DialogProvider({ children }: { children: ReactNode }) {
       resolver.current(value);
       resolver.current = null;
     }
-    setTimeout(() => {
+    
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    
+    timeoutRef.current = setTimeout(() => {
       setOptions(null);
       setInputValue('');
     }, 300);
@@ -111,9 +121,10 @@ export function DialogProvider({ children }: { children: ReactNode }) {
                 </button>
                 <button
                   onClick={() => handleClose(options.type === 'confirm' ? true : inputValue)}
-                  className="px-5 py-2.5 rounded-xl font-medium bg-accent text-white hover:bg-accent/80 transition-colors focus:ring-2 focus:ring-accent focus:ring-offset-2 dark:focus:ring-offset-[#1a1a1a] focus:outline-none active:scale-95"
+                  className="px-5 py-2.5 rounded-xl font-bold transition-all focus:outline-none active:scale-95 shadow-md"
+                  style={{ background: 'var(--accent)', color: 'white' }}
                 >
-                  Onayla
+                  {options.type === 'confirm' ? 'Onayla' : 'Kaydet'}
                 </button>
               </div>
             </div>

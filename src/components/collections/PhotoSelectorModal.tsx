@@ -4,7 +4,6 @@ import { useState, useMemo } from 'react';
 import Modal from '@/components/ui/Modal';
 import { usePhotos } from '@/hooks/usePhotos';
 import { usePhotoImage } from '@/hooks/usePhotoImage';
-import { PhotoMetadata } from '@/types';
 import { updatePhotoMetadata, notifyDataChange } from '@/lib/indexeddb';
 import { showToast } from '@/components/ui/Toast';
 

@@ -49,29 +49,29 @@
 
 /* ==================== DARK THEME ==================== */
 .theme-dark {
-  --bg-primary: #0b0b0c;
-  --bg-secondary: #121214;
-  --bg-tertiary: #18181a;
-  --bg-card: #0e0e10;
-  --bg-card-hover: #151518;
-  --bg-overlay: rgba(0, 0, 0, 0.7);
-  --bg-nav: rgba(11, 11, 12, 0.85);
+  --bg-primary: #191c1e;
+  --bg-secondary: #1f2326;
+  --bg-tertiary: #252a2d;
+  --bg-card: #1d2124;
+  --bg-card-hover: #232729;
+  --bg-overlay: rgba(0, 0, 0, 0.65);
+  --bg-nav: rgba(25, 28, 30, 0.88);
 
-  --text-primary: #f2f2f2;
-  --text-secondary: #a1a1aa;
-  --text-tertiary: #71717a;
-  --text-muted: #52525b;
+  --text-primary: #eef0f2;
+  --text-secondary: #a8b0b8;
+  --text-tertiary: #6e7880;
+  --text-muted: #4a5260;
 
-  --border-primary: rgba(255, 255, 255, 0.08);
+  --border-primary: rgba(255, 255, 255, 0.09);
   --border-secondary: rgba(255, 255, 255, 0.05);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.8);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.7);
   --shadow-accent: 0 4px 14px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.2);
 
-  --skeleton-base: #151518;
-  --skeleton-highlight: #1c1c20;
+  --skeleton-base: #21262a;
+  --skeleton-highlight: #2a3035;
 
   --scrollbar-track: transparent;
   --scrollbar-thumb: rgba(255, 255, 255, 0.1);
@@ -335,6 +335,201 @@ html {
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.break-inside-avoid {
+  break-inside: avoid;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ==================== THEMED COMPONENTS ==================== */
+
+/* Page animation */
+.page-enter {
+  animation: pageEnter 0.4s ease-out;
+}
+
+/* Card styles with theme */
+.themed-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              box-shadow 0.3s ease, 
+              border-color 0.3s ease,
+              var(--theme-transition);
+}
+
+
+
+/* Header backdrop */
+.themed-header {
+  background: var(--bg-nav);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+/* Input styles */
+.themed-input {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  color: var(--text-primary);
+  transition: var(--theme-transition), border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.themed-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.15);
+  outline: none;
+}
+
+.themed-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Button accent */
+.btn-accent {
+  background: linear-gradient(135deg, 
+    hsl(var(--accent-h), var(--accent-s), var(--accent-l)), 
+    hsl(calc(var(--accent-h) + 20), var(--accent-s), calc(var(--accent-l) - 8%)));
+  color: var(--accent-foreground, white);
+  border: none;
+  box-shadow: var(--shadow-accent);
+  transition: transform 0.2s ease, box-shadow 0.3s ease, opacity 0.2s ease;
+}
+
+.btn-accent:hover {
+  box-shadow: 0 6px 20px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-accent:active {
+  transform: scale(0.98);
+}
+
+/* Nav item */
+.nav-item-active {
+  background: var(--accent);
+  color: var(--accent-foreground, white) !important;
+}
+
+/* Accent text */
+.text-accent {
+  color: var(--accent);
+}
+
+/* Accent bg */
+.bg-accent-soft {
+  background: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.1);
+}
+
+/* FAB (Floating Action Button) */
+.fab {
+  position: fixed;
+  bottom: 88px;
+  right: 20px;
+  z-index: 45;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  animation: springIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.fab:hover {
+  transform: scale(1.08);
+}
+
+.fab:active {
+  transform: scale(0.94);
+  animation: tapFeedback 0.15s ease;
+}
+
+@media (min-width: 1024px) {
+  .fab {
+    bottom: 32px;
+    right: 32px;
+  }
+}
+
+/* Haptic tap effect for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .haptic-tap:active {
+    animation: tapFeedback 0.12s ease;
+  }
+}
+
+/* ==================== PWA STANDALONE ==================== */
+@media (display-mode: standalone) {
+  .safe-area-bottom {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4px);
+  }
+}
+
+/* ==================== CANVAS MODE ==================== */
+.canvas-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  background: var(--bg-secondary);
+}
+
+.canvas-container:active {
+  cursor: grabbing;
+}
+
+/* React Flow Theming */
+.react-flow__controls-button {
+  background: var(--bg-card) !important;
+  fill: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border-secondary) !important;
+}
+.react-flow__controls-button:hover {
+  background: var(--bg-secondary) !important;
+}
+.react-flow__controls-button svg {
+  fill: var(--text-primary) !important;
+}
+.react-flow__minimap {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-primary) !important;
+  border-radius: 12px !important;
+}
+.react-flow__attribution {
+  background: transparent !important;
+  color: var(--text-tertiary) !important;
+}
+.react-flow__handle {
+  width: 10px !important;
+  height: 10px !important;
+  background: var(--accent) !important;
+  border: 2px solid var(--bg-primary) !important;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.react-flow__node.selected .react-flow__handle,
+.react-flow__node:hover .react-flow__handle {
+  opacity: 1;
+}
+.react-flow__edge-path {
+  transition: stroke 0.2s, stroke-width 0.2s;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

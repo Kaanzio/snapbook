@@ -62,19 +62,26 @@ export default function CollectionsPage() {
   return (
     <div className="min-h-screen pb-20">
       {/* Header */}
-      <header className="sticky top-0 z-30 pt-8 pb-4 lg:pt-12 px-4 lg:px-6 flex items-end justify-between bg-transparent">
-        <h1 className="text-4xl md:text-5xl font-black tracking-tight" style={{ color: 'var(--text-primary)' }}>
-          Koleksiyonlar
-        </h1>
-        <button
-          onClick={() => setShowForm(true)}
-          className="p-3 rounded-full btn-accent haptic-tap transition-transform hover:scale-105 active:scale-95"
-          title="Yeni Koleksiyon"
-        >
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-        </button>
+      <header className="sticky top-0 z-30 themed-header">
+        <div className="px-4 lg:px-6 py-6 mb-2 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight" style={{ color: 'var(--text-primary)' }}>
+              Koleksiyonlar
+            </h1>
+            <p className="text-sm mt-1 font-medium" style={{ color: 'var(--text-tertiary)' }}>
+              {loading ? 'Yükleniyor...' : `${collections.length} koleksiyon`}
+            </p>
+          </div>
+          <button
+            onClick={() => setShowForm(true)}
+            className="p-3 rounded-full btn-accent haptic-tap transition-transform hover:scale-105 active:scale-95"
+            title="Yeni Koleksiyon"
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+          </button>
+        </div>
       </header>
 
       {/* Content */}

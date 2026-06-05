@@ -6,6 +6,7 @@ import { usePhotoImage } from '@/hooks/usePhotoImage';
 import { useCategories } from '@/hooks/useCategories';
 import StarToggle from '@/components/ui/StarToggle';
 import { updatePhotoMetadata, notifyDataChange } from '@/lib/indexeddb';
+import { CategoryIcon } from '@/components/ui/CategoryIcon';
 
 interface PhotoCardProps {
   photo: PhotoMetadata;
@@ -24,7 +25,7 @@ export default function PhotoCard({ photo, onClick }: PhotoCardProps) {
   return (
     <Link 
       href={`/photo/?id=${photo.id}`} 
-      className="block break-inside-avoid mb-3 group haptic-tap"
+      className="block relative aspect-square rounded-[18px] md:rounded-2xl overflow-hidden group haptic-tap bg-black/5 border border-white/5 shadow-sm"
       onClick={(e) => {
         if (onClick) {
           e.preventDefault();
@@ -32,16 +33,16 @@ export default function PhotoCard({ photo, onClick }: PhotoCardProps) {
         }
       }}
     >
-      <div className="relative themed-card overflow-hidden">
+      <div className="absolute inset-0 w-full h-full">
         {/* Image */}
-        <div className="relative overflow-hidden">
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
           {loading ? (
-            <div className="aspect-square skeleton" />
+            <div className="w-full h-full skeleton" />
           ) : (
             <img
               src={imageUrl || undefined}
               alt={photo.note || 'Fotoğraf'}
-              className="w-full h-auto object-cover transition-transform duration-500"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
               loading="lazy"
             />
           )}
@@ -53,10 +54,10 @@ export default function PhotoCard({ photo, onClick }: PhotoCardProps) {
           {/* Category badge */}
           <div className="absolute top-2.5 left-2.5">
             <span
-              className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium backdrop-blur-sm shadow-sm"
+              className="inline-flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium backdrop-blur-sm shadow-sm"
               style={{ color: category.color, background: 'var(--bg-nav)' }}
             >
-              <span className="text-sm">{category.icon}</span>
+              <CategoryIcon categoryKey={category.key} className="w-3.5 h-3.5" />
               {category.label}
             </span>
           </div>
@@ -117,10 +118,10 @@ function PhotoPlaceholder({ photo }: { photo: PhotoMetadata }) {
           <p className="text-xs font-medium mb-1" style={{ color: 'var(--text-secondary)' }}>Bu fotoğraf başka bir cihazda</p>
           <p className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>{photo.device_name}</p>
           <span
-            className="inline-flex items-center gap-1 mt-3 px-2 py-1 rounded-lg text-[11px] font-medium"
+            className="inline-flex items-center gap-1.5 mt-3 px-2 py-1.5 rounded-lg text-[11px] font-medium"
             style={{ color: category.color, background: 'var(--bg-secondary)' }}
           >
-            {category.icon} {category.label}
+            <CategoryIcon categoryKey={category.key} className="w-3.5 h-3.5" /> {category.label}
           </span>
         </div>
       </div>

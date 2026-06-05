@@ -14,7 +14,7 @@ export default function SearchPage() {
   const toggleDensity = () => {
     const modes = ['compact', 'normal', 'large'];
     const currentIndex = modes.indexOf(prefs.gridDensity);
-    const nextMode = modes[(currentIndex + 1) % modes.length] as any;
+    const nextMode = modes[(currentIndex + 1) % modes.length] as 'compact' | 'normal' | 'large';
     updatePrefs({ gridDensity: nextMode });
   };
   
@@ -126,7 +126,13 @@ export default function SearchPage() {
           </div>
         ) : filteredPhotos.length === 0 && isSearching ? (
           <div className="py-20 text-center animate-[fade-in_0.5s_ease-out]">
-            <div className="text-6xl mb-4">🔍</div>
+            <div className="flex justify-center mb-6">
+              <div className="p-5 rounded-full bg-black/5 dark:bg-white/5 text-accent/50">
+                <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+            </div>
             <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Eşleşme Bulunamadı</h2>
             <p style={{ color: 'var(--text-secondary)' }}>Farklı bir kelime veya etiket deneyin.</p>
           </div>

@@ -55,6 +55,22 @@ export function useSearch(photos: PhotoMetadata[], filters: FilterState): PhotoM
       });
     }
 
+    // Sort
+    const sortBy = filters.sortBy || 'date_desc';
+    result.sort((a, b) => {
+      switch (sortBy) {
+        case 'date_asc':
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        case 'note_asc':
+          return (a.note || '').localeCompare(b.note || '');
+        case 'note_desc':
+          return (b.note || '').localeCompare(a.note || '');
+        case 'date_desc':
+        default:
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+    });
+
     return result;
   }, [photos, filters]);
 }

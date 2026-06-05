@@ -6,6 +6,7 @@ import { WatchItem, WATCH_TYPE_INFO } from '@/types';
 import { usePhotoImage } from '@/hooks/usePhotoImage';
 import { useWatchlist } from '@/hooks/useWatchlist';
 import { useDialog } from '@/components/providers/DialogProvider';
+import { WatchStatusIcon } from './WatchIcons';
 
 interface WatchCardProps {
   item: WatchItem;
@@ -20,13 +21,21 @@ export default function WatchCard({ item }: WatchCardProps) {
   
   const typeInfo = WATCH_TYPE_INFO[item.type];
   
-  // Yıl ve ek bilgi metni oluştur
-  const year = new Date(item.created_at).getFullYear();
-  let infoText = `${year}`;
+  // Çıkış yılı veya ek bilgi metni
+  const displayYear = item.releaseYear ?? null;
+  let infoText = displayYear ? `${displayYear}` : '—';
+  
+  if (item.duration) {
+    const hours = Math.floor(item.duration / 60);
+    const mins = item.duration % 60;
+    const durationText = hours > 0 ? `${hours}s${mins > 0 ? ` ${mins}dk` : ''}` : `${mins}dk`;
+    infoText += ` • ${durationText}`;
+  }
+
   if (item.type === 'series' && item.currentSeason) {
     infoText += ` • ${item.currentSeason}. Sezon`;
   } else if (item.rating) {
-    infoText += ` • ⭐ ${item.rating}`;
+    infoText += ` • IMDb ${item.rating}/10`;
   }
 
   return (
@@ -47,7 +56,7 @@ export default function WatchCard({ item }: WatchCardProps) {
           />
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-            <span className="text-4xl mb-2 opacity-50">{typeInfo.icon}</span>
+            <WatchStatusIcon icon={typeInfo.icon} className="w-10 h-10 mb-2 opacity-30" />
             <span className="text-xs font-medium opacity-50" style={{ color: 'var(--text-tertiary)' }}>Afiş Yok</span>
           </div>
         )}
@@ -122,7 +131,11 @@ export default function WatchCard({ item }: WatchCardProps) {
                           className="w-full text-left px-3 py-2 text-sm hover:bg-white/10 rounded-lg flex items-center justify-between transition-colors"
                         >
                           <span className="truncate pr-2">{list.name}</span>
-                          {isInList && <span className="text-green-500 font-bold shrink-0">✓</span>}
+                          {isInList && (
+                            <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                          )}
                         </button>
                       );
                     })
@@ -136,10 +149,7 @@ export default function WatchCard({ item }: WatchCardProps) {
 
       {/* Info Below Poster */}
       <div className="mt-2.5 flex flex-col px-1">
-        <h3 className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
-          {item.title}
-        </h3>
-        <span className="text-[11px] font-medium mt-0.5" style={{ color: 'var(--text-tertiary)' }}>
+        <span className="text-xs font-semibold tracking-wide truncate" style={{ color: 'var(--text-secondary)' }}>
           {infoText}
         </span>
       </div>

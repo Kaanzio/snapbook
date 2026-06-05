@@ -2,7 +2,7 @@ import { Handle, Position, NodeProps, NodeResizer } from '@xyflow/react';
 import { usePhotoImage } from '@/hooks/usePhotoImage';
 
 export default function PhotoNode({ data, selected }: NodeProps) {
-  const nodeData = data as Record<string, any>;
+  const nodeData = data as Record<string, unknown>;
   const { imageUrl, loading } = usePhotoImage(nodeData.photoData?.id || '');
 
   return (

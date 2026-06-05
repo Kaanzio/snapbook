@@ -65,14 +65,14 @@ function FlowCanvas({ canvasId, initialNodes, initialEdges }: { canvasId: string
   const [cmdQuery, setCmdQuery] = useState('');
   const [menu, setMenu] = useState<{ id: string; top?: number; left?: number; right?: number; bottom?: number } | null>(null);
   const [showBgPicker, setShowBgPicker] = useState(false);
-  const [canvasBg, setCanvasBg] = useState('#0a0a0a');
+  const [canvasBg, setCanvasBg] = useState('var(--bg-primary)');
   const { fitView, screenToFlowPosition } = useReactFlow();
   const { confirm } = useDialog();
 
   const BG_COLORS = [
-    '#0a0a0a', '#111111', '#1a1a2e', '#0f0f23', '#1a0a0a',
-    '#0a1a0a', '#0d1117', '#18181b', '#1e1e2e', '#282a36',
-    '#1e293b', '#172554', '#fafafa', '#f5f5f4', '#fef9c3',
+    'var(--bg-primary)', 'var(--bg-secondary)', 'var(--bg-card)', '#1a1a2e', '#0f0f23',
+    '#1a0a0a', '#0a1a0a', '#0d1117', '#18181b', '#1e1e2e',
+    '#282a36', '#1e293b', '#172554', '#fafafa', '#fef9c3',
   ];
 
   // Drop from library
