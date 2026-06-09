@@ -204,7 +204,6 @@ export default function WatchlistAddPage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-12 pr-4 py-4 rounded-2xl font-medium shadow-sm transition-shadow focus:shadow-md outline-none"
                   style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-primary)' }}
-                  autoFocus
                 />
                 {isSearching && (
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center">

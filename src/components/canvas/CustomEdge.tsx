@@ -111,7 +111,6 @@ export default function CustomEdge({
               onChange={(e) => setLabelText(e.target.value)}
               onBlur={onLabelBlur}
               onKeyDown={(e) => e.key === 'Enter' && onLabelBlur()}
-              autoFocus
             />
           ) : (
             <div

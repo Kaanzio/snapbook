@@ -10,13 +10,23 @@ import { DialogProvider } from '@/components/providers/DialogProvider';
 import FloatingActionButton from '@/components/ui/FloatingActionButton';
 import PageTransition from '@/components/ui/PageTransition';
 
+import WelcomeScreen from './WelcomeScreen';
+
 interface AppShellProps {
   children: React.ReactNode;
 }
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
-  const { prefs } = usePreferences();
+  const { prefs, loaded } = usePreferences();
   const sidebarWidth = prefs.sidebarCollapsed ? '64px' : '260px';
+
+  // Wait for IndexedDB to load preferences to avoid hydration mismatch and wrong lock state
+  if (!loaded) return null;
+
+  // Show Welcome Screen if the app is explicitly locked, OR if no PIN is set yet (first launch or existing user without pin)
+  if (prefs.isLocked || !prefs.pin) {
+    return <WelcomeScreen />;
+  }
 
   return (
     <>

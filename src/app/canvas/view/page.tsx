@@ -173,10 +173,10 @@ function FlowCanvas({ canvasId, initialNodes, initialEdges }: { canvasId: string
   const Icon = ({ d }: { d: string }) => <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d={d} /></svg>;
 
   return (
-    <div className="h-screen w-screen overflow-hidden relative flex" style={{ background: canvasBg }}>
+    <div className="fixed inset-0 w-full h-[100dvh] overflow-hidden flex touch-none overscroll-none" style={{ background: canvasBg }}>
 
-      {/* ── Left Sidebar (VVD style - always visible) ── */}
-      <div className={`h-full flex-shrink-0 flex flex-col bg-black/60 backdrop-blur-2xl border-r border-white/[0.06] transition-all duration-500 ${showLibrary ? 'w-[200px]' : 'w-0 overflow-hidden border-r-0'}`}>
+      {/* ── Left Sidebar (Responsive Overlay) ── */}
+      <div className={`absolute md:relative z-[60] h-full flex-shrink-0 flex flex-col bg-black/80 md:bg-black/60 backdrop-blur-3xl md:backdrop-blur-2xl border-r border-white/[0.06] transition-all duration-300 ease-in-out ${showLibrary ? 'w-[260px] translate-x-0' : 'w-[260px] md:w-0 -translate-x-full md:translate-x-0 overflow-hidden border-r-0'}`}>
         {/* Sidebar Header */}
         <div className="p-3 flex items-center justify-between">
           <button onClick={() => router.push('/canvas')} className="p-1 text-white/30 hover:text-white transition-all">
@@ -229,7 +229,7 @@ function FlowCanvas({ canvasId, initialNodes, initialEdges }: { canvasId: string
       </div>
 
       {/* ── Bottom Dock ── */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-black/50 backdrop-blur-2xl border border-white/[0.06] shadow-2xl">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-black/50 backdrop-blur-2xl border border-white/[0.06] shadow-2xl max-w-[90vw] overflow-x-auto no-scrollbar">
         <ToolBtn onClick={() => setShowLibrary(!showLibrary)} title="Sidebar" active={showLibrary}><Icon d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></ToolBtn>
 
         <div className="w-px h-7 bg-white/[0.06] mx-0.5" />
@@ -276,7 +276,7 @@ function FlowCanvas({ canvasId, initialNodes, initialEdges }: { canvasId: string
           <div onClick={(e) => e.stopPropagation()} className="relative w-full max-w-md rounded-xl bg-neutral-900/95 backdrop-blur-2xl border border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.8)] overflow-hidden">
             <div className="flex items-center gap-3 px-4 py-3 border-b border-white/[0.06]">
               <Icon d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-              <input value={cmdQuery} onChange={(e) => setCmdQuery(e.target.value)} placeholder="Type a command..." autoFocus className="flex-1 bg-transparent text-sm text-white/90 focus:outline-none placeholder:text-white/20" />
+              <input value={cmdQuery} onChange={(e) => setCmdQuery(e.target.value)} placeholder="Type a command..." className="flex-1 bg-transparent text-sm text-white/90 focus:outline-none placeholder:text-white/20" />
               <kbd className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-white/20 font-mono">ESC</kbd>
             </div>
             <div className="max-h-[300px] overflow-y-auto py-1">
@@ -299,16 +299,11 @@ function FlowCanvas({ canvasId, initialNodes, initialEdges }: { canvasId: string
           onDragOver={onDragOver} onDrop={onDrop}
           nodeTypes={nodeTypes} edgeTypes={edgeTypes}
           fitView defaultEdgeOptions={{ type: 'custom' }}
-          colorMode="dark" panOnScroll selectionOnDrag elevateNodesOnSelect
+          colorMode="dark" panOnDrag={true} selectionOnDrag={false} elevateNodesOnSelect
           style={{ background: canvasBg }}
           onEdgeDoubleClick={async (_, edge) => { if (await confirm('Delete this connection?')) setEdges((e) => e.filter((x) => x.id !== edge.id)); }}
         >
           <Background variant={BackgroundVariant.Dots} gap={20} size={1.5} color="rgba(255,255,255,0.08)" style={{ backgroundColor: 'transparent' }} />
-          <MiniMap
-            nodeStrokeWidth={3} zoomable pannable
-            style={{ background: '#111', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}
-            maskColor="rgba(0,0,0,0.7)"
-          />
           <Controls showFitView={false} style={{ background: 'rgba(23,23,23,0.9)', borderColor: 'rgba(255,255,255,0.06)', fill: 'rgba(255,255,255,0.5)', borderRadius: '12px', overflow: 'hidden', backdropFilter: 'blur(10px)' }} />
           {menu && <CanvasContextMenu {...menu} onClose={() => setMenu(null)} />}
         </ReactFlow>
@@ -348,11 +343,11 @@ function CanvasEditorContent() {
     })();
   }, [canvasId]);
 
-  if (!initialData) return <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><div className="w-6 h-6 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" /></div>;
+  if (!initialData) return <div className="min-h-[100dvh] bg-[#0a0a0a] flex items-center justify-center"><div className="w-6 h-6 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" /></div>;
 
   return <ReactFlowProvider><FlowCanvas canvasId={canvasId} initialNodes={initialData.nodes} initialEdges={initialData.edges} /></ReactFlowProvider>;
 }
 
 export default function CanvasEditorPage() {
-  return <Suspense fallback={<div className="min-h-screen bg-[#0a0a0a]" />}><CanvasEditorContent /></Suspense>;
+  return <Suspense fallback={<div className="min-h-[100dvh] bg-[#0a0a0a]" />}><CanvasEditorContent /></Suspense>;
 }

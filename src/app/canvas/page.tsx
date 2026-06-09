@@ -187,7 +187,7 @@ export default function CanvasListPage() {
                         <input type="text" value={renameValue} onChange={(e) => setRenameValue(e.target.value)}
                           onKeyDown={(e) => e.key === 'Enter' && handleRename(canvas.id)}
                           onBlur={() => handleRename(canvas.id)}
-                          className="text-lg font-black tracking-tight px-2 py-1 rounded-lg themed-input w-full" autoFocus />
+                          className="text-lg font-black tracking-tight px-2 py-1 rounded-lg themed-input w-full" />
                       </div>
                     ) : (
                       <>
@@ -240,7 +240,6 @@ export default function CanvasListPage() {
                   onKeyDown={(e) => e.key === 'Enter' && createNewCanvas()}
                   placeholder={`Canvas ${canvases.length + 1}`}
                   className="w-full px-4 py-3 rounded-xl text-sm font-medium themed-input"
-                  autoFocus
                 />
               </div>
 

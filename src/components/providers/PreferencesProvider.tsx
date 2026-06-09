@@ -9,6 +9,7 @@ interface PreferencesContextValue {
   resolvedTheme: 'light' | 'dark' | 'oled';
   updatePrefs: (updates: Partial<AppPreferences>) => void;
   accentHSL: { h: number; s: number; l: number };
+  loaded: boolean;
 }
 
 const PreferencesContext = createContext<PreferencesContextValue>({
@@ -16,6 +17,7 @@ const PreferencesContext = createContext<PreferencesContextValue>({
   resolvedTheme: 'light',
   updatePrefs: () => {},
   accentHSL: { h: 239, s: 84, l: 67 },
+  loaded: false,
 });
 
 export function usePreferences() {
@@ -143,7 +145,7 @@ export default function PreferencesProvider({ children }: { children: ReactNode 
   }, []);
 
   return (
-    <PreferencesContext.Provider value={{ prefs, resolvedTheme, updatePrefs, accentHSL }}>
+    <PreferencesContext.Provider value={{ prefs, resolvedTheme, updatePrefs, accentHSL, loaded }}>
       {children}
     </PreferencesContext.Provider>
   );

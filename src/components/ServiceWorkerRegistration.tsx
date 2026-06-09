@@ -5,11 +5,9 @@ import { useEffect } from 'react';
 export default function ServiceWorkerRegistration() {
   useEffect(() => {
     if ('serviceWorker' in navigator) {
-      const basePath = '/snapbook';
-      
       // Register SW
       navigator.serviceWorker
-        .register(`${basePath}/sw.js`, { scope: `${basePath}/` })
+        .register('/sw.js', { scope: '/' })
         .then((registration) => {
           console.log('SW registered:', registration.scope);
         })

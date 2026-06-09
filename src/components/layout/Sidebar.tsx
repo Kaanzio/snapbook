@@ -130,6 +130,19 @@ export default function Sidebar() {
             Yerel depolama
           </div>
         )}
+        {/* Lock App */}
+        {prefs.pin && (
+          <button
+            onClick={() => updatePrefs({ isLocked: true })}
+            className={`flex items-center justify-center ${isCollapsed ? 'w-10 h-10' : 'w-full py-2.5 gap-2'} rounded-xl text-xs font-bold transition-colors hover:bg-red-500/10 text-red-500 haptic-tap mt-2 mb-2`}
+            title={isCollapsed ? 'Kilitle' : 'Uygulamayı Kilitle'}
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+            {!isCollapsed && <span>KİLİTLE</span>}
+          </button>
+        )}
         
         <button
           onClick={() => updatePrefs({ sidebarCollapsed: !isCollapsed })}

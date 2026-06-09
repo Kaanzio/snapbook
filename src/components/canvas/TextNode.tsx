@@ -57,14 +57,14 @@ export default function TextNode({ id, data, selected }: NodeProps) {
         lineStyle={{ borderColor: '#6366f1', borderWidth: 1.5 }}
         handleStyle={{ width: 8, height: 8, background: '#6366f1', borderRadius: '50%' }}
       />
-      <Handle type="target" position={Position.Top} id="top-t" className={`!w-2.5 !h-2.5 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
-      <Handle type="source" position={Position.Top} id="top-s" className={`!w-2.5 !h-2.5 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
-      <Handle type="target" position={Position.Bottom} id="bot-t" className={`!w-2.5 !h-2.5 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
-      <Handle type="source" position={Position.Bottom} id="bot-s" className={`!w-2.5 !h-2.5 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
-      <Handle type="target" position={Position.Left} id="left-t" className={`!w-2.5 !h-2.5 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
-      <Handle type="source" position={Position.Left} id="left-s" className={`!w-2.5 !h-2.5 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
-      <Handle type="target" position={Position.Right} id="right-t" className={`!w-2.5 !h-2.5 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
-      <Handle type="source" position={Position.Right} id="right-s" className={`!w-2.5 !h-2.5 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
+      <Handle type="target" position={Position.Top} id="top-t" className={`!w-4 !h-4 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
+      <Handle type="source" position={Position.Top} id="top-s" className={`!w-4 !h-4 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
+      <Handle type="target" position={Position.Bottom} id="bot-t" className={`!w-4 !h-4 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
+      <Handle type="source" position={Position.Bottom} id="bot-s" className={`!w-4 !h-4 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
+      <Handle type="target" position={Position.Left} id="left-t" className={`!w-4 !h-4 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
+      <Handle type="source" position={Position.Left} id="left-s" className={`!w-4 !h-4 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
+      <Handle type="target" position={Position.Right} id="right-t" className={`!w-4 !h-4 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
+      <Handle type="source" position={Position.Right} id="right-s" className={`!w-4 !h-4 !bg-indigo-400 !border-none transition-opacity z-50 ${selected ? '!opacity-100' : '!opacity-0 group-hover:!opacity-100'}`} />
 
       {/* Style toolbar */}
       {selected && !isEditing && (

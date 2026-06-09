@@ -55,7 +55,6 @@ export default function CustomCategoryModal({ onClose, onSelect }: Props) {
               onChange={(e) => setName(e.target.value)}
               className="w-full px-3 py-2 rounded-xl text-sm themed-input"
               placeholder="Örn: Evcil Hayvanlar"
-              autoFocus
             />
           </div>
 
@@ -66,8 +65,7 @@ export default function CustomCategoryModal({ onClose, onSelect }: Props) {
               value={icon}
               onChange={(e) => setIcon(e.target.value)}
               maxLength={2}
-              className="w-full px-3 py-2 rounded-xl text-sm themed-input"
-              placeholder="🐶"
+              className="w-full px-4 py-3 rounded-xl text-sm font-medium themed-input"
             />
           </div>
 

@@ -90,6 +90,8 @@ export interface AppPreferences {
   fontSize: FontSize;
   hiddenCategories: string[];
   sidebarCollapsed?: boolean;
+  pin?: string | null;
+  isLocked?: boolean;
 }
 
 export const DEFAULT_PREFERENCES: AppPreferences = {
@@ -99,6 +101,8 @@ export const DEFAULT_PREFERENCES: AppPreferences = {
   fontSize: 'medium',
   hiddenCategories: [],
   sidebarCollapsed: false,
+  pin: null,
+  isLocked: false,
 };
 
 // ==================== CANVAS MODE ====================

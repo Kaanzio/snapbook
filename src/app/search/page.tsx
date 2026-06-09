@@ -87,7 +87,6 @@ export default function SearchPage() {
               style={{
                 boxShadow: isSearching ? 'var(--shadow-sm)' : 'var(--shadow-lg)'
               }}
-              autoFocus
             />
           </div>
 
