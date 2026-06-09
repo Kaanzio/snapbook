@@ -1,17 +1,110 @@
 'use client';
 
-import { useState, Suspense, useRef } from 'react';
+import { useState, Suspense, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useWatchlist } from '@/hooks/useWatchlist';
 import { usePreferences } from '@/components/providers/PreferencesProvider';
 import WatchCard from '@/components/watchlist/WatchCard';
 import EmptyState from '@/components/ui/EmptyState';
-import { WatchStatus, WatchItemType, WATCH_STATUS_INFO, WATCH_TYPE_INFO } from '@/types';
+import { WatchItem, WatchStatus, WatchItemType, WATCH_STATUS_INFO, WATCH_TYPE_INFO } from '@/types';
 import WatchItemModal from '@/components/watchlist/WatchItemModal';
 import CreateListModal from '@/components/watchlist/CreateListModal';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useDialog } from '@/components/providers/DialogProvider';
 import { WatchStatusIcon } from '@/components/watchlist/WatchIcons';
+
+function WatchlistSlider({ groupItems, cardWidthClass }: { groupItems: WatchItem[], cardWidthClass: string }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkScroll = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(Math.ceil(scrollLeft + clientWidth) < scrollWidth);
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, [groupItems]);
+
+  const handleScrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -(scrollRef.current.clientWidth * 0.8), behavior: 'smooth' });
+    }
+  };
+
+  const handleScrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: scrollRef.current.clientWidth * 0.8, behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <div className="relative group/slider">
+      {/* Left Scroll Button */}
+      {canScrollLeft && (
+        <button 
+          type="button"
+          onClick={handleScrollLeft}
+          className="absolute left-0 top-0 bottom-4 z-50 w-12 lg:w-16 flex items-center justify-center opacity-90 hover:opacity-100 transition-opacity cursor-pointer"
+          style={{ background: 'linear-gradient(to right, var(--bg-primary) 10%, transparent)' }}
+          aria-label="Sola kaydır"
+        >
+          <div className="w-8 h-8 rounded-full backdrop-blur-md flex items-center justify-center shadow-lg active:scale-90 transition-transform duration-200" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+          </div>
+        </button>
+      )}
+
+      <motion.div 
+        layout 
+        ref={scrollRef}
+        onScroll={checkScroll}
+        className="flex overflow-x-auto hide-scrollbar gap-3 lg:gap-4 px-4 lg:px-6 pb-4 relative z-0"
+      >
+        <AnimatePresence>
+          {groupItems.map(item => (
+            <motion.div 
+              layout 
+              initial={{ opacity: 0, scale: 0.9 }} 
+              animate={{ opacity: 1, scale: 1 }} 
+              exit={{ opacity: 0, scale: 0.9 }} 
+              key={item.id} 
+              className={`shrink-0 ${cardWidthClass}`}
+            >
+              <WatchCard item={item} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* Right Scroll Button */}
+      {canScrollRight && groupItems.length > 0 && (
+        <button 
+          type="button"
+          onClick={handleScrollRight}
+          className="absolute right-0 top-0 bottom-4 z-50 w-12 lg:w-16 flex items-center justify-center opacity-90 hover:opacity-100 transition-opacity cursor-pointer"
+          style={{ background: 'linear-gradient(to left, var(--bg-primary) 10%, transparent)' }}
+          aria-label="Sağa kaydır"
+        >
+          <div className="w-8 h-8 rounded-full backdrop-blur-md flex items-center justify-center shadow-lg active:scale-90 transition-transform duration-200" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </div>
+        </button>
+      )}
+    </div>
+  );
+}
 
 function WatchlistContent() {
   const router = useRouter();
@@ -279,13 +372,22 @@ function WatchlistContent() {
                     <h2 className="text-sm font-bold tracking-widest uppercase" style={{ color: 'var(--text-primary)' }}>Sonuçlar</h2>
                     <span className="text-xs opacity-60" style={{ color: 'var(--text-tertiary)' }}>{displayItems.length} kayıt</span>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 lg:gap-5 px-4 lg:px-6">
-                    {displayItems.map(item => (
-                      <div key={item.id} className="w-full">
-                        <WatchCard item={item} />
-                      </div>
-                    ))}
-                  </div>
+                  <motion.div layout className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-2.5 sm:gap-4 lg:gap-5 px-4 lg:px-6">
+                    <AnimatePresence>
+                      {displayItems.map(item => (
+                        <motion.div 
+                          layout 
+                          initial={{ opacity: 0, scale: 0.9 }} 
+                          animate={{ opacity: 1, scale: 1 }} 
+                          exit={{ opacity: 0, scale: 0.9 }} 
+                          key={item.id} 
+                          className="w-full"
+                        >
+                          <WatchCard item={item} />
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </motion.div>
                 </div>
               );
             }
@@ -339,6 +441,16 @@ function WatchlistContent() {
                     <span className="text-[10px] opacity-50 font-medium" style={{ color: 'var(--text-tertiary)' }}>
                       {groupItems.length}
                     </span>
+
+                    {groupItems.length > 0 && !reorderMode && (
+                      <Link 
+                        href={`/watchlist/list?id=${customListId || 'unlisted'}`}
+                        className="ml-3 px-2.5 py-1 rounded-md text-xs font-bold transition-colors haptic-tap"
+                        style={{ color: 'var(--text-secondary)', background: 'var(--bg-secondary)' }}
+                      >
+                        Tümünü Gör
+                      </Link>
+                    )}
 
                     {/* Custom list actions */}
                     {customListId && !reorderMode && (
@@ -396,13 +508,7 @@ function WatchlistContent() {
                       </div>
                     </div>
                   ) : (
-                    <div className="flex overflow-x-auto hide-scrollbar gap-3 lg:gap-4 px-4 lg:px-6 snap-x snap-mandatory pb-4">
-                      {groupItems.map(item => (
-                        <div key={item.id} className={`snap-start shrink-0 ${cardWidthClass}`}>
-                          <WatchCard item={item} />
-                        </div>
-                      ))}
-                    </div>
+                    <WatchlistSlider groupItems={groupItems} cardWidthClass={cardWidthClass} />
                   )}
                 </div>
               );
@@ -421,7 +527,7 @@ function WatchlistContent() {
                 {(() => {
                   const unlistedItems = displayItems.filter(item => !item.listIds || item.listIds.length === 0);
                   if (unlistedItems.length > 0) {
-                    return renderSection('Listesiz', unlistedItems, 'unlisted', customLists.length);
+                    return renderSection('Listesiz', unlistedItems, undefined, customLists.length);
                   }
                   return null;
                 })()}
@@ -457,17 +563,6 @@ function WatchlistContent() {
           );
         })()}
       </main>
-
-      {/* ─── FAB ─── */}
-      <Link
-        href="/watchlist/add"
-        className="fixed bottom-20 right-4 lg:right-8 lg:bottom-8 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white z-40 transition-all hover:scale-110 haptic-tap lg:hidden"
-        style={{ background: 'var(--accent)' }}
-      >
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-        </svg>
-      </Link>
 
       {/* ─── MODALS ─── */}
       {viewId && <WatchItemModal id={viewId} onClose={() => router.push('/watchlist')} />}

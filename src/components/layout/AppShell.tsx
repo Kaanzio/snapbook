@@ -8,6 +8,7 @@ import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import PreferencesProvider, { usePreferences } from '@/components/providers/PreferencesProvider';
 import { DialogProvider } from '@/components/providers/DialogProvider';
 import FloatingActionButton from '@/components/ui/FloatingActionButton';
+import PageTransition from '@/components/ui/PageTransition';
 
 interface AppShellProps {
   children: React.ReactNode;

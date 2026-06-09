@@ -72,7 +72,7 @@ export type GridDensity = 'comfortable' | 'compact' | 'large';
 export type FontSize = 'small' | 'medium' | 'large';
 
 export const ACCENT_PRESETS = [
-  { name: 'Snapbook Kırmızısı', value: '#e60000' },
+  { name: 'Snapbook Kırmızısı', value: '#e50914' },
   { name: 'İndigo', value: '#6366f1' },
   { name: 'Mavi', value: '#3b82f6' },
   { name: 'Yeşil', value: '#10b981' },
@@ -93,9 +93,9 @@ export interface AppPreferences {
 }
 
 export const DEFAULT_PREFERENCES: AppPreferences = {
-  theme: 'system',
-  accentColor: '#e60000',
+  theme: 'dark',
   gridDensity: 'comfortable',
+  accentColor: '#e50914',
   fontSize: 'medium',
   hiddenCategories: [],
   sidebarCollapsed: false,
@@ -172,6 +172,9 @@ export interface WatchItem {
   note?: string;
   listIds?: string[];
   trailerUrl?: string; // Fragman bağlantısı
+  posterUrl?: string; // TMDB'den gelen afiş URL'si
+  backdropUrl?: string; // TMDB geniş arka plan URL'si
+  tmdbId?: number; // TMDB kayıt ID'si
   created_at: Date;
   updated_at: Date;
 }

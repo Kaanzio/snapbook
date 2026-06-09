@@ -69,6 +69,11 @@ export default function PreferencesProvider({ children }: { children: ReactNode 
   // Load preferences from IndexedDB
   useEffect(() => {
     getPreferences().then((p) => {
+      // Migrate old Snapbook red to exact Netflix red
+      if (p.accentColor === '#e60000' || p.accentColor === '#E60000') {
+        p.accentColor = '#e50914';
+        savePreferences(p);
+      }
       setPrefs(p);
       setLoaded(true);
     });

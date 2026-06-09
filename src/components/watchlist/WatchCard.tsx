@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { WatchItem, WATCH_TYPE_INFO } from '@/types';
 import { usePhotoImage } from '@/hooks/usePhotoImage';
 import { useWatchlist } from '@/hooks/useWatchlist';
@@ -13,7 +15,12 @@ interface WatchCardProps {
 }
 
 export default function WatchCard({ item }: WatchCardProps) {
-  const { imageUrl, loading } = usePhotoImage(`watch-poster-${item.id}`);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { imageUrl: localImageUrl, loading: localLoading } = usePhotoImage(`watch-poster-${item.id}`);
+  const imageUrl = item.posterUrl || localImageUrl;
+  const loading = !item.posterUrl && localLoading;
+
   const { removeItem, customLists, toggleItemInList } = useWatchlist();
   const { confirm } = useDialog();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -32,19 +39,34 @@ export default function WatchCard({ item }: WatchCardProps) {
     infoText += ` • ${durationText}`;
   }
 
-  if (item.type === 'series' && item.currentSeason) {
-    infoText += ` • ${item.currentSeason}. Sezon`;
-  } else if (item.rating) {
-    infoText += ` • IMDb ${item.rating}/10`;
+  if (item.type === 'series') {
+    if (item.totalSeasons) {
+      infoText += ` • ${item.totalSeasons} Sezon`;
+    }
+  }
+
+  if (item.rating && item.rating > 0) {
+    infoText += ` • ★ ${item.rating}`;
   }
 
   return (
-    <div className="flex flex-col w-full h-full group relative shrink-0">
+    <motion.div 
+      layout
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ type: "spring", stiffness: 350, damping: 25 }}
+      className="flex flex-col w-full h-full group relative shrink-0"
+    >
       <div 
         className="block relative rounded-xl overflow-hidden aspect-[2/3] transition-transform duration-300"
         style={{ backgroundColor: 'var(--bg-secondary)' }}
       >
-        <Link href={`?v=${item.id}`} className="absolute inset-0 z-10 haptic-tap" />
+        <Link href={(() => {
+          const params = new URLSearchParams(searchParams.toString());
+          params.set('v', item.id);
+          return `${pathname}?${params.toString()}`;
+        })()} className="absolute inset-0 z-10 haptic-tap" />
         {/* Poster Image */}
         {loading ? (
           <div className="absolute inset-0 skeleton" />
@@ -153,6 +175,6 @@ export default function WatchCard({ item }: WatchCardProps) {
           {infoText}
         </span>
       </div>
-    </div>
+    </motion.div>
   );
 }

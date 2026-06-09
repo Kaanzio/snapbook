@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { PhotoMetadata } from '@/types';
 import { usePhotoImage } from '@/hooks/usePhotoImage';
 import { useCategories } from '@/hooks/useCategories';
@@ -23,16 +24,23 @@ export default function PhotoCard({ photo, onClick }: PhotoCardProps) {
   }
 
   return (
-    <Link 
-      href={`/photo/?id=${photo.id}`} 
-      className="block relative aspect-square rounded-[18px] md:rounded-2xl overflow-hidden group haptic-tap bg-black/5 border border-white/5 shadow-sm"
-      onClick={(e) => {
-        if (onClick) {
-          e.preventDefault();
-          onClick(e);
-        }
-      }}
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      transition={{ type: "spring", stiffness: 350, damping: 25 }}
     >
+      <Link 
+        href={`/photo/?id=${photo.id}`} 
+        className="block relative aspect-square rounded-[18px] md:rounded-2xl overflow-hidden group haptic-tap bg-black/5 border border-white/5 shadow-sm"
+        onClick={(e) => {
+          if (onClick) {
+            e.preventDefault();
+            onClick(e);
+          }
+        }}
+      >
       <div className="absolute inset-0 w-full h-full">
         {/* Image */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
@@ -99,6 +107,7 @@ export default function PhotoCard({ photo, onClick }: PhotoCardProps) {
         )}
       </div>
     </Link>
+    </motion.div>
   );
 }
 

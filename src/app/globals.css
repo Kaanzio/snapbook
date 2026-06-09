@@ -3,10 +3,10 @@
 
 /* ==================== CSS CUSTOM PROPERTIES ==================== */
 :root {
-  --accent-h: 239;
-  --accent-s: 84%;
-  --accent-l: 67%;
-  --accent: #6366f1;
+  --accent-h: 357;
+  --accent-s: 92%;
+  --accent-l: 47%;
+  --accent: #e50914;
 
   --base-font-size: 16px;
 
@@ -394,30 +394,6 @@ html {
   outline: none;
 }
 
-.themed-input::placeholder {
-  color: var(--text-tertiary);
-}
-
-/* Button accent */
-.btn-accent {
-  background: linear-gradient(135deg, 
-    hsl(var(--accent-h), var(--accent-s), var(--accent-l)), 
-    hsl(calc(var(--accent-h) + 20), var(--accent-s), calc(var(--accent-l) - 8%)));
-  color: var(--accent-foreground, white);
-  border: none;
-  box-shadow: var(--shadow-accent);
-  transition: transform 0.2s ease, box-shadow 0.3s ease, opacity 0.2s ease;
-}
-
-.btn-accent:hover {
-  box-shadow: 0 6px 20px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.4);
-  transform: translateY(-1px);
-}
-
-.btn-accent:active {
-  transform: scale(0.98);
-}
-
 /* Nav item */
 .nav-item-active {
   background: var(--accent);
@@ -595,16 +571,15 @@ html {
 
 /* Button accent */
 .btn-accent {
-  background: linear-gradient(135deg, 
-    hsl(var(--accent-h), var(--accent-s), var(--accent-l)), 
-    hsl(calc(var(--accent-h) + 20), var(--accent-s), calc(var(--accent-l) - 8%)));
+  background: var(--accent);
   color: var(--accent-foreground, white);
   border: none;
   box-shadow: var(--shadow-accent);
-  transition: transform 0.2s ease, box-shadow 0.3s ease, opacity 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.2s ease;
 }
 
 .btn-accent:hover {
+  background: #f40612; /* Slightly brighter red for hover, Netflix style */
   box-shadow: 0 6px 20px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.4);
   transform: translateY(-1px);
 }
@@ -632,7 +607,7 @@ html {
 /* FAB (Floating Action Button) */
 .fab {
   position: fixed;
-  bottom: 88px;
+  bottom: calc(88px + env(safe-area-inset-bottom, 0px));
   right: 20px;
   z-index: 45;
   width: 56px;

@@ -3,6 +3,7 @@
 import { PhotoMetadata } from '@/types';
 import PhotoCard from './PhotoCard';
 import { usePreferences } from '@/components/providers/PreferencesProvider';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface MasonryGridProps {
   photos: PhotoMetadata[];
@@ -54,15 +55,17 @@ export default function MasonryGrid({ photos, forceCompact, onPhotoClick, sortBy
               </h2>
             </div>
           )}
-          <div className={gridClass}>
-            {group.items.map((photo) => (
-              <PhotoCard 
-                key={photo.id} 
-                photo={photo} 
-                onClick={onPhotoClick ? () => onPhotoClick(photo.id) : undefined}
-              />
-            ))}
-          </div>
+          <motion.div layout className={gridClass}>
+            <AnimatePresence>
+              {group.items.map((photo) => (
+                <PhotoCard 
+                  key={photo.id} 
+                  photo={photo} 
+                  onClick={onPhotoClick ? () => onPhotoClick(photo.id) : undefined}
+                />
+              ))}
+            </AnimatePresence>
+          </motion.div>
         </div>
       ))}
     </div>
