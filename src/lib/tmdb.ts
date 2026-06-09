@@ -1,6 +1,13 @@
-const TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+
+export function getTmdbApiKey(): string | undefined {
+  if (typeof window !== 'undefined') {
+    const localKey = localStorage.getItem('snapbook_tmdb_api_key');
+    if (localKey && localKey.trim() !== '') return localKey.trim();
+  }
+  return process.env.NEXT_PUBLIC_TMDB_API_KEY;
+}
 
 export interface TMDBResult {
   id: number;
@@ -35,14 +42,15 @@ export interface TMDBDetails extends TMDBResult {
 
 export async function searchTMDB(query: string): Promise<TMDBResult[]> {
   if (!query || query.trim() === '') return [];
-  if (!TMDB_API_KEY) {
+  const apiKey = getTmdbApiKey();
+  if (!apiKey) {
     console.warn("TMDB API Key eksik!");
     return [];
   }
 
   try {
     const response = await fetch(
-      `${BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&language=tr-TR&query=${encodeURIComponent(query)}&page=1&include_adult=false`
+      `${BASE_URL}/search/multi?api_key=${apiKey}&language=tr-TR&query=${encodeURIComponent(query)}&page=1&include_adult=false`
     );
     const data = await response.json();
     
@@ -57,11 +65,12 @@ export async function searchTMDB(query: string): Promise<TMDBResult[]> {
 }
 
 export async function getTMDBDetails(id: number, type: 'movie' | 'tv'): Promise<TMDBDetails | null> {
-  if (!TMDB_API_KEY) return null;
+  const apiKey = getTmdbApiKey();
+  if (!apiKey) return null;
 
   try {
     const response = await fetch(
-      `${BASE_URL}/${type}/${id}?api_key=${TMDB_API_KEY}&language=tr-TR&append_to_response=videos&include_video_language=tr,en`
+      `${BASE_URL}/${type}/${id}?api_key=${apiKey}&language=tr-TR&append_to_response=videos&include_video_language=tr,en`
     );
     const data = await response.json();
     data.media_type = type; // Ensure media_type is present for details

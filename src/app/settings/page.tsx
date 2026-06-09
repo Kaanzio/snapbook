@@ -147,6 +147,47 @@ export default function SettingsPage() {
       </header>
 
       <div className="max-w-2xl mx-auto p-4 lg:p-6 space-y-8">
+      
+        {/* ==================== API INTEGRATION ==================== */}
+        <section>
+          <h2 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+            </svg>
+            TMDB API Bağlantısı (İsteğe Bağlı)
+          </h2>
+          <div className="p-4 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}>
+            <p className="text-xs mb-3 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              Snapbook, film ve dizi aramak için TMDB altyapısını kullanır. Eğer kendi API anahtarınızı buraya girerseniz, uygulama sadece <b>sizin cihazınızda</b> sizin şifrenizle çalışır.
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="password"
+                placeholder="TMDB API Anahtarınızı yapıştırın..."
+                className="flex-1 px-4 py-2.5 rounded-xl text-sm transition-all focus:ring-2 focus:ring-accent outline-none"
+                style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-secondary)' }}
+                defaultValue={typeof window !== 'undefined' ? localStorage.getItem('snapbook_tmdb_api_key') || '' : ''}
+                onChange={(e) => {
+                  if (typeof window !== 'undefined') {
+                    localStorage.setItem('snapbook_tmdb_api_key', e.target.value.trim());
+                  }
+                }}
+              />
+              <a 
+                href="https://www.themoviedb.org/settings/api" 
+                target="_blank" 
+                rel="noreferrer"
+                className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 haptic-tap whitespace-nowrap"
+                style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-secondary)' }}
+              >
+                Şifre Al
+              </a>
+            </div>
+            <p className="text-[10px] mt-2 opacity-60" style={{ color: 'var(--text-tertiary)' }}>
+              Şifre tarayıcınızın gizli hafızasına kaydedilir, asla sunucuya veya başka bir yere gönderilmez.
+            </p>
+          </div>
+        </section>
 
         {/* ==================== THEME ==================== */}
         <section>
