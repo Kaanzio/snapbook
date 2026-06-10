@@ -7,7 +7,7 @@ export default function ServiceWorkerRegistration() {
     if ('serviceWorker' in navigator) {
       // Register SW
       navigator.serviceWorker
-        .register('/sw.js', { scope: '/' })
+        .register('/snapbook/sw.js', { scope: '/snapbook/' })
         .then((registration) => {
           console.log('SW registered:', registration.scope);
         })
