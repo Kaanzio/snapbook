@@ -8,6 +8,7 @@ import { getPhotoMetadata } from '@/lib/indexeddb';
 import { deletePhoto } from '@/lib/storage';
 import { updatePhotoMetadata, updateCollection, notifyDataChange } from '@/lib/indexeddb';
 import { useCategories } from '@/hooks/useCategories';
+import { CategoryIcon } from '@/components/ui/CategoryIcon';
 import TagInput from '@/components/ui/TagInput';
 import StarToggle from '@/components/ui/StarToggle';
 import AddToCollection from '@/components/collections/AddToCollection';
@@ -35,6 +36,7 @@ function PhotoDetailContent() {
   const [editNote, setEditNote] = useState('');
   const [editTags, setEditTags] = useState<string[]>([]);
   const [editCategory, setEditCategory] = useState<string>('other');
+  const [isAiTagging, setIsAiTagging] = useState(false);
   const editingRef = useRef(editing);
   
   useEffect(() => {
@@ -103,6 +105,45 @@ function PhotoDetailContent() {
     notifyDataChange('photos');
   }
 
+  const handleAiTag = async () => {
+    if (!photo || !imageUrl) return;
+    setIsAiTagging(true);
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64Data = reader.result as string;
+        try {
+          const { aiManager } = await import('@/lib/ai');
+          const { tags, category } = await aiManager.analyzeImage(photo.id, base64Data);
+          
+          if (tags && tags.length > 0) {
+            setEditTags(prev => Array.from(new Set([...prev, ...tags])));
+          }
+          if (category) {
+            setEditCategory(category);
+          }
+
+          if ((tags && tags.length > 0) || category) {
+            showToast('Yapay Zeka analizi tamamlandı!');
+          } else {
+            showToast('Uygun etiket veya kategori bulunamadı.');
+          }
+        } catch (e: any) {
+          console.error("AI Error:", e);
+          showToast(`AI Hatası: ${e.message || 'Bilinmeyen hata'}`);
+        }
+        setIsAiTagging(false);
+      };
+      reader.readAsDataURL(blob);
+    } catch (err) {
+      console.error(err);
+      setIsAiTagging(false);
+      showToast('Görsel okunurken hata oluştu.');
+    }
+  };
+
   async function handleSetAsCover() {
     if (!photo || photo.collection_ids.length === 0) return;
     
@@ -154,25 +195,25 @@ function PhotoDetailContent() {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <header className="sticky top-0 z-30 themed-header">
-        <div className="px-4 lg:px-6 py-3 flex items-center justify-between">
+      {/* Floating Header */}
+      <div className="fixed top-2 right-0 z-40 px-2 sm:px-4 pointer-events-none transition-all duration-300" style={{ left: 'var(--sidebar-width, 0px)' }}>
+        <div className="max-w-4xl mx-auto flex items-center justify-between p-2 rounded-2xl backdrop-blur-xl bg-white/60 dark:bg-black/60 shadow-sm border border-black/5 dark:border-white/5 pointer-events-auto">
           <button
             onClick={() => router.back()}
-            className="p-2 -ml-2 rounded-xl transition-colors text-slate-500 haptic-tap hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="w-10 h-10 rounded-xl transition-colors text-slate-500 haptic-tap hover:bg-slate-100 dark:hover:bg-slate-800 inline-flex items-center justify-center"
             style={{ color: 'var(--text-secondary)' }}
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
             </svg>
           </button>
 
-          <div className="flex items-center gap-2">
-            <StarToggle starred={photo.is_starred} onChange={handleToggleStar} />
+          <div className="flex items-center gap-1.5">
+            <StarToggle starred={photo.is_starred} onChange={handleToggleStar} size="sm" className="w-10 h-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors inline-flex items-center justify-center" />
 
             <button
               onClick={() => setShowCollections(true)}
-              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="w-10 h-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors inline-flex items-center justify-center"
               style={{ color: 'var(--text-secondary)' }}
               title="Koleksiyona ekle"
             >
@@ -184,7 +225,7 @@ function PhotoDetailContent() {
             {photo.collection_ids.length > 0 && (
               <button
                 onClick={handleSetAsCover}
-                className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="w-10 h-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors inline-flex items-center justify-center"
                 style={{ color: 'var(--text-secondary)' }}
                 title="Koleksiyon kapağı yap"
               >
@@ -199,7 +240,7 @@ function PhotoDetailContent() {
                 const success = await savePhotoToDevice(photo.id, photo.note || undefined);
                 if (success) showToast('Fotoğraf kaydedildi');
               }}
-              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="w-10 h-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors inline-flex items-center justify-center"
               style={{ color: 'var(--text-secondary)' }}
               title="Cihaza kaydet"
             >
@@ -210,7 +251,7 @@ function PhotoDetailContent() {
 
             <button
               onClick={handleDelete}
-              className="p-2 rounded-xl transition-colors text-red-500 hover:bg-red-500/10 haptic-tap"
+              className="w-10 h-10 rounded-xl transition-colors text-red-500 hover:bg-red-500/10 haptic-tap inline-flex items-center justify-center"
               title="Sil"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -219,11 +260,11 @@ function PhotoDetailContent() {
             </button>
           </div>
         </div>
-      </header>
+      </div>
 
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto pt-20 px-2 sm:px-4 pb-10 space-y-6">
         {/* Image */}
-        <div style={{ background: 'var(--bg-secondary)' }}>
+        <div className="rounded-3xl overflow-hidden relative shadow-sm" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
           {imageLoading ? (
             <div className="aspect-[4/3] skeleton" />
           ) : isLocal ? (
@@ -245,15 +286,15 @@ function PhotoDetailContent() {
           )}
         </div>
 
-        {/* Metadata */}
-        <div className="p-4 lg:p-6 space-y-5">
+        {/* Info Card */}
+        <div className="themed-card p-5 sm:p-6 mb-20 animate-[fade-in_0.3s_ease-out] space-y-5">
           {/* Category & Date */}
           <div className="flex items-center justify-between">
             <span
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium"
               style={{ backgroundColor: category.color + '15', color: category.color }}
             >
-              {category.icon} {category.label}
+              <CategoryIcon categoryKey={category.key} className="w-4 h-4 mr-1 inline-block" /> {category.label}
             </span>
             <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{dateStr}</span>
           </div>
@@ -261,6 +302,28 @@ function PhotoDetailContent() {
           {/* Note */}
           {editing ? (
             <div className="space-y-4 animate-[fadeIn_0.2s_ease-out]">
+              {/* AI Button */}
+              <button
+                onClick={handleAiTag}
+                disabled={isAiTagging || !isLocal}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all haptic-tap disabled:opacity-50"
+                style={{ background: 'var(--accent)', color: 'white' }}
+              >
+                {isAiTagging ? (
+                  <>
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Yapay Zeka ile Analiz Ediliyor...
+                  </>
+                ) : (
+                  <>
+                    ✨ Yapay Zeka ile Otomatik Doldur
+                  </>
+                )}
+              </button>
+
               {/* Category edit */}
               <div>
                 <label className="block text-xs font-medium text-slate-500 mb-2">Kategori</label>
@@ -280,7 +343,7 @@ function PhotoDetailContent() {
                         border: editCategory === cat.key ? '1px solid var(--accent)' : '1px solid var(--border-primary)'
                       }}
                     >
-                      {cat.icon} {cat.label}
+                      <CategoryIcon categoryKey={cat.key} className="w-4 h-4 inline-block mr-1" /> {cat.label}
                     </button>
                   ))}
                 </div>
@@ -298,14 +361,16 @@ function PhotoDetailContent() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Etiketler</label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-medium text-slate-500">Etiketler</label>
+                </div>
                 <TagInput tags={editTags} onChange={setEditTags} />
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-3 mt-4">
                 <button
                   onClick={handleSave}
-                  className="px-5 py-2 rounded-xl btn-accent text-sm font-medium haptic-tap"
+                  className="flex-1 py-3.5 rounded-2xl btn-accent text-sm font-semibold haptic-tap shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
                   Kaydet
                 </button>
@@ -316,7 +381,7 @@ function PhotoDetailContent() {
                     setEditTags([...photo.tags]);
                     setEditCategory(photo.category);
                   }}
-                  className="px-5 py-2 rounded-xl text-sm font-medium transition-colors haptic-tap"
+                  className="flex-1 py-3.5 rounded-2xl text-sm font-semibold transition-all haptic-tap hover:scale-[1.02] active:scale-[0.98]"
                   style={{ color: 'var(--text-secondary)', background: 'var(--bg-secondary)' }}
                 >
                   İptal

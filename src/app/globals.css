@@ -8,11 +8,28 @@
   --accent-l: 47%;
   --accent: #e50914;
 
-  --base-font-size: 16px;
+  --base-font-size: clamp(14px, 1.5vw + 10px, 18px);
 
   /* Transition for theme switching */
   --theme-transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
 }
+
+/* Fluid typography and mobile base resets */
+html {
+  font-size: var(--base-font-size);
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Touch targets must be at least 44x44 on mobile */
+@media (max-width: 768px) {
+  button, 
+  [role="button"],
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
 
 /* ==================== LIGHT THEME ==================== */
 .theme-light {

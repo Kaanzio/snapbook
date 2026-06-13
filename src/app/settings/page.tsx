@@ -20,10 +20,28 @@ export default function SettingsPage() {
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
+  const [tmdbKey, setTmdbKey] = useState('');
+  const [isTmdbEnabled, setIsTmdbEnabled] = useState(true);
 
   useEffect(() => {
     getStorageUsage().then(setStorage);
+    if (typeof window !== 'undefined') {
+      setTmdbKey(localStorage.getItem('snapbook_tmdb_api_key') || '');
+      setIsTmdbEnabled(localStorage.getItem('snapbook_tmdb_disabled') !== 'true');
+    }
   }, []);
+
+  const handleToggleTmdb = () => {
+    const newState = !isTmdbEnabled;
+    setIsTmdbEnabled(newState);
+    if (typeof window !== 'undefined') {
+      if (newState) {
+        localStorage.removeItem('snapbook_tmdb_disabled');
+      } else {
+        localStorage.setItem('snapbook_tmdb_disabled', 'true');
+      }
+    }
+  };
 
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -150,13 +168,22 @@ export default function SettingsPage() {
       
         {/* ==================== API INTEGRATION ==================== */}
         <section>
-          <h2 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
-            </svg>
-            TMDB API Bağlantısı (İsteğe Bağlı)
-          </h2>
-          <div className="p-4 rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+              </svg>
+              TMDB API Entegrasyonu
+            </h2>
+            <button
+              onClick={handleToggleTmdb}
+              className={`w-11 h-6 rounded-full transition-colors relative flex items-center ${isTmdbEnabled ? 'bg-green-500' : 'bg-slate-300 dark:bg-slate-700'}`}
+            >
+              <div className={`w-4 h-4 rounded-full bg-white absolute transition-all ${isTmdbEnabled ? 'right-1' : 'left-1'}`} />
+            </button>
+          </div>
+          
+          <div className={`p-4 rounded-2xl transition-all ${isTmdbEnabled ? 'opacity-100' : 'opacity-40 pointer-events-none grayscale'}`} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}>
             <p className="text-xs mb-3 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               Snapbook, film ve dizi aramak için TMDB altyapısını kullanır. Eğer kendi API anahtarınızı buraya girerseniz, uygulama sadece <b>sizin cihazınızda</b> sizin şifrenizle çalışır.
             </p>
@@ -166,22 +193,40 @@ export default function SettingsPage() {
                 placeholder="TMDB API Anahtarınızı yapıştırın..."
                 className="flex-1 px-4 py-2.5 rounded-xl text-sm transition-all focus:ring-2 focus:ring-accent outline-none"
                 style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-secondary)' }}
-                defaultValue={typeof window !== 'undefined' ? localStorage.getItem('snapbook_tmdb_api_key') || '' : ''}
+                value={tmdbKey}
                 onChange={(e) => {
+                  setTmdbKey(e.target.value);
                   if (typeof window !== 'undefined') {
                     localStorage.setItem('snapbook_tmdb_api_key', e.target.value.trim());
                   }
                 }}
+                disabled={!isTmdbEnabled}
               />
-              <a 
-                href="https://www.themoviedb.org/settings/api" 
-                target="_blank" 
-                rel="noreferrer"
-                className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 haptic-tap whitespace-nowrap"
-                style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-secondary)' }}
-              >
-                Şifre Al
-              </a>
+              {tmdbKey ? (
+                <button 
+                  onClick={() => {
+                    setTmdbKey('');
+                    if (typeof window !== 'undefined') {
+                      localStorage.removeItem('snapbook_tmdb_api_key');
+                    }
+                  }}
+                  className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 haptic-tap whitespace-nowrap bg-red-500 text-white"
+                  title="Şifreyi Sil"
+                  disabled={!isTmdbEnabled}
+                >
+                  Şifreyi Sil
+                </button>
+              ) : (
+                <a 
+                  href="https://www.themoviedb.org/settings/api" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 haptic-tap whitespace-nowrap"
+                  style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-secondary)' }}
+                >
+                  Şifre Al
+                </a>
+              )}
             </div>
             <p className="text-[10px] mt-2 opacity-60" style={{ color: 'var(--text-tertiary)' }}>
               Şifre tarayıcınızın gizli hafızasına kaydedilir, asla sunucuya veya başka bir yere gönderilmez.

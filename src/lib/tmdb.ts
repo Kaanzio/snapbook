@@ -3,6 +3,9 @@ const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
 export function getTmdbApiKey(): string | undefined {
   if (typeof window !== 'undefined') {
+    if (localStorage.getItem('snapbook_tmdb_disabled') === 'true') {
+      return undefined; // Integration is explicitly disabled
+    }
     const localKey = localStorage.getItem('snapbook_tmdb_api_key');
     if (localKey && localKey.trim() !== '') return localKey.trim();
   }

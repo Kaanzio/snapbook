@@ -4,9 +4,10 @@ interface StarToggleProps {
   starred: boolean;
   onChange: (starred: boolean) => void;
   size?: 'sm' | 'md' | 'lg';
+  className?: string;
 }
 
-export default function StarToggle({ starred, onChange, size = 'md' }: StarToggleProps) {
+export default function StarToggle({ starred, onChange, size = 'md', className = '' }: StarToggleProps) {
   const sizes = {
     sm: 'w-5 h-5',
     md: 'w-6 h-6',
@@ -17,9 +18,9 @@ export default function StarToggle({ starred, onChange, size = 'md' }: StarToggl
     <button
       type="button"
       onClick={() => onChange(!starred)}
-      className={`transition-all duration-200 hover:scale-110 active:scale-95 ${
+      className={`inline-flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 ${
         starred ? 'text-amber-400' : 'text-slate-300 hover:text-amber-300'
-      }`}
+      } ${className}`}
       title={starred ? 'Favorilerden çıkar' : 'Favorilere ekle'}
     >
       <svg

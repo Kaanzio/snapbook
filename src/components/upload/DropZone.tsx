@@ -61,15 +61,15 @@ export default function DropZone({ onFilesSelected, disabled }: DropZoneProps) {
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       onClick={() => !disabled && fileInputRef.current?.click()}
-      className={`relative rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer
+      className={`relative rounded-3xl border-2 border-dashed transition-all duration-300 cursor-pointer shadow-sm
         ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
         ${isDragging
-          ? 'bg-accent-soft scale-[1.01]'
-          : 'hover:bg-accent-soft'
+          ? 'bg-accent-soft scale-[1.02] border-accent ring-4 ring-accent/20'
+          : 'hover:bg-accent-soft hover:-translate-y-1 hover:shadow-md'
         }`}
       style={{
         borderColor: isDragging ? 'var(--accent)' : 'var(--border-primary)',
-        background: isDragging ? 'var(--bg-accent-soft)' : 'var(--bg-card)'
+        background: isDragging ? 'var(--bg-accent-soft)' : 'var(--bg-secondary)'
       }}
     >
       <div className="flex flex-col items-center justify-center py-12 px-6">

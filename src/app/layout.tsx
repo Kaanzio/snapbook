@@ -28,7 +28,8 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&display=swap" rel="stylesheet" />
         
         {/* PWA Tags */}
-        <link rel="manifest" href="/snapbook/manifest.json?v=4" />
+        <link rel="manifest" href="/snapbook/manifest.json?v=5" />
+        <link rel="apple-touch-icon" href="/snapbook/icon.svg" />
         <meta name="theme-color" content="#1A1A1A" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

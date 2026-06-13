@@ -12,12 +12,31 @@ import { CategoryIcon } from '@/components/ui/CategoryIcon';
 interface PhotoCardProps {
   photo: PhotoMetadata;
   onClick?: (e: React.MouseEvent) => void;
+  isSelected?: boolean;
+  isSelectionMode?: boolean;
+  onToggleSelect?: (e: React.MouseEvent) => void;
+  onLongPress?: () => void;
 }
 
-export default function PhotoCard({ photo, onClick }: PhotoCardProps) {
+export default function PhotoCard({ 
+  photo, onClick, isSelected = false, isSelectionMode = false, onToggleSelect, onLongPress 
+}: PhotoCardProps) {
   const { imageUrl, isLocal, loading } = usePhotoImage(photo.id);
   const { getCategoryInfo } = useCategories();
   const category = getCategoryInfo(photo.category);
+
+  // Simple long press handler
+  let touchTimer: NodeJS.Timeout;
+  const handleTouchStart = () => {
+    if (onLongPress && !isSelectionMode) {
+      touchTimer = setTimeout(() => {
+        onLongPress();
+      }, 500);
+    }
+  };
+  const handleTouchEnd = () => {
+    if (touchTimer) clearTimeout(touchTimer);
+  };
 
   if (!isLocal && !loading) {
     return <PhotoPlaceholder photo={photo} />;
@@ -27,19 +46,28 @@ export default function PhotoCard({ photo, onClick }: PhotoCardProps) {
     <motion.div
       layout
       initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
+      animate={{ opacity: 1, scale: isSelected ? 0.95 : 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
       transition={{ type: "spring", stiffness: 350, damping: 25 }}
+      className="relative"
     >
       <Link 
         href={`/photo/?id=${photo.id}`} 
-        className="block relative aspect-square rounded-[18px] md:rounded-2xl overflow-hidden group haptic-tap bg-black/5 border border-white/5 shadow-sm"
+        className={`block relative aspect-square rounded-[18px] md:rounded-2xl overflow-hidden group haptic-tap shadow-sm transition-all duration-300 ${isSelected ? 'ring-4 ring-accent bg-accent/20' : 'bg-black/5 border border-white/5'}`}
         onClick={(e) => {
+          if (isSelectionMode && onToggleSelect) {
+            e.preventDefault();
+            onToggleSelect(e);
+            return;
+          }
           if (onClick) {
             e.preventDefault();
             onClick(e);
           }
         }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchEnd}
       >
       <div className="absolute inset-0 w-full h-full">
         {/* Image */}
@@ -50,14 +78,28 @@ export default function PhotoCard({ photo, onClick }: PhotoCardProps) {
             <img
               src={imageUrl || undefined}
               alt={photo.note || 'Fotoğraf'}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+              className={`w-full h-full object-cover transition-transform duration-700 ${isSelected ? 'scale-110' : 'group-hover:scale-[1.03]'}`}
               loading="lazy"
             />
           )}
 
           {/* Hover overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent 
-            opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className={`absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent transition-opacity duration-300 ${isSelected || isSelectionMode ? 'opacity-20' : 'opacity-0 group-hover:opacity-100'}`} />
+
+          {/* Selection Indicator */}
+          {(isSelectionMode || isSelected) && (
+            <div className="absolute top-2 left-2 z-20">
+              <div 
+                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${isSelected ? 'bg-accent border-accent text-white' : 'bg-black/20 border-white/70 backdrop-blur-md'}`}
+              >
+                {isSelected && (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Category badge */}
           <div className="absolute top-2.5 left-2.5">

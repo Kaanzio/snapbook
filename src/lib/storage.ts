@@ -1,7 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { UploadFormData, PhotoMetadata } from '@/types';
 import { getDeviceName } from './device';
-import { savePhoto, deleteLocalPhoto, createPhotoMetadata, notifyDataChange } from './indexeddb';
+import { savePhoto, deleteLocalPhoto, createPhotoMetadata, notifyDataChange, updatePhotoMetadata } from './indexeddb';
+import { aiManager } from './ai';
+import { showToast } from '@/components/ui/Toast';
 
 export async function uploadPhoto(file: File, formData: UploadFormData): Promise<string> {
   const id = uuidv4();
@@ -37,6 +39,16 @@ export async function deletePhoto(id: string): Promise<void> {
   // Delete from metadata store
   const { deletePhotoMetadata } = await import('./indexeddb');
   await deletePhotoMetadata(id);
+  
+  notifyDataChange('photos');
+}
+
+export async function deletePhotos(ids: string[]): Promise<void> {
+  const { deletePhotoMetadata } = await import('./indexeddb');
+  
+  // Delete all binaries and metadata concurrently
+  await Promise.all(ids.map(id => deleteLocalPhoto(id)));
+  await Promise.all(ids.map(id => deletePhotoMetadata(id)));
   
   notifyDataChange('photos');
 }

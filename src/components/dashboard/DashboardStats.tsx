@@ -47,42 +47,45 @@ export default function DashboardStats({ totalPhotos, totalCollections, totalWat
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-3 md:gap-5 w-full animate-[fade-in_0.7s_ease-out]">
+    <div className="flex flex-col gap-3 w-full animate-[fade-in_0.7s_ease-out]">
       {stats.map((stat) => (
         <Link 
           key={stat.id} 
           href={stat.href}
-          className="relative overflow-hidden group flex flex-col justify-between p-4 md:p-6 lg:p-7 rounded-3xl border transition-all duration-500 hover:border-white/20"
+          className="relative overflow-hidden group flex items-center justify-between p-4 md:p-5 rounded-2xl border transition-all duration-300 hover:border-white/20 haptic-tap"
           style={{ 
             background: 'var(--bg-card)', 
             borderColor: 'var(--border-primary)',
           }}
         >
           {/* Hover parlaması (Subtle Glow) */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-[0.04] transition-opacity duration-500 pointer-events-none" style={{ background: 'var(--accent)' }} />
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-[0.04] transition-opacity duration-300 pointer-events-none" style={{ background: 'var(--accent)' }} />
           
-          <div className="flex justify-between items-start w-full mb-4 md:mb-8">
-            <span 
-              className="text-[10px] md:text-xs font-semibold uppercase tracking-widest mt-1" 
-              style={{ color: 'var(--text-tertiary)' }}
-            >
-              {stat.label}
-            </span>
+          <div className="flex items-center gap-3 md:gap-4 z-10">
             <div 
-              className="transition-transform duration-500 group-hover:scale-110" 
-              style={{ color: 'var(--text-tertiary)' }}
+              className="flex items-center justify-center p-2.5 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:bg-accent/10" 
+              style={{ color: 'var(--text-secondary)', background: 'var(--bg-secondary)' }}
             >
               {stat.icon}
             </div>
+            <span 
+              className="text-sm md:text-base font-bold tracking-wide" 
+              style={{ color: 'var(--text-primary)' }}
+            >
+              {stat.label}
+            </span>
           </div>
           
-          <div className="flex items-end w-full">
+          <div className="flex items-center z-10">
             <span 
-              className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tighter transition-colors duration-500" 
+              className="text-3xl md:text-4xl font-light tracking-tight transition-colors duration-300" 
               style={{ color: 'var(--text-primary)' }}
             >
               {stat.value}
             </span>
+            <svg className="w-5 h-5 ml-2 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" style={{ color: 'var(--text-tertiary)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
           </div>
         </Link>
       ))}

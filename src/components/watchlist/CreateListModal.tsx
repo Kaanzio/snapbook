@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useWatchlist } from '@/hooks/useWatchlist';
 
 interface CreateListModalProps {
   onClose: () => void;
@@ -10,6 +11,7 @@ interface CreateListModalProps {
 export default function CreateListModal({ onClose, onSubmit }: CreateListModalProps) {
   const [name, setName] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const { customLists, loading } = useWatchlist();
 
   useEffect(() => {
     // Escape key handling
@@ -71,7 +73,28 @@ export default function CreateListModal({ onClose, onSubmit }: CreateListModalPr
               />
             </div>
             
-            <div className="flex justify-end gap-3">
+            {!loading && customLists.length > 0 && (
+              <div className="mb-6">
+                <label className="block text-xs font-semibold tracking-wider uppercase text-white/40 mb-2.5">
+                  Mevcut Listeler ({customLists.length})
+                </label>
+                <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto no-scrollbar">
+                  {customLists.map(list => (
+                    <span 
+                      key={list.id} 
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/70 text-xs font-medium cursor-default"
+                    >
+                      <svg className="w-3.5 h-3.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                      </svg>
+                      {list.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            <div className="flex justify-end gap-3 mt-2">
               <button
                 type="button"
                 onClick={onClose}

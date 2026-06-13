@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 import BottomNav from './BottomNav';
@@ -7,8 +8,8 @@ import { ToastProvider } from '@/components/ui/Toast';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import PreferencesProvider, { usePreferences } from '@/components/providers/PreferencesProvider';
 import { DialogProvider } from '@/components/providers/DialogProvider';
-import FloatingActionButton from '@/components/ui/FloatingActionButton';
 import PageTransition from '@/components/ui/PageTransition';
+import InstallPrompt from '@/components/ui/InstallPrompt';
 
 import WelcomeScreen from './WelcomeScreen';
 
@@ -19,6 +20,25 @@ interface AppShellProps {
 function AppShellInner({ children }: { children: React.ReactNode }) {
   const { prefs, loaded } = usePreferences();
   const sidebarWidth = prefs.sidebarCollapsed ? '64px' : '260px';
+
+  useEffect(() => {
+    const handleHaptic = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('.haptic-tap')) {
+        if (typeof navigator !== 'undefined' && navigator.vibrate) {
+          navigator.vibrate(15);
+        }
+      }
+    };
+    
+    document.addEventListener('click', handleHaptic as any);
+    document.addEventListener('touchstart', handleHaptic as any, { passive: true });
+    
+    return () => {
+      document.removeEventListener('click', handleHaptic as any);
+      document.removeEventListener('touchstart', handleHaptic as any);
+    };
+  }, []);
 
   // Wait for IndexedDB to load preferences to avoid hydration mismatch and wrong lock state
   if (!loaded) return null;
@@ -45,8 +65,8 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
         `}} />
         {children}
       </main>
-      <FloatingActionButton />
       <BottomNav />
+      <InstallPrompt />
     </>
   );
 }

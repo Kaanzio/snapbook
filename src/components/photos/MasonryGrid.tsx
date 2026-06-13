@@ -10,17 +10,24 @@ interface MasonryGridProps {
   forceCompact?: boolean;
   onPhotoClick?: (photoId: string) => void;
   sortBy?: string;
+  selectedIds?: Set<string>;
+  isSelectionMode?: boolean;
+  onToggleSelect?: (photoId: string) => void;
+  onLongPress?: (photoId: string) => void;
 }
 
-export default function MasonryGrid({ photos, forceCompact, onPhotoClick, sortBy = 'date_desc' }: MasonryGridProps) {
+export default function MasonryGrid({ 
+  photos, forceCompact, onPhotoClick, sortBy = 'date_desc',
+  selectedIds = new Set(), isSelectionMode = false, onToggleSelect, onLongPress
+}: MasonryGridProps) {
   const { prefs } = usePreferences();
 
   if (photos.length === 0) return null;
 
-  // Premium Square Grid Layout (Apple Photos/Instagram Style)
-  let gridClass = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 lg:gap-3 px-4 lg:px-6";
+  // Premium Edge-to-Edge Square Grid Layout (Apple Photos Style)
+  let gridClass = "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-1 lg:gap-1.5 px-1 lg:px-1.5";
   if (forceCompact || prefs.gridDensity === 'compact') {
-    gridClass = "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-9 gap-1 lg:gap-1.5 px-2 lg:px-4";
+    gridClass = "grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-9 xl:grid-cols-12 gap-0.5 px-0.5";
   } else if (prefs.gridDensity === 'large') {
     return <FocusView photos={photos} onPhotoClick={onPhotoClick} />;
   }
@@ -62,6 +69,10 @@ export default function MasonryGrid({ photos, forceCompact, onPhotoClick, sortBy
                   key={photo.id} 
                   photo={photo} 
                   onClick={onPhotoClick ? () => onPhotoClick(photo.id) : undefined}
+                  isSelected={selectedIds.has(photo.id)}
+                  isSelectionMode={isSelectionMode}
+                  onToggleSelect={() => onToggleSelect && onToggleSelect(photo.id)}
+                  onLongPress={() => onLongPress && onLongPress(photo.id)}
                 />
               ))}
             </AnimatePresence>
