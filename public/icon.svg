@@ -9,6 +9,7 @@
     </clipPath>
   </defs>
   <g>
+    <rect width="100" height="100" fill="#000000" />
     <path d="M 94,50 A 44,44 0 0,1 28,88 L 50,66 A 16,16 0 0,0 64,58 Z" fill="url(#bladeGrad)" />
     <path d="M 94,50 A 44,44 0 0,1 28,88 L 50,66 A 16,16 0 0,0 64,58 Z" transform="rotate(60,50,50)" fill="url(#bladeGrad)" />
     <path d="M 94,50 A 44,44 0 0,1 28,88 L 50,66 A 16,16 0 0,0 64,58 Z" transform="rotate(120,50,50)" fill="url(#bladeGrad)" />

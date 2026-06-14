@@ -12,7 +12,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#1A1A1A",
+  themeColor: "#000000",
 };
 
 export default function RootLayout({
@@ -30,7 +30,7 @@ export default function RootLayout({
         {/* PWA Tags */}
         <link rel="manifest" href="/snapbook/manifest.json?v=5" />
         <link rel="apple-touch-icon" href="/snapbook/icon.svg" />
-        <meta name="theme-color" content="#1A1A1A" />
+        <meta name="theme-color" content="#000000" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
