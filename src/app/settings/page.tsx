@@ -178,7 +178,7 @@ export default function SettingsPage() {
             </h2>
             <button
               onClick={handleToggleTmdb}
-              className={`w-11 h-6 rounded-full transition-colors relative flex items-center ${isTmdbEnabled ? 'bg-green-500' : 'bg-slate-300 dark:bg-slate-700'}`}
+              className={`w-11 h-6 shrink-0 rounded-full transition-colors relative flex items-center ${isTmdbEnabled ? 'bg-green-500' : 'bg-slate-300 dark:bg-slate-700'}`}
             >
               <div className={`w-4 h-4 rounded-full bg-white absolute transition-all ${isTmdbEnabled ? 'right-1' : 'left-1'}`} />
             </button>
