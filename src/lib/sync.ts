@@ -149,7 +149,8 @@ export class SyncManager {
       for (const id of photoIds) {
         const blob = await idb.getPhoto(id);
         if (blob) {
-          photos.push({ id, blob });
+          // Send mime type along with the binary data since PeerJS strips it when converting Blobs to ArrayBuffers
+          photos.push({ id, blob, type: blob.type || 'image/jpeg' });
         }
         loadedPhotos++;
         this.updateProgress('syncing', `Fotoğraflar hazırlanıyor... (${loadedPhotos}/${photoIds.length})`, 30 + (loadedPhotos / photoIds.length) * 20);
@@ -206,7 +207,14 @@ export class SyncManager {
         for (const photo of payload.photos) {
           const exists = await idb.hasPhoto(photo.id);
           if (!exists) {
-            await idb.savePhoto(photo.id, photo.blob);
+            let finalBlob = photo.blob;
+            // PeerJS converts Blobs to ArrayBuffer/Uint8Array. Reconstruct the Blob with the correct mime type.
+            if (finalBlob && !(finalBlob instanceof Blob)) {
+              finalBlob = new Blob([finalBlob], { type: photo.type || 'image/jpeg' });
+            } else if (finalBlob instanceof Blob) {
+              finalBlob = new Blob([finalBlob], { type: photo.type || finalBlob.type || 'image/jpeg' });
+            }
+            await idb.savePhoto(photo.id, finalBlob);
           }
           processed++;
           this.updateProgress('syncing', `Fotoğraflar kaydediliyor... (${processed}/${payload.photos.length})`, 70 + (processed / payload.photos.length) * 20);
