@@ -28,20 +28,22 @@ export class SyncManager {
     this.onConnectionRequest = onConnectionRequest;
   }
 
-  public initialize(peerId?: string): Promise<string> {
+  public initialize(customPin?: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      this.peer = new Peer(peerId || '', {
-        debug: 2,
+      // If a custom PIN is given (host mode), use it as the PeerJS peer ID
+      // so the other device can connect with just the PIN.
+      const peerId = customPin ?? ('sb-' + Math.random().toString(36).slice(2, 8));
+      this.peer = new Peer(peerId, {
+        debug: 0,
       });
 
       this.peer.on('open', (id) => {
-        this.updateProgress('disconnected', 'Cihaz kimliği oluşturuldu.', 0);
         resolve(id);
       });
 
       this.peer.on('connection', (conn) => {
         // Incoming connection
-        this.onConnectionRequest(conn.peer, 
+        this.onConnectionRequest(conn.peer,
           () => this.acceptConnection(conn),
           () => {
             conn.send({ type: 'REJECTED' });
