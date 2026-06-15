@@ -3,7 +3,12 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { QRCodeSVG } from 'qrcode.react';
-import { Scanner } from '@yudiel/react-qr-scanner';
+import dynamic from 'next/dynamic';
+
+const Scanner = dynamic(() => import('@yudiel/react-qr-scanner').then(mod => mod.Scanner), { 
+  ssr: false,
+  loading: () => <div className="p-8 text-center text-tertiary">Kamera başlatılıyor...</div>
+});
 import { SyncManager, SyncProgress } from '@/lib/sync';
 import { showToast } from '@/components/ui/Toast';
 
