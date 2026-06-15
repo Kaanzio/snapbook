@@ -12,7 +12,7 @@ export default function SyncPage() {
   const [mode, setMode] = useState<'idle' | 'host' | 'scan'>('idle');
   const [progress, setProgress] = useState<SyncProgress>({ status: 'disconnected', message: '', progress: 0 });
   const [incomingRequest, setIncomingRequest] = useState<{peerId: string, accept: () => void, reject: () => void} | null>(null);
-  
+  const [manualPeerId, setManualPeerId] = useState('');
   const syncManager = useRef<SyncManager | null>(null);
 
   useEffect(() => {
@@ -63,6 +63,18 @@ export default function SyncPage() {
         setMode('idle');
         syncManager.current.connectToPeer(targetPeerId);
       }
+    }
+  };
+
+  const handleScanError = (err: unknown) => {
+    console.error('Kamera hatası:', err);
+    showToast('Kamera açılamadı. Lütfen kamera izinlerini verdiğinizden ve uygulamanın güvenli bağlantı (HTTPS) veya localhost üzerinde çalıştığından emin olun.', 'error');
+  };
+
+  const handleManualConnect = () => {
+    if (manualPeerId.trim() && syncManager.current) {
+      setMode('idle');
+      syncManager.current.connectToPeer(manualPeerId.trim());
     }
   };
 
@@ -127,19 +139,51 @@ export default function SyncPage() {
               ) : (
                 <div className="animate-pulse w-[250px] h-[250px] bg-black/10 dark:bg-white/10 rounded-2xl"></div>
               )}
-              <p className="text-sm text-tertiary text-center max-w-xs">Diğer cihazınızda Snapbook'u açın ve "QR Kod Tara" seçeneğini kullanarak bu kodu okutun.</p>
+              
+              {peerId && (
+                <div className="flex flex-col items-center gap-2 mt-4">
+                  <p className="text-xs text-tertiary">Veya manuel bağlantı kodunu kopyalayın:</p>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(peerId);
+                      showToast('Kod kopyalandı!');
+                    }}
+                    className="px-4 py-2 bg-black/5 dark:bg-white/5 rounded-full text-xs font-mono select-all haptic-tap"
+                  >
+                    {peerId}
+                  </button>
+                </div>
+              )}
+
+              <p className="text-sm text-tertiary text-center max-w-xs mt-4">Diğer cihazınızda Snapbook'u açın ve "QR Kod Tara" seçeneğini kullanarak bu kodu okutun.</p>
               <button onClick={() => setMode('idle')} className="text-sm text-red-500 font-bold haptic-tap">İptal Et</button>
             </div>
           )}
 
           {/* Scanning Mode */}
           {mode === 'scan' && progress.status === 'disconnected' && (
-            <div className="flex flex-col items-center justify-center space-y-4">
+            <div className="flex flex-col items-center justify-center space-y-6">
               <h3 className="font-bold text-lg">QR Kodu Tarayın</h3>
-              <div className="w-full max-w-sm rounded-2xl overflow-hidden shadow-lg border-2 border-accent">
-                <Scanner onScan={handleScan} />
+              
+              <div className="w-full max-w-sm rounded-2xl overflow-hidden shadow-lg border-2 border-accent bg-black">
+                <Scanner onScan={handleScan} onError={handleScanError} />
               </div>
-              <button onClick={() => setMode('idle')} className="text-sm text-red-500 font-bold haptic-tap">İptal Et</button>
+              
+              <div className="w-full max-w-sm pt-4 border-t border-black/10 dark:border-white/10 flex flex-col gap-3">
+                <p className="text-xs text-center text-tertiary">Kamera açılmıyorsa kodu manuel girebilirsiniz:</p>
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    placeholder="Diğer cihazın kodunu yapıştırın..." 
+                    value={manualPeerId}
+                    onChange={(e) => setManualPeerId(e.target.value)}
+                    className="flex-1 px-4 py-2 rounded-xl text-sm themed-input"
+                  />
+                  <button onClick={handleManualConnect} className="btn-accent px-4 py-2 rounded-xl text-sm font-bold haptic-tap whitespace-nowrap">Bağlan</button>
+                </div>
+              </div>
+
+              <button onClick={() => setMode('idle')} className="text-sm text-red-500 font-bold haptic-tap mt-4">İptal Et</button>
             </div>
           )}
 
