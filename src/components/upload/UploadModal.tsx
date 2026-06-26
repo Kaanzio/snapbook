@@ -138,7 +138,7 @@ export default function UploadModal({ onClose }: UploadModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center pointer-events-none">
+    <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center pointer-events-none pb-8 sm:pb-0 px-2 sm:px-4">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto animate-[fadeIn_0.3s_ease-out]"
@@ -146,7 +146,7 @@ export default function UploadModal({ onClose }: UploadModalProps) {
       />
       
       {/* Modal Content */}
-      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto pointer-events-auto bg-white dark:bg-[#0A0A0A] sm:rounded-3xl rounded-t-3xl shadow-2xl animate-[slideUp_0.4s_cubic-bezier(0.16,1,0.3,1)] flex flex-col">
+      <div className="relative w-full max-w-3xl max-h-[85vh] overflow-y-auto pointer-events-auto bg-white dark:bg-[#0A0A0A] sm:rounded-3xl rounded-2xl shadow-2xl animate-[slideUp_0.4s_cubic-bezier(0.16,1,0.3,1)] flex flex-col mb-4 sm:mb-0">
         
         {/* Sticky Header */}
         <div className="sticky top-0 z-40 bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5 px-6 py-4 flex items-center justify-between">

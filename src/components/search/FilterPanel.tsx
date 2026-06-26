@@ -56,7 +56,7 @@ export default function FilterPanel({ filters, onChange, collections, totalPhoto
                   <button
                     key={cat.key}
                     onClick={() => update({ category: cat.key })}
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                    className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
                       isActive ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                     style={{
@@ -85,7 +85,7 @@ export default function FilterPanel({ filters, onChange, collections, totalPhoto
               {/* Favorites */}
               <button
                 onClick={() => update({ starred: filters.starred ? null : true })}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
                   filters.starred ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
                 }`}
                 style={{
@@ -104,7 +104,7 @@ export default function FilterPanel({ filters, onChange, collections, totalPhoto
                 <select
                   value={filters.sortBy || 'date_desc'}
                   onChange={(e) => update({ sortBy: e.target.value as PhotoSortOption })}
-                  className="appearance-none inline-flex items-center gap-1.5 pl-3.5 pr-8 py-2 text-sm font-bold bg-transparent cursor-pointer outline-none shrink-0"
+                  className="appearance-none inline-flex items-center justify-center gap-1.5 pl-3.5 pr-8 py-2 text-sm font-bold bg-transparent cursor-pointer outline-none shrink-0"
                   style={{ color: 'var(--text-secondary)' }}
                 >
                   <option value="date_desc" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)' }}>En Yeni</option>
@@ -123,7 +123,7 @@ export default function FilterPanel({ filters, onChange, collections, totalPhoto
                   <select
                     value={filters.collectionId || ''}
                     onChange={(e) => update({ collectionId: e.target.value || null })}
-                    className="appearance-none inline-flex items-center gap-1.5 pl-3.5 pr-8 py-2 text-sm font-bold bg-transparent cursor-pointer outline-none shrink-0"
+                    className="appearance-none inline-flex items-center justify-center gap-1.5 pl-3.5 pr-8 py-2 text-sm font-bold bg-transparent cursor-pointer outline-none shrink-0"
                     style={{ color: 'var(--text-secondary)' }}
                   >
                     <option value="" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)' }}>Koleksiyonlar</option>
