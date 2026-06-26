@@ -44,16 +44,15 @@ export default function FilterPanel({ filters, onChange, collections, totalPhoto
 
   return (
     <div className="space-y-4">
-      {/* Unified Filter Bar - Horizontal Scroll */}
-      <div 
-        ref={scrollRef}
-        className="block w-full overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 lg:-mx-6 lg:px-6"
-      >
-        {/* Row Container */}
-        <div className="flex items-center min-w-full w-max gap-4">
+      {/* Responsive Filter Container */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 w-full">
           
-          {/* 1. Category Selection Box */}
-          <div className="inline-flex items-center p-1 rounded-[14px] border shrink-0" 
+          {/* 1. Category Selection Box (Scrollable on mobile) */}
+          <div 
+            ref={scrollRef}
+            className="w-full lg:w-auto overflow-x-auto no-scrollbar -mx-4 px-4 lg:mx-0 lg:px-0"
+          >
+            <div className="inline-flex items-center p-1 rounded-[14px] border shrink-0 w-max" 
                style={{ 
                  background: 'var(--bg-secondary)', 
                  borderColor: 'var(--border-primary)' 
@@ -84,12 +83,11 @@ export default function FilterPanel({ filters, onChange, collections, totalPhoto
               );
             })}
           </div>
+          </div>
 
-          {/* Spacer to push the rest to the right */}
-          <div className="flex-1" />
-
-          {/* 2. Right Side Controls */}
-          <div className="flex items-center gap-2 shrink-0">
+          {/* 2. Right Side Controls (Scrollable on mobile) */}
+          <div className="w-full lg:w-auto overflow-x-auto no-scrollbar -mx-4 px-4 lg:mx-0 lg:px-0 pb-1">
+            <div className="flex items-center gap-2 shrink-0 w-max lg:w-auto">
             {/* Favorites */}
             <button
               onClick={() => update({ starred: filters.starred ? null : true })}
@@ -146,7 +144,7 @@ export default function FilterPanel({ filters, onChange, collections, totalPhoto
               </div>
             )}
           </div>
-        </div>
+          </div>
       </div>
     </div>
   );

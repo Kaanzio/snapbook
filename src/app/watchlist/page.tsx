@@ -217,9 +217,14 @@ function WatchlistContent() {
             </div>
           </div>
 
-          {/* ── Unified Action Row ── */}
-          <div className="block w-full overflow-x-auto no-scrollbar py-2 -mx-4 px-4 lg:-mx-6 lg:px-6 mb-1">
-            <div className="flex items-center min-w-full w-max gap-3">
+            {/* Responsive Filter Container */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 w-full">
+              
+              {/* Top Row (Mobile): Search & Status */}
+              <div 
+                className="w-full lg:w-auto overflow-x-auto no-scrollbar -mx-4 px-4 lg:mx-0 lg:px-0"
+              >
+                <div className="flex items-center gap-3 w-max">
               
               {/* ── Modern Compact Search Bar ── */}
               <div className="relative group shrink-0 w-48 sm:w-56">
@@ -321,9 +326,6 @@ function WatchlistContent() {
                 })}
               </div>
 
-              {/* Spacer */}
-              <div className="flex-1" />
-
               {/* 3. Right Side Controls */}
               <div className="flex items-center gap-2 shrink-0">
                 {/* Sort dropdown */}
@@ -343,9 +345,9 @@ function WatchlistContent() {
                   </svg>
                 </div>
               </div>
-
+              </div>
+              </div>
             </div>
-          </div>
 
         </div>
       </header>
