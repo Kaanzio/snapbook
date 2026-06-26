@@ -9,6 +9,8 @@ import { usePreferences } from '@/components/providers/PreferencesProvider';
 import MasonryGrid from '@/components/photos/MasonryGrid';
 import FilterPanel from '@/components/search/FilterPanel';
 import EmptyState from '@/components/ui/EmptyState';
+import Modal from '@/components/ui/Modal';
+import BottomSheet from '@/components/ui/BottomSheet';
 import { useWatchlist } from '@/hooks/useWatchlist';
 import { FilterState } from '@/types';
 import Link from 'next/link';
@@ -25,6 +27,7 @@ export default function HomePage() {
   const { items: watchlist } = useWatchlist();
   const { prefs, updatePrefs } = usePreferences();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   
   // Selection State
   const [isSelectionMode, setIsSelectionMode] = useState(false);
@@ -198,16 +201,6 @@ export default function HomePage() {
               </div>
             </div>
           )}
-
-          {/* Bottom Row: Filters */}
-          <div className="animate-[fade-in_0.5s_ease-out]">
-            <FilterPanel 
-              filters={filters} 
-              onChange={setFilters} 
-              collections={collections} 
-              totalPhotos={photos.length}
-            />
-          </div>
         </div>
       </header>
 
@@ -292,6 +285,37 @@ export default function HomePage() {
           </div>
         </div>
       )}
+
+      {/* Floating Action Button */}
+      {!loading && !isSelectionMode && (
+        <button
+          onClick={() => setIsFilterOpen(true)}
+          className="fixed bottom-20 lg:bottom-8 right-6 z-40 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 haptic-tap"
+          style={{ background: 'var(--accent)', color: 'var(--accent-foreground, white)' }}
+          title="Filtreler"
+        >
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+          </svg>
+          {/* Badge for active filters */}
+          {(filters.category !== 'all' || filters.starred || filters.collectionId) && (
+            <div className="absolute top-0 right-0 w-3.5 h-3.5 rounded-full bg-red-500 border-2" style={{ borderColor: 'var(--bg-primary)' }} />
+          )}
+        </button>
+      )}
+
+      {/* Filter Modals */}
+      <div className="hidden lg:block">
+        <Modal isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} title="Filtreler ve Kategoriler">
+          <FilterPanel filters={filters} onChange={setFilters} collections={collections} totalPhotos={photos.length} />
+        </Modal>
+      </div>
+      <div className="lg:hidden">
+        <BottomSheet isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} title="Filtreler ve Kategoriler">
+          <FilterPanel filters={filters} onChange={setFilters} collections={collections} totalPhotos={photos.length} />
+        </BottomSheet>
+      </div>
+
     </div>
   );
 }

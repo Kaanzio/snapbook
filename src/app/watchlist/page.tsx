@@ -10,6 +10,8 @@ import EmptyState from '@/components/ui/EmptyState';
 import { WatchItem, WatchStatus, WatchItemType, WATCH_STATUS_INFO, WATCH_TYPE_INFO } from '@/types';
 import WatchItemModal from '@/components/watchlist/WatchItemModal';
 import CreateListModal from '@/components/watchlist/CreateListModal';
+import Modal from '@/components/ui/Modal';
+import BottomSheet from '@/components/ui/BottomSheet';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDialog } from '@/components/providers/DialogProvider';
 import { WatchStatusIcon } from '@/components/watchlist/WatchIcons';
@@ -119,6 +121,7 @@ function WatchlistContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'rating-desc' | 'duration-desc' | 'duration-asc'>('date-desc');
   const [isCreateListModalOpen, setIsCreateListModalOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [reorderMode, setReorderMode] = useState(false);
   const sortMenuRef = useRef<HTMLDivElement>(null);
@@ -214,20 +217,10 @@ function WatchlistContent() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
               </Link>
-            </div>
-          </div>
-
-            {/* Responsive Filter Container */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 w-full">
-              
-              {/* Top Row (Mobile): Search & Status */}
-              <div 
-                className="w-full lg:w-auto overflow-x-auto no-scrollbar -mx-4 px-4 lg:mx-0 lg:px-0"
-              >
-                <div className="flex items-center gap-3 w-max">
-              
+                    {/* Responsive Filter Container (Search only now) */}
+            <div className="flex items-center w-full mt-2">
               {/* ── Modern Compact Search Bar ── */}
-              <div className="relative group shrink-0 w-48 sm:w-56">
+              <div className="relative group shrink-0 w-full sm:w-80 max-w-full">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300 group-focus-within:text-accent z-10" style={{ color: 'var(--text-tertiary)' }}>
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -238,8 +231,8 @@ function WatchlistContent() {
                   placeholder="Film, dizi ara..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-10 py-1.5 rounded-full text-sm font-medium outline-none transition-all duration-300 themed-input"
-                  style={{ color: 'var(--text-primary)', boxShadow: 'none' }}
+                  className="w-full pl-10 pr-10 py-2 rounded-xl text-sm font-medium outline-none transition-all duration-300 themed-input"
+                  style={{ color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
                 />
                 {searchQuery ? (
                   <button
@@ -255,98 +248,7 @@ function WatchlistContent() {
                   </button>
                 ) : null}
               </div>
-
-              {/* 1. Status Filters */}
-              <div className="inline-flex items-center p-1 rounded-[14px] border shrink-0" 
-                   style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
-                {/* All */}
-                <button
-                  onClick={() => { setStatusFilter('all'); setTypeFilter('all'); }}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-[11px] uppercase tracking-wider font-bold transition-all duration-300 haptic-tap shrink-0 ${
-                    statusFilter === 'all' && typeFilter === 'all' ? '' : 'hover:bg-black/5 dark:hover:bg-white/5'
-                  }`}
-                  style={{
-                    background: statusFilter === 'all' && typeFilter === 'all' ? 'var(--accent)' : 'transparent',
-                    color: statusFilter === 'all' && typeFilter === 'all' ? 'var(--accent-foreground, white)' : 'var(--text-secondary)',
-                  }}
-                >
-                  <svg className={`w-3.5 h-3.5 ${statusFilter === 'all' && typeFilter === 'all' ? 'opacity-100' : 'opacity-60'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25z" />
-                  </svg>
-                  Tümü
-                </button>
-
-                {/* Status Options */}
-                {(Object.entries(WATCH_STATUS_INFO) as [WatchStatus, { label: string; icon: string; color: string }][]).map(([key, info]) => {
-                  const isActive = statusFilter === key;
-                  return (
-                    <button
-                      key={key}
-                      onClick={() => { setStatusFilter(isActive ? 'all' : key); setTypeFilter('all'); }}
-                      className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-[11px] uppercase tracking-wider font-bold transition-all duration-300 haptic-tap shrink-0 ${
-                        isActive ? '' : 'hover:bg-black/5 dark:hover:bg-white/5'
-                      }`}
-                      style={{
-                        background: isActive ? 'var(--accent)' : 'transparent',
-                        color: isActive ? 'var(--accent-foreground, white)' : 'var(--text-secondary)',
-                      }}
-                    >
-                      <div className={isActive ? 'opacity-100' : 'opacity-60'}>
-                        <WatchStatusIcon icon={info.icon} className="w-3.5 h-3.5" />
-                      </div>
-                      {info.label}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* 2. Type Filters */}
-              <div className="inline-flex items-center p-1 rounded-[14px] border shrink-0" 
-                   style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
-                {(Object.entries(WATCH_TYPE_INFO) as [WatchItemType, { label: string; icon: string }][]).map(([key, info]) => {
-                  const isActive = typeFilter === key;
-                  return (
-                    <button
-                      key={key}
-                      onClick={() => { setTypeFilter(isActive ? 'all' : key); setStatusFilter('all'); }}
-                      className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-[11px] uppercase tracking-wider font-bold transition-all duration-300 haptic-tap shrink-0 ${
-                        isActive ? '' : 'hover:bg-black/5 dark:hover:bg-white/5'
-                      }`}
-                      style={{
-                        background: isActive ? 'var(--accent)' : 'transparent',
-                        color: isActive ? 'var(--accent-foreground, white)' : 'var(--text-secondary)',
-                      }}
-                    >
-                      <div className={isActive ? 'opacity-100' : 'opacity-60'}>
-                        <WatchStatusIcon icon={info.icon} className="w-3.5 h-3.5" />
-                      </div>
-                      {info.label}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* 3. Right Side Controls */}
-              <div className="flex items-center gap-2 shrink-0">
-                {/* Sort dropdown */}
-                <div className="relative flex items-center border rounded-full haptic-tap transition-all hover:bg-black/5 dark:hover:bg-white/5 shrink-0" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-                    className="appearance-none inline-flex items-center gap-1.5 pl-4 pr-8 py-1.5 text-[11px] uppercase tracking-wider font-bold bg-transparent cursor-pointer outline-none shrink-0"
-                    style={{ color: 'var(--text-secondary)' }}
-                  >
-                    {Object.entries(sortLabels).map(([key, label]) => (
-                      <option key={key} value={key} style={{ background: 'var(--bg-card)', color: 'var(--text-primary)' }}>{label}</option>
-                    ))}
-                  </select>
-                  <svg className="w-3.5 h-3.5 absolute right-3 pointer-events-none opacity-60" style={{ color: 'var(--text-secondary)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                  </svg>
-                </div>
-              </div>
-              </div>
-              </div>
+            </div>              </div>
             </div>
 
         </div>
@@ -563,9 +465,232 @@ function WatchlistContent() {
             </div>
           );
         })()}
+
+        {/* Floating Action Button for Filters */}
+        <button
+          onClick={() => setIsFilterOpen(true)}
+          className="fixed bottom-20 lg:bottom-8 right-6 z-40 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 haptic-tap"
+          style={{ background: 'var(--accent)', color: 'var(--accent-foreground, white)' }}
+          title="Filtreler"
+        >
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+          </svg>
+          {/* Badge for active filters */}
+          {(statusFilter !== 'all' || typeFilter !== 'all') && (
+            <div className="absolute top-0 right-0 w-3.5 h-3.5 rounded-full bg-red-500 border-2" style={{ borderColor: 'var(--bg-primary)' }} />
+          )}
+        </button>
+
       </main>
 
       {/* ─── MODALS ─── */}
+      
+      {/* Filter Modal Content */}
+      <div className="hidden lg:block">
+        <Modal isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} title="Filtreler ve Sıralama">
+          <div className="flex flex-col gap-6 w-full pb-4">
+            
+            {/* Status Filters */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">İzleme Durumu</label>
+              <div className="flex flex-wrap items-center gap-2">
+                {/* All */}
+                <button
+                  onClick={() => { setStatusFilter('all'); setTypeFilter('all'); }}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                    statusFilter === 'all' && typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                  }`}
+                  style={{
+                    background: statusFilter === 'all' && typeFilter === 'all' ? 'var(--accent)' : 'transparent',
+                    color: statusFilter === 'all' && typeFilter === 'all' ? 'var(--accent-foreground, white)' : 'var(--text-secondary)',
+                  }}
+                >
+                  <svg className={`w-4 h-4 ${statusFilter === 'all' && typeFilter === 'all' ? 'opacity-100' : 'opacity-60'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25z" />
+                  </svg>
+                  Tümü
+                </button>
+
+                {/* Status Options */}
+                {(Object.entries(WATCH_STATUS_INFO) as [WatchStatus, { label: string; icon: string; color: string }][]).map(([key, info]) => {
+                  const isActive = statusFilter === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => { setStatusFilter(isActive ? 'all' : key); setTypeFilter('all'); }}
+                      className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                        isActive ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                      }`}
+                      style={{
+                        background: isActive ? 'var(--accent)' : 'transparent',
+                        color: isActive ? 'var(--accent-foreground, white)' : 'var(--text-secondary)',
+                      }}
+                    >
+                      <div className={isActive ? 'opacity-100' : 'opacity-60'}>
+                        <WatchStatusIcon icon={info.icon} className="w-4 h-4" />
+                      </div>
+                      {info.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Type Filters */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Tür</label>
+              <div className="flex flex-wrap items-center gap-2">
+                {(Object.entries(WATCH_TYPE_INFO) as [WatchItemType, { label: string; icon: string }][]).map(([key, info]) => {
+                  const isActive = typeFilter === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => { setTypeFilter(isActive ? 'all' : key); setStatusFilter('all'); }}
+                      className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                        isActive ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                      }`}
+                      style={{
+                        background: isActive ? 'var(--accent)' : 'transparent',
+                        color: isActive ? 'var(--accent-foreground, white)' : 'var(--text-secondary)',
+                      }}
+                    >
+                      <div className={isActive ? 'opacity-100' : 'opacity-60'}>
+                        <WatchStatusIcon icon={info.icon} className="w-4 h-4" />
+                      </div>
+                      {info.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Sıralama</label>
+              <div className="relative flex items-center border rounded-xl haptic-tap transition-all hover:bg-black/5 dark:hover:bg-white/5 shrink-0 border-slate-200 dark:border-slate-800 w-max">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                  className="appearance-none inline-flex items-center gap-1.5 pl-3.5 pr-8 py-2 text-sm font-bold bg-transparent cursor-pointer outline-none shrink-0"
+                  style={{ color: 'var(--text-secondary)' }}
+                >
+                  {Object.entries(sortLabels).map(([key, label]) => (
+                    <option key={key} value={key} style={{ background: 'var(--bg-card)', color: 'var(--text-primary)' }}>{label}</option>
+                  ))}
+                </select>
+                <svg className="w-4 h-4 absolute right-2.5 pointer-events-none opacity-60" style={{ color: 'var(--text-secondary)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+            </div>
+
+          </div>
+        </Modal>
+      </div>
+
+      <div className="lg:hidden">
+        <BottomSheet isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} title="Filtreler ve Sıralama">
+          <div className="flex flex-col gap-6 w-full">
+            
+            {/* Status Filters */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">İzleme Durumu</label>
+              <div className="flex flex-wrap items-center gap-2">
+                {/* All */}
+                <button
+                  onClick={() => { setStatusFilter('all'); setTypeFilter('all'); }}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                    statusFilter === 'all' && typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                  }`}
+                  style={{
+                    background: statusFilter === 'all' && typeFilter === 'all' ? 'var(--accent)' : 'transparent',
+                    color: statusFilter === 'all' && typeFilter === 'all' ? 'var(--accent-foreground, white)' : 'var(--text-secondary)',
+                  }}
+                >
+                  <svg className={`w-4 h-4 ${statusFilter === 'all' && typeFilter === 'all' ? 'opacity-100' : 'opacity-60'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25z" />
+                  </svg>
+                  Tümü
+                </button>
+
+                {/* Status Options */}
+                {(Object.entries(WATCH_STATUS_INFO) as [WatchStatus, { label: string; icon: string; color: string }][]).map(([key, info]) => {
+                  const isActive = statusFilter === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => { setStatusFilter(isActive ? 'all' : key); setTypeFilter('all'); }}
+                      className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                        isActive ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                      }`}
+                      style={{
+                        background: isActive ? 'var(--accent)' : 'transparent',
+                        color: isActive ? 'var(--accent-foreground, white)' : 'var(--text-secondary)',
+                      }}
+                    >
+                      <div className={isActive ? 'opacity-100' : 'opacity-60'}>
+                        <WatchStatusIcon icon={info.icon} className="w-4 h-4" />
+                      </div>
+                      {info.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Type Filters */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Tür</label>
+              <div className="flex flex-wrap items-center gap-2">
+                {(Object.entries(WATCH_TYPE_INFO) as [WatchItemType, { label: string; icon: string }][]).map(([key, info]) => {
+                  const isActive = typeFilter === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => { setTypeFilter(isActive ? 'all' : key); setStatusFilter('all'); }}
+                      className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                        isActive ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                      }`}
+                      style={{
+                        background: isActive ? 'var(--accent)' : 'transparent',
+                        color: isActive ? 'var(--accent-foreground, white)' : 'var(--text-secondary)',
+                      }}
+                    >
+                      <div className={isActive ? 'opacity-100' : 'opacity-60'}>
+                        <WatchStatusIcon icon={info.icon} className="w-4 h-4" />
+                      </div>
+                      {info.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Sıralama</label>
+              <div className="relative flex items-center border rounded-xl haptic-tap transition-all hover:bg-black/5 dark:hover:bg-white/5 shrink-0 border-slate-200 dark:border-slate-800 w-max">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                  className="appearance-none inline-flex items-center gap-1.5 pl-3.5 pr-8 py-2 text-sm font-bold bg-transparent cursor-pointer outline-none shrink-0"
+                  style={{ color: 'var(--text-secondary)' }}
+                >
+                  {Object.entries(sortLabels).map(([key, label]) => (
+                    <option key={key} value={key} style={{ background: 'var(--bg-card)', color: 'var(--text-primary)' }}>{label}</option>
+                  ))}
+                </select>
+                <svg className="w-4 h-4 absolute right-2.5 pointer-events-none opacity-60" style={{ color: 'var(--text-secondary)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+            </div>
+
+          </div>
+        </BottomSheet>
+      </div>
+
       {viewId && <WatchItemModal id={viewId} onClose={() => router.push('/watchlist')} />}
       {isCreateListModalOpen && (
         <CreateListModal
