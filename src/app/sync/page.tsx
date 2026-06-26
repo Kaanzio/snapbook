@@ -110,7 +110,7 @@ export default function SyncPage() {
 
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
-          <Link href="/settings" className="w-10 h-10 rounded-xl transition-colors hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center haptic-tap">
+          <Link href="/settings" className="w-10 h-10 rounded-xl transition-colors hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center haptic-tap cursor-pointer">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="m15 18-6-6 6-6" />
             </svg>
@@ -129,7 +129,7 @@ export default function SyncPage() {
                 Veri paylaşmak istediğiniz cihazı seçin
               </p>
               <div className="grid grid-cols-2 gap-3">
-                <button onClick={startHosting} className="btn-accent py-5 rounded-2xl font-bold flex flex-col items-center justify-center gap-3 haptic-tap">
+                <button onClick={startHosting} className="btn-accent py-5 rounded-2xl font-bold flex flex-col items-center justify-center gap-3 haptic-tap cursor-pointer">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 3v1m0 16v1M4.22 4.22l.7.7m12.16 12.16.7.7M3 12h1m16 0h1M4.92 19.07l.7-.7M18.36 5.64l.7-.7" />
                     <circle cx="12" cy="12" r="4" />
@@ -140,7 +140,7 @@ export default function SyncPage() {
                   </div>
                 </button>
 
-                <button onClick={startConnect} className="bg-secondary border border-primary py-5 rounded-2xl font-bold flex flex-col items-center justify-center gap-3 haptic-tap hover:bg-black/5 dark:hover:bg-white/5">
+                <button onClick={startConnect} className="bg-secondary border border-primary py-5 rounded-2xl font-bold flex flex-col items-center justify-center gap-3 haptic-tap cursor-pointer hover:bg-black/5 dark:hover:bg-white/5">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
@@ -200,7 +200,7 @@ export default function SyncPage() {
                     navigator.clipboard.writeText(displayPin);
                     showToast('Kod kopyalandı!');
                   }}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold haptic-tap"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold haptic-tap cursor-pointer"
                   style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -222,7 +222,7 @@ export default function SyncPage() {
               </div>
             )}
 
-            <button onClick={() => { setPeerId(''); setMode('idle'); }} className="text-sm text-red-500 font-bold haptic-tap">
+            <button onClick={() => { setPeerId(''); setMode('idle'); }} className="text-sm text-red-500 font-bold haptic-tap cursor-pointer">
               İptal Et
             </button>
           </div>
@@ -266,12 +266,12 @@ export default function SyncPage() {
 
             <button
               onClick={handleManualConnect}
-              className="btn-accent w-full py-3 rounded-xl font-bold haptic-tap"
+              className="btn-accent w-full py-3 rounded-xl font-bold haptic-tap cursor-pointer"
             >
               Bağlan
             </button>
 
-            <button onClick={() => { setPinDigits(['', '', '', '', '', '']); setMode('idle'); }} className="text-sm text-red-500 font-bold haptic-tap">
+            <button onClick={() => { setPinDigits(['', '', '', '', '', '']); setMode('idle'); }} className="text-sm text-red-500 font-bold haptic-tap cursor-pointer">
               İptal Et
             </button>
           </div>
@@ -307,7 +307,7 @@ export default function SyncPage() {
             {progress.status === 'completed' && (
               <button
                 onClick={() => { setProgress({ status: 'disconnected', message: '', progress: 0 }); setMode('idle'); }}
-                className="btn-accent px-8 py-3 rounded-xl font-bold haptic-tap"
+                className="btn-accent px-8 py-3 rounded-xl font-bold haptic-tap cursor-pointer"
               >
                 Tamam
               </button>
@@ -329,8 +329,8 @@ export default function SyncPage() {
                 <p className="text-sm text-tertiary">Bir cihaz verileri eşitlemek istiyor. Onaylıyor musunuz?</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <button onClick={handleReject} className="py-3 rounded-xl border font-bold haptic-tap text-red-500" style={{ borderColor: '#ef4444' }}>Reddet</button>
-                <button onClick={handleAccept} className="btn-accent py-3 rounded-xl font-bold haptic-tap">Kabul Et</button>
+                <button onClick={handleReject} className="py-3 rounded-xl border font-bold haptic-tap cursor-pointer text-red-500" style={{ borderColor: '#ef4444' }}>Reddet</button>
+                <button onClick={handleAccept} className="btn-accent py-3 rounded-xl font-bold haptic-tap cursor-pointer">Kabul Et</button>
               </div>
             </div>
           </div>

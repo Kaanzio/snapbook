@@ -156,7 +156,7 @@ export default function UploadModal({ onClose }: UploadModalProps) {
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-full transition-all duration-300 haptic-tap shadow-sm hover:scale-105 active:scale-95 inline-flex items-center justify-center"
+            className="w-10 h-10 rounded-full transition-all duration-300 haptic-tap cursor-pointer shadow-sm hover:scale-105 active:scale-95 inline-flex items-center justify-center"
             style={{ background: 'var(--bg-card)', color: 'var(--text-secondary)', border: '1px solid var(--border-primary)' }}
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -262,7 +262,7 @@ export default function UploadModal({ onClose }: UploadModalProps) {
               onClick={handleUpload}
               disabled={uploading}
               className="w-full py-3.5 px-6 rounded-2xl btn-accent text-sm font-semibold
-                disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[0_8px_30px_rgb(0,0,0,0.12)] haptic-tap hover:scale-[1.01] active:scale-[0.99] transition-all"
+                disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[0_8px_30px_rgb(0,0,0,0.12)] haptic-tap cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all"
             >
               {uploading ? (
                 <>

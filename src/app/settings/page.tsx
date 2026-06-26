@@ -211,7 +211,7 @@ export default function SettingsPage() {
                       localStorage.removeItem('snapbook_tmdb_api_key');
                     }
                   }}
-                  className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 haptic-tap whitespace-nowrap bg-red-500 text-white"
+                  className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 haptic-tap cursor-pointer whitespace-nowrap bg-red-500 text-white"
                   title="Şifreyi Sil"
                   disabled={!isTmdbEnabled}
                 >
@@ -222,7 +222,7 @@ export default function SettingsPage() {
                   href="https://www.themoviedb.org/settings/api" 
                   target="_blank" 
                   rel="noreferrer"
-                  className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 haptic-tap whitespace-nowrap"
+                  className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 haptic-tap cursor-pointer whitespace-nowrap"
                   style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-secondary)' }}
                 >
                   Şifre Al
@@ -248,7 +248,7 @@ export default function SettingsPage() {
               <button
                 key={opt.key}
                 onClick={() => updatePrefs({ theme: opt.key })}
-                className="text-left p-4 rounded-2xl transition-all duration-200 haptic-tap"
+                className="text-left p-4 rounded-2xl transition-all duration-200 haptic-tap cursor-pointer"
                 style={{
                   background: prefs.theme === opt.key ? 'hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.1)' : 'var(--bg-card)',
                   border: prefs.theme === opt.key ? '2px solid var(--accent)' : '2px solid var(--border-primary)',
@@ -281,7 +281,7 @@ export default function SettingsPage() {
               <button
                 key={preset.value}
                 onClick={() => updatePrefs({ accentColor: preset.value })}
-                className="relative w-10 h-10 rounded-xl transition-all duration-200 hover:scale-110 haptic-tap"
+                className="relative w-10 h-10 rounded-xl transition-all duration-200 hover:scale-110 haptic-tap cursor-pointer"
                 style={{
                   background: preset.value,
                   boxShadow: prefs.accentColor === preset.value ? `0 0 0 3px var(--bg-primary), 0 0 0 5px ${preset.value}` : 'none',
@@ -306,7 +306,7 @@ export default function SettingsPage() {
             {/* Custom color */}
             <button
               onClick={() => setShowCustomInput(!showCustomInput)}
-              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 haptic-tap"
+              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 haptic-tap cursor-pointer"
               style={{
                 background: 'var(--bg-tertiary)',
                 border: '2px dashed var(--border-primary)',
@@ -350,7 +350,7 @@ export default function SettingsPage() {
               <button
                 key={opt.key}
                 onClick={() => updatePrefs({ gridDensity: opt.key })}
-                className="text-center p-4 rounded-2xl transition-all duration-200 haptic-tap"
+                className="text-center p-4 rounded-2xl transition-all duration-200 haptic-tap cursor-pointer"
                 style={{
                   background: prefs.gridDensity === opt.key ? 'hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.1)' : 'var(--bg-card)',
                   border: prefs.gridDensity === opt.key ? '2px solid var(--accent)' : '2px solid var(--border-primary)',
@@ -398,7 +398,7 @@ export default function SettingsPage() {
               <button
                 key={opt.key}
                 onClick={() => updatePrefs({ fontSize: opt.key })}
-                className="text-center p-4 rounded-2xl transition-all duration-200 haptic-tap"
+                className="text-center p-4 rounded-2xl transition-all duration-200 haptic-tap cursor-pointer"
                 style={{
                   background: prefs.fontSize === opt.key ? 'hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.1)' : 'var(--bg-card)',
                   border: prefs.fontSize === opt.key ? '2px solid var(--accent)' : '2px solid var(--border-primary)',
@@ -490,7 +490,7 @@ export default function SettingsPage() {
           <div className="space-y-3">
             <Link
               href="/sync"
-              className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl font-bold transition-all haptic-tap btn-accent shadow-[0_8px_30px_rgb(0,0,0,0.12)]"
+              className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl font-bold transition-all haptic-tap cursor-pointer btn-accent shadow-[0_8px_30px_rgb(0,0,0,0.12)]"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
@@ -529,7 +529,7 @@ export default function SettingsPage() {
                 }
               }}
               disabled={isExporting || isImporting}
-              className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl font-medium transition-all haptic-tap disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl font-medium transition-all haptic-tap cursor-pointer disabled:opacity-50"
               style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)' }}
             >
               {isExporting ? (
@@ -552,7 +552,7 @@ export default function SettingsPage() {
               />
               <button
                 disabled={isExporting || isImporting}
-                className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl font-medium transition-all haptic-tap disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl font-medium transition-all haptic-tap cursor-pointer disabled:opacity-50"
                 style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)' }}
               >
                 {isImporting ? (
@@ -574,7 +574,7 @@ export default function SettingsPage() {
             <button
               onClick={handleClearDatabase}
               disabled={isExporting || isImporting}
-              className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl font-medium transition-all hover:bg-red-500/10 haptic-tap disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl font-medium transition-all hover:bg-red-500/10 haptic-tap cursor-pointer disabled:opacity-50"
               style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)', color: '#ef4444' }}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

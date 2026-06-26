@@ -56,7 +56,7 @@ export default function FilterPanel({ filters, onChange, collections, totalPhoto
                   <button
                     key={cat.key}
                     onClick={() => update({ category: cat.key })}
-                    className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                    className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap cursor-pointer shrink-0 border ${
                       isActive ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                     style={{
@@ -85,7 +85,7 @@ export default function FilterPanel({ filters, onChange, collections, totalPhoto
               {/* Favorites */}
               <button
                 onClick={() => update({ starred: filters.starred ? null : true })}
-                className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap cursor-pointer shrink-0 border ${
                   filters.starred ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                 }`}
                 style={{
@@ -100,7 +100,7 @@ export default function FilterPanel({ filters, onChange, collections, totalPhoto
               </button>
 
               {/* Sort Menu */}
-              <div className="relative flex items-center border rounded-xl haptic-tap transition-all hover:bg-black/5 dark:hover:bg-white/5 border-black/10 dark:border-white/10">
+              <div className="relative flex items-center border rounded-xl haptic-tap cursor-pointer transition-all hover:bg-black/5 dark:hover:bg-white/5 border-black/10 dark:border-white/10">
                 <select
                   value={filters.sortBy || 'date_desc'}
                   onChange={(e) => update({ sortBy: e.target.value as PhotoSortOption })}
@@ -119,7 +119,7 @@ export default function FilterPanel({ filters, onChange, collections, totalPhoto
 
               {/* Collection Menu */}
               {collections.length > 0 && (
-                <div className="relative flex items-center border rounded-xl haptic-tap transition-all hover:bg-black/5 dark:hover:bg-white/5 border-black/10 dark:border-white/10">
+                <div className="relative flex items-center border rounded-xl haptic-tap cursor-pointer transition-all hover:bg-black/5 dark:hover:bg-white/5 border-black/10 dark:border-white/10">
                   <select
                     value={filters.collectionId || ''}
                     onChange={(e) => update({ collectionId: e.target.value || null })}

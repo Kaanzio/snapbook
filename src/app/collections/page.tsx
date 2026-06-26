@@ -74,7 +74,7 @@ export default function CollectionsPage() {
           </div>
           <button
             onClick={() => setShowForm(true)}
-            className="p-3 rounded-full btn-accent haptic-tap transition-transform hover:scale-105 active:scale-95"
+            className="p-3 rounded-full btn-accent haptic-tap cursor-pointer transition-transform hover:scale-105 active:scale-95"
             title="Yeni Koleksiyon"
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -154,7 +154,7 @@ export default function CollectionsPage() {
                         e.stopPropagation();
                         setEditingCollection({ id: coll.id, name: coll.name, description: coll.description });
                       }}
-                      className="p-2.5 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-white transition-all haptic-tap"
+                      className="p-2.5 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-white transition-all haptic-tap cursor-pointer"
                       title="Düzenle"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -167,7 +167,7 @@ export default function CollectionsPage() {
                         e.stopPropagation();
                         handleDelete(coll.id);
                       }}
-                      className="p-2.5 rounded-full bg-black/40 hover:bg-red-500/80 backdrop-blur-md text-white transition-all haptic-tap"
+                      className="p-2.5 rounded-full bg-black/40 hover:bg-red-500/80 backdrop-blur-md text-white transition-all haptic-tap cursor-pointer"
                       title="Sil"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -177,7 +177,7 @@ export default function CollectionsPage() {
                   </div>
 
                   {/* Clean Typography Below the Cover */}
-                  <Link href={`/collections/view?id=${coll.id}`} className="block px-1 haptic-tap">
+                  <Link href={`/collections/view?id=${coll.id}`} className="block px-1 haptic-tap cursor-pointer">
                     <h3 className="text-xl lg:text-2xl font-black tracking-tight truncate transition-colors hover:text-accent" style={{ color: 'var(--text-primary)' }}>
                       {coll.name}
                     </h3>
@@ -232,7 +232,7 @@ export default function CollectionsPage() {
                 <button 
                   key={photo.id} 
                   onClick={() => handleSetCover(photo.id)}
-                  className="aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-accent transition-all haptic-tap active:scale-95"
+                  className="aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-accent transition-all haptic-tap cursor-pointer active:scale-95"
                 >
                   <ThumbnailItem photoId={photo.id} />
                 </button>

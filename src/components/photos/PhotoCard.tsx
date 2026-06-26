@@ -53,7 +53,7 @@ export default function PhotoCard({
     >
       <Link 
         href={`/photo/?id=${photo.id}`} 
-        className={`block relative aspect-square rounded-[18px] md:rounded-2xl overflow-hidden group haptic-tap shadow-sm transition-all duration-300 ${isSelected ? 'ring-4 ring-accent bg-accent/20' : 'bg-black/5 border border-white/5'}`}
+        className={`block relative aspect-square rounded-[18px] md:rounded-2xl overflow-hidden group haptic-tap cursor-pointer shadow-sm transition-all duration-300 ${isSelected ? 'ring-4 ring-accent bg-accent/20' : 'bg-black/5 border border-white/5'}`}
         onClick={(e) => {
           if (isSelectionMode && onToggleSelect) {
             e.preventDefault();

@@ -21,7 +21,7 @@ export default function TopBar() {
       <div className="flex items-center gap-2">
         <Link 
           href="/sync"
-          className="flex items-center justify-center w-9 h-9 text-accent bg-accent/10 rounded-full haptic-tap transition-all active:scale-95"
+          className="flex items-center justify-center w-9 h-9 text-accent bg-accent/10 rounded-full haptic-tap cursor-pointer transition-all active:scale-95"
           title="Cihaz Eşitleme"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -31,7 +31,7 @@ export default function TopBar() {
 
         <Link 
           href="/settings"
-          className="flex items-center justify-center w-9 h-9 text-slate-500 hover:text-slate-900 dark:hover:text-white bg-black/5 dark:bg-white/5 rounded-full haptic-tap transition-all active:scale-95"
+          className="flex items-center justify-center w-9 h-9 text-slate-500 hover:text-slate-900 dark:hover:text-white bg-black/5 dark:bg-white/5 rounded-full haptic-tap cursor-pointer transition-all active:scale-95"
           title="Ayarlar"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -43,7 +43,7 @@ export default function TopBar() {
         {prefs.pin && (
           <button 
             onClick={() => updatePrefs({ isLocked: true })} 
-            className="flex items-center justify-center w-9 h-9 text-red-500 bg-red-500/10 rounded-full haptic-tap transition-transform active:scale-95"
+            className="flex items-center justify-center w-9 h-9 text-red-500 bg-red-500/10 rounded-full haptic-tap cursor-pointer transition-transform active:scale-95"
             title="Uygulamayı Kilitle"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

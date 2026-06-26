@@ -58,7 +58,7 @@ export default function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center gap-0.5 min-w-[64px] py-2 rounded-xl transition-all haptic-tap
+              className={`flex flex-col items-center justify-center gap-0.5 min-w-[64px] py-2 rounded-xl transition-all haptic-tap cursor-pointer
                 ${active ? 'nav-item-active shadow-sm' : ''}`}
               style={{ 
                 color: active ? 'var(--accent-foreground)' : 'var(--text-tertiary)' 

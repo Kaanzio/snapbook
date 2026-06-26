@@ -100,7 +100,7 @@ export default function CollectionsPage() {
                 <Link
                   key={coll.id}
                   href={`/collections/view?id=${coll.id}`}
-                  className="group relative block haptic-tap"
+                  className="group relative block haptic-tap cursor-pointer"
                 >
                   <div className="themed-card overflow-hidden">
                     {/* Visual Stack / Grid */}

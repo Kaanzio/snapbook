@@ -182,7 +182,7 @@ function WatchlistContent() {
               {customLists.length > 1 && (
                 <button
                   onClick={() => setReorderMode(v => !v)}
-                  className={`flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2 p-0 rounded-xl transition-colors haptic-tap shrink-0 ${reorderMode ? 'text-accent' : ''}`}
+                  className={`flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2 p-0 rounded-xl transition-colors haptic-tap cursor-pointer shrink-0 ${reorderMode ? 'text-accent' : ''}`}
                   style={{
                     background: reorderMode ? 'hsla(var(--accent-h),var(--accent-s),var(--accent-l),0.15)' : 'var(--bg-secondary)',
                     color: reorderMode ? 'var(--accent)' : 'var(--text-secondary)',
@@ -197,7 +197,7 @@ function WatchlistContent() {
               {/* New List */}
               <button
                 onClick={() => setIsCreateListModalOpen(true)}
-                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2 p-0 gap-1.5 rounded-xl text-sm font-bold transition-colors haptic-tap shrink-0"
+                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2 p-0 gap-1.5 rounded-xl text-sm font-bold transition-colors haptic-tap cursor-pointer shrink-0"
                 style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
                 title="Yeni Liste Oluştur"
               >
@@ -209,7 +209,7 @@ function WatchlistContent() {
               {/* Add */}
               <Link
                 href="/watchlist/add"
-                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2 p-0 rounded-xl transition-colors haptic-tap shrink-0"
+                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2 p-0 rounded-xl transition-colors haptic-tap cursor-pointer shrink-0"
                 style={{ background: 'hsla(var(--accent-h),var(--accent-s),var(--accent-l),0.12)', color: 'var(--accent)' }}
                 title="Film veya Dizi Ekle"
               >
@@ -237,7 +237,7 @@ function WatchlistContent() {
                 {searchQuery ? (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute inset-y-0 right-1.5 pr-2 pl-2 flex items-center haptic-tap hover:scale-110 transition-transform z-10"
+                    className="absolute inset-y-0 right-1.5 pr-2 pl-2 flex items-center haptic-tap cursor-pointer hover:scale-110 transition-transform z-10"
                     style={{ color: 'var(--text-secondary)' }}
                   >
                     <div className="w-4 h-4 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center backdrop-blur-sm">
@@ -306,7 +306,7 @@ function WatchlistContent() {
                         <button
                           onClick={() => reorderCustomLists(sectionIndex, sectionIndex - 1)}
                           disabled={sectionIndex === 0}
-                          className="p-0.5 rounded disabled:opacity-20 hover:opacity-60 transition-opacity haptic-tap"
+                          className="p-0.5 rounded disabled:opacity-20 hover:opacity-60 transition-opacity haptic-tap cursor-pointer"
                           style={{ color: 'var(--text-tertiary)' }}
                         >
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -316,7 +316,7 @@ function WatchlistContent() {
                         <button
                           onClick={() => reorderCustomLists(sectionIndex, sectionIndex + 1)}
                           disabled={sectionIndex === customLists.length - 1}
-                          className="p-0.5 rounded disabled:opacity-20 hover:opacity-60 transition-opacity haptic-tap"
+                          className="p-0.5 rounded disabled:opacity-20 hover:opacity-60 transition-opacity haptic-tap cursor-pointer"
                           style={{ color: 'var(--text-tertiary)' }}
                         >
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -348,7 +348,7 @@ function WatchlistContent() {
                     {groupItems.length > 0 && !reorderMode && (
                       <Link 
                         href={`/watchlist/list?id=${customListId || 'unlisted'}`}
-                        className="ml-3 px-2.5 py-1 rounded-md text-xs font-bold transition-colors haptic-tap"
+                        className="ml-3 px-2.5 py-1 rounded-md text-xs font-bold transition-colors haptic-tap cursor-pointer"
                         style={{ color: 'var(--text-secondary)', background: 'var(--bg-secondary)' }}
                       >
                         Tümünü Gör
@@ -363,7 +363,7 @@ function WatchlistContent() {
                             const newName = await prompt('Listenin yeni adı:', title);
                             if (newName?.trim()) editCustomList(customListId, newName.trim());
                           }}
-                          className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors haptic-tap hover:bg-black/5 dark:hover:bg-white/5"
+                          className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors haptic-tap cursor-pointer hover:bg-black/5 dark:hover:bg-white/5"
                           style={{ color: 'var(--text-tertiary)' }}
                           title="Düzenle"
                         >
@@ -378,7 +378,7 @@ function WatchlistContent() {
                               removeCustomList(customListId);
                             }
                           }}
-                          className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors haptic-tap hover:bg-red-500/10 hover:text-red-500"
+                          className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors haptic-tap cursor-pointer hover:bg-red-500/10 hover:text-red-500"
                           style={{ color: 'var(--text-tertiary)' }}
                           title="Sil"
                         >
@@ -393,7 +393,7 @@ function WatchlistContent() {
                     {reorderMode && customListId && sectionIndex === customLists.length - 1 && (
                       <button
                         onClick={() => setReorderMode(false)}
-                        className="ml-auto px-3 py-1 rounded-lg text-xs font-bold transition-colors haptic-tap"
+                        className="ml-auto px-3 py-1 rounded-lg text-xs font-bold transition-colors haptic-tap cursor-pointer"
                         style={{ background: 'var(--accent)', color: 'white' }}
                       >
                         Tamam
@@ -454,7 +454,7 @@ function WatchlistContent() {
               />
               {items.length === 0 && (
                 <div className="mt-4 flex justify-center">
-                  <Link href="/watchlist/add" className="btn-accent px-6 py-2.5 rounded-xl font-medium text-sm haptic-tap inline-flex items-center gap-2">
+                  <Link href="/watchlist/add" className="btn-accent px-6 py-2.5 rounded-xl font-medium text-sm haptic-tap cursor-pointer inline-flex items-center gap-2">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
@@ -469,7 +469,7 @@ function WatchlistContent() {
         {/* Floating Action Button for Filters */}
         <button
           onClick={() => setIsFilterOpen(true)}
-          className="fixed bottom-20 lg:bottom-8 right-6 z-40 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 haptic-tap"
+          className="fixed bottom-20 lg:bottom-8 right-6 z-40 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 haptic-tap cursor-pointer"
           style={{ background: 'var(--accent)', color: 'var(--accent-foreground, white)' }}
           title="Filtreler"
         >
@@ -498,7 +498,7 @@ function WatchlistContent() {
                 {/* All */}
                 <button
                   onClick={() => { setStatusFilter('all'); }}
-                  className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                  className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap cursor-pointer shrink-0 border ${
                     statusFilter === 'all' && typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
                   style={{
@@ -519,7 +519,7 @@ function WatchlistContent() {
                     <button
                       key={key}
                       onClick={() => { setStatusFilter(isActive ? 'all' : key); }}
-                      className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                      className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap cursor-pointer shrink-0 border ${
                         isActive ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
                       style={{
@@ -544,7 +544,7 @@ function WatchlistContent() {
                 {/* All Type */}
                 <button
                   onClick={() => { setTypeFilter('all'); }}
-                  className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                  className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap cursor-pointer shrink-0 border ${
                     typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
                   style={{
@@ -564,7 +564,7 @@ function WatchlistContent() {
                     <button
                       key={key}
                       onClick={() => { setTypeFilter(isActive ? 'all' : key); }}
-                      className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                      className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap cursor-pointer shrink-0 border ${
                         isActive ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
                       style={{
@@ -585,7 +585,7 @@ function WatchlistContent() {
             {/* Sort Dropdown */}
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Sıralama</label>
-              <div className="relative flex items-center border rounded-xl haptic-tap transition-all hover:bg-black/5 dark:hover:bg-white/5 shrink-0 border-black/10 dark:border-white/10 w-max">
+              <div className="relative flex items-center border rounded-xl haptic-tap cursor-pointer transition-all hover:bg-black/5 dark:hover:bg-white/5 shrink-0 border-black/10 dark:border-white/10 w-max">
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
@@ -617,7 +617,7 @@ function WatchlistContent() {
                 {/* All */}
                 <button
                   onClick={() => { setStatusFilter('all'); }}
-                  className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                  className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap cursor-pointer shrink-0 border ${
                     statusFilter === 'all' && typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
                   style={{
@@ -638,7 +638,7 @@ function WatchlistContent() {
                     <button
                       key={key}
                       onClick={() => { setStatusFilter(isActive ? 'all' : key); }}
-                      className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                      className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap cursor-pointer shrink-0 border ${
                         isActive ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
                       style={{
@@ -663,7 +663,7 @@ function WatchlistContent() {
                 {/* All Type */}
                 <button
                   onClick={() => { setTypeFilter('all'); }}
-                  className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                  className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap cursor-pointer shrink-0 border ${
                     typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
                   style={{
@@ -683,7 +683,7 @@ function WatchlistContent() {
                     <button
                       key={key}
                       onClick={() => { setTypeFilter(isActive ? 'all' : key); }}
-                      className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                      className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap cursor-pointer shrink-0 border ${
                         isActive ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
                       style={{
@@ -704,7 +704,7 @@ function WatchlistContent() {
             {/* Sort Dropdown */}
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Sıralama</label>
-              <div className="relative flex items-center border rounded-xl haptic-tap transition-all hover:bg-black/5 dark:hover:bg-white/5 shrink-0 border-black/10 dark:border-white/10 w-max">
+              <div className="relative flex items-center border rounded-xl haptic-tap cursor-pointer transition-all hover:bg-black/5 dark:hover:bg-white/5 shrink-0 border-black/10 dark:border-white/10 w-max">
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as typeof sortBy)}

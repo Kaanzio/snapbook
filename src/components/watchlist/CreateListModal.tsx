@@ -106,7 +106,7 @@ export default function CreateListModal({ onClose, onSubmit }: CreateListModalPr
               <button
                 type="submit"
                 disabled={!name.trim()}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold bg-accent text-white hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all haptic-tap focus:ring-2 focus:ring-accent focus:ring-offset-2 dark:focus:ring-offset-[#1a1a1a] focus:outline-none disabled:cursor-not-allowed"
+                className="px-5 py-2.5 rounded-xl text-sm font-bold bg-accent text-white hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all haptic-tap cursor-pointer focus:ring-2 focus:ring-accent focus:ring-offset-2 dark:focus:ring-offset-[#1a1a1a] focus:outline-none disabled:cursor-not-allowed"
               >
                 Oluştur
               </button>

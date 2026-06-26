@@ -103,7 +103,7 @@ function FocusView({ photos, onPhotoClick }: { photos: PhotoMetadata[], onPhotoC
         {/* Navigation Buttons */}
         <button 
           onClick={prev}
-          className="absolute left-0 lg:-left-12 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-all z-10 haptic-tap"
+          className="absolute left-0 lg:-left-12 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-all z-10 haptic-tap cursor-pointer"
           style={{ color: 'var(--text-primary)', background: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}
         >
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -113,7 +113,7 @@ function FocusView({ photos, onPhotoClick }: { photos: PhotoMetadata[], onPhotoC
 
         <button 
           onClick={next}
-          className="absolute right-0 lg:-right-12 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-all z-10 haptic-tap"
+          className="absolute right-0 lg:-right-12 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-all z-10 haptic-tap cursor-pointer"
           style={{ color: 'var(--text-primary)', background: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}
         >
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

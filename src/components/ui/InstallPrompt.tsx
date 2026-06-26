@@ -93,14 +93,14 @@ export default function InstallPrompt() {
             {!isIOS && (
               <button 
                 onClick={handleInstallClick}
-                className="px-3 py-1.5 bg-accent text-white rounded-lg text-xs font-bold haptic-tap transition-transform active:scale-95"
+                className="px-3 py-1.5 bg-accent text-white rounded-lg text-xs font-bold haptic-tap cursor-pointer transition-transform active:scale-95"
               >
                 Yükle
               </button>
             )}
             <button 
               onClick={dismissPrompt}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold haptic-tap transition-colors"
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold haptic-tap cursor-pointer transition-colors"
               style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
             >
               Şimdilik Geç

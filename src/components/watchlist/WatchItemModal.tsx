@@ -135,7 +135,7 @@ export default function WatchItemModal({ id, onClose }: WatchItemModalProps) {
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-black/70 haptic-tap z-20"
+            className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-black/70 haptic-tap cursor-pointer z-20"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -199,7 +199,7 @@ export default function WatchItemModal({ id, onClose }: WatchItemModalProps) {
             <div ref={statusRef} className="relative flex-1">
               <button
                 onClick={() => setShowStatusMenu(v => !v)}
-                className="w-full py-3.5 px-4 flex items-center justify-center gap-2 rounded-2xl transition-all haptic-tap font-bold text-sm shadow-sm"
+                className="w-full py-3.5 px-4 flex items-center justify-center gap-2 rounded-2xl transition-all haptic-tap cursor-pointer font-bold text-sm shadow-sm"
                 style={{ background: `${statusInfo.color}15`, color: statusInfo.color }}
               >
                 <WatchStatusIcon icon={statusInfo.icon} className="w-5 h-5" />
@@ -231,7 +231,7 @@ export default function WatchItemModal({ id, onClose }: WatchItemModalProps) {
             {ytId && (
               <button
                 onClick={() => setShowTrailer(true)}
-                className="w-14 h-14 flex items-center justify-center rounded-2xl transition-all haptic-tap shadow-sm hover:scale-105"
+                className="w-14 h-14 flex items-center justify-center rounded-2xl transition-all haptic-tap cursor-pointer shadow-sm hover:scale-105"
                 style={{ background: 'var(--accent)', color: '#fff' }}
               >
                 <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
@@ -240,7 +240,7 @@ export default function WatchItemModal({ id, onClose }: WatchItemModalProps) {
 
             <button
               onClick={handleDelete}
-              className="w-14 h-14 flex items-center justify-center rounded-2xl transition-all haptic-tap"
+              className="w-14 h-14 flex items-center justify-center rounded-2xl transition-all haptic-tap cursor-pointer"
               style={{ background: 'var(--bg-secondary)', color: '#ef4444' }}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -332,7 +332,7 @@ export default function WatchItemModal({ id, onClose }: WatchItemModalProps) {
                 <h3 className="text-white font-bold text-lg sm:text-xl line-clamp-1">{item.title} - Fragman</h3>
                 <button 
                   onClick={() => setShowTrailer(false)}
-                  className="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors haptic-tap"
+                  className="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors haptic-tap cursor-pointer"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

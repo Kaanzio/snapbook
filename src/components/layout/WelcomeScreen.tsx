@@ -183,7 +183,7 @@ export default function WelcomeScreen() {
                     <button
                       key={t.id}
                       onClick={() => updatePrefs({ theme: t.id as any })}
-                      className={`relative flex flex-col items-center justify-center py-5 rounded-2xl border transition-all haptic-tap overflow-hidden ${t.bg} ${t.border} ${prefs.theme === t.id ? 'ring-2 ring-offset-2 ring-offset-[#050505] ring-[var(--accent)] scale-105 opacity-100 z-10' : 'hover:scale-105 opacity-60 hover:opacity-100'}`}
+                      className={`relative flex flex-col items-center justify-center py-5 rounded-2xl border transition-all haptic-tap cursor-pointer overflow-hidden ${t.bg} ${t.border} ${prefs.theme === t.id ? 'ring-2 ring-offset-2 ring-offset-[#050505] ring-[var(--accent)] scale-105 opacity-100 z-10' : 'hover:scale-105 opacity-60 hover:opacity-100'}`}
                     >
                       <span className={`font-semibold text-sm ${t.id === 'system' ? 'text-white drop-shadow-md' : t.text}`}>{t.label}</span>
                     </button>
@@ -203,7 +203,7 @@ export default function WelcomeScreen() {
                     <button
                       key={colorOption.name}
                       onClick={() => updatePrefs({ accentColor: colorOption.value })}
-                      className="group relative flex flex-col items-center justify-center gap-2 outline-none haptic-tap"
+                      className="group relative flex flex-col items-center justify-center gap-2 outline-none haptic-tap cursor-pointer"
                       title={colorOption.name}
                     >
                       <div 
@@ -252,7 +252,7 @@ export default function WelcomeScreen() {
                     setStep('create');
                   }
                 }}
-                className="w-full max-w-[240px] py-3.5 rounded-2xl font-bold text-sm text-white shadow-[0_0_20px_rgba(var(--accent-rgb),0.3)] transition-transform hover:scale-105 active:scale-95 haptic-tap"
+                className="w-full max-w-[240px] py-3.5 rounded-2xl font-bold text-sm text-white shadow-[0_0_20px_rgba(var(--accent-rgb),0.3)] transition-transform hover:scale-105 active:scale-95 haptic-tap cursor-pointer"
                 style={{ background: 'var(--accent)' }}
               >
                 {slideIndex < ONBOARDING_SLIDES.length - 1 ? 'İleri' : 'Başla'}
@@ -292,7 +292,7 @@ export default function WelcomeScreen() {
             <div className="grid grid-cols-3 gap-x-6 gap-y-4 w-full max-w-[300px]">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
                 <button key={num} onClick={() => handleInput(num.toString())}
-                  className="group relative aspect-square rounded-full flex items-center justify-center transition-transform active:scale-95 haptic-tap">
+                  className="group relative aspect-square rounded-full flex items-center justify-center transition-transform active:scale-95 haptic-tap cursor-pointer">
                   {/* Glowing Halo */}
                   <div className="absolute inset-0 rounded-full border-[1.5px] border-[var(--accent)] opacity-30 shadow-[0_0_15px_var(--accent),_inset_0_0_15px_var(--accent)] transition-opacity group-active:opacity-60 pointer-events-none" />
                   <span className="relative z-10 text-white text-[28px] font-bold">{num}</span>
@@ -300,7 +300,7 @@ export default function WelcomeScreen() {
               ))}
               <div /> {/* Empty space for alignment */}
               <button onClick={() => handleInput('0')}
-                className="group relative aspect-square rounded-full flex items-center justify-center transition-transform active:scale-95 haptic-tap">
+                className="group relative aspect-square rounded-full flex items-center justify-center transition-transform active:scale-95 haptic-tap cursor-pointer">
                 {/* Glowing Halo */}
                 <div className="absolute inset-0 rounded-full border-[1.5px] border-[var(--accent)] opacity-30 shadow-[0_0_15px_var(--accent),_inset_0_0_15px_var(--accent)] transition-opacity group-active:opacity-60 pointer-events-none" />
                 <span className="relative z-10 text-white text-[28px] font-bold">0</span>
@@ -308,7 +308,7 @@ export default function WelcomeScreen() {
               
               {/* Backspace Button - Darker, crisp border, no colored glow to match design */}
               <button onClick={handleBackspace}
-                className="relative aspect-square rounded-full flex items-center justify-center transition-transform active:scale-95 haptic-tap">
+                className="relative aspect-square rounded-full flex items-center justify-center transition-transform active:scale-95 haptic-tap cursor-pointer">
                 <div className="absolute inset-0 rounded-full border border-white/10 bg-white/[0.02] pointer-events-none" />
                 <svg className="relative z-10 w-5 h-5 text-[#888888]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.211-.211.498-.33.796-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.796-.33z" />

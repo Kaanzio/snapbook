@@ -40,7 +40,7 @@ export default function MetadataForm({ formData, onChange, onAiTagRequest, isAiT
           type="button"
           onClick={onAiTagRequest}
           disabled={isAiTagging}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-bold transition-all haptic-tap disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-bold transition-all haptic-tap cursor-pointer disabled:opacity-50"
           style={{ background: 'var(--accent)', color: 'white' }}
         >
           {isAiTagging ? (
@@ -77,7 +77,7 @@ export default function MetadataForm({ formData, onChange, onAiTagRequest, isAiT
               key={cat.key}
               type="button"
               onClick={() => update({ category: cat.key })}
-              className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl border-2 transition-all duration-200 haptic-tap
+              className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl border-2 transition-all duration-200 haptic-tap cursor-pointer
                 ${formData.category === cat.key
                   ? 'bg-accent-soft shadow-sm'
                   : 'hover:bg-accent-soft/50'
@@ -110,7 +110,7 @@ export default function MetadataForm({ formData, onChange, onAiTagRequest, isAiT
                   key={coll.id}
                   type="button"
                   onClick={() => toggleCollection(coll.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-medium border-2 transition-all haptic-tap
+                  className={`px-3 py-1.5 rounded-xl text-xs font-medium border-2 transition-all haptic-tap cursor-pointer
                     ${isSelected ? 'bg-accent text-white border-accent' : 'border-border-primary'}`}
                   style={{ 
                     borderColor: isSelected ? 'var(--accent)' : 'var(--border-primary)',

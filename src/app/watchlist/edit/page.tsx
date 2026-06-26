@@ -166,7 +166,7 @@ function EditForm() {
     <div className="min-h-screen page-enter pb-24">
       <header className="sticky top-0 z-30 themed-header shadow-sm">
         <div className="px-4 lg:px-6 py-6 mb-2 flex items-center gap-3">
-          <Link href={`/watchlist?v=${id}`} className="p-2 -ml-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors haptic-tap">
+          <Link href={`/watchlist?v=${id}`} className="p-2 -ml-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors haptic-tap cursor-pointer">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
@@ -184,7 +184,7 @@ function EditForm() {
           <div className="flex flex-col items-center">
             <div 
               onClick={() => fileInputRef.current?.click()}
-              className="w-40 h-60 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all hover:scale-[1.02] haptic-tap overflow-hidden relative group"
+              className="w-40 h-60 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all hover:scale-[1.02] haptic-tap cursor-pointer overflow-hidden relative group"
               style={{ borderColor: 'var(--border-primary)', background: 'var(--bg-secondary)' }}
             >
               {displayPoster ? (
@@ -215,7 +215,7 @@ function EditForm() {
                 href="https://www.themoviedb.org/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-accent hover:underline transition-all hover:scale-105 haptic-tap"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-accent hover:underline transition-all hover:scale-105 haptic-tap cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
@@ -247,7 +247,7 @@ function EditForm() {
                     key={key}
                     type="button"
                     onClick={() => setType(key)}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-lg transition-all haptic-tap
+                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-lg transition-all haptic-tap cursor-pointer
                       ${type === key ? 'bg-white dark:bg-black shadow-sm' : 'opacity-70'}`}
                     style={{ color: type === key ? 'var(--text-primary)' : 'var(--text-secondary)' }}
                   >
@@ -266,7 +266,7 @@ function EditForm() {
                     key={key}
                     type="button"
                     onClick={() => setStatus(key)}
-                    className="flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all haptic-tap"
+                    className="flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all haptic-tap cursor-pointer"
                     style={{ 
                       borderColor: status === key ? info.color : 'transparent',
                       background: status === key ? `${info.color}15` : 'var(--bg-secondary)',
@@ -393,7 +393,7 @@ function EditForm() {
                     return (
                       <label 
                         key={list.id} 
-                        className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all cursor-pointer haptic-tap`}
+                        className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all cursor-pointer haptic-tap cursor-pointer`}
                         style={{
                           borderColor: isSelected ? 'var(--accent)' : 'transparent',
                           background: isSelected ? 'rgba(var(--accent-rgb), 0.1)' : 'var(--bg-secondary)',
@@ -453,7 +453,7 @@ function EditForm() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full py-4 rounded-xl font-bold text-white btn-accent disabled:opacity-50 transition-opacity haptic-tap"
+            className="w-full py-4 rounded-xl font-bold text-white btn-accent disabled:opacity-50 transition-opacity haptic-tap cursor-pointer"
           >
             {saving ? 'Kaydediliyor...' : 'Kaydet'}
           </button>

@@ -57,7 +57,7 @@ function ListContent() {
       <header className="sticky top-0 z-30 themed-header shadow-sm">
         <div className="px-4 lg:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/watchlist" className="p-2 rounded-xl transition-colors haptic-tap" style={{ color: 'var(--text-secondary)', background: 'var(--bg-secondary)' }}>
+            <Link href="/watchlist" className="p-2 rounded-xl transition-colors haptic-tap cursor-pointer" style={{ color: 'var(--text-secondary)', background: 'var(--bg-secondary)' }}>
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
               </svg>
@@ -79,7 +79,7 @@ function ListContent() {
                   const newName = await prompt('Listenin yeni adı:', listName);
                   if (newName?.trim()) editCustomList(id, newName.trim());
                 }}
-                className="p-2 rounded-xl transition-colors haptic-tap hover:bg-black/5 dark:hover:bg-white/5"
+                className="p-2 rounded-xl transition-colors haptic-tap cursor-pointer hover:bg-black/5 dark:hover:bg-white/5"
                 style={{ color: 'var(--text-tertiary)' }}
                 title="Düzenle"
               >
@@ -95,7 +95,7 @@ function ListContent() {
                     router.push('/watchlist');
                   }
                 }}
-                className="p-2 rounded-xl transition-colors haptic-tap hover:bg-red-500/10 hover:text-red-500"
+                className="p-2 rounded-xl transition-colors haptic-tap cursor-pointer hover:bg-red-500/10 hover:text-red-500"
                 style={{ color: 'var(--text-tertiary)' }}
                 title="Sil"
               >

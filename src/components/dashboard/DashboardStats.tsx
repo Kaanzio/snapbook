@@ -52,7 +52,7 @@ export default function DashboardStats({ totalPhotos, totalCollections, totalWat
         <Link 
           key={stat.id} 
           href={stat.href}
-          className="relative overflow-hidden group flex items-center justify-between p-4 md:p-5 rounded-2xl border transition-all duration-300 hover:border-white/20 haptic-tap"
+          className="relative overflow-hidden group flex items-center justify-between p-4 md:p-5 rounded-2xl border transition-all duration-300 hover:border-white/20 haptic-tap cursor-pointer"
           style={{ 
             background: 'var(--bg-card)', 
             borderColor: 'var(--border-primary)',

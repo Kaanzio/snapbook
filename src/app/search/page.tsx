@@ -101,7 +101,7 @@ export default function SearchPage() {
                   <button
                     key={tag}
                     onClick={() => toggleTag(tag)}
-                    className="px-4 py-2 rounded-full text-sm font-medium transition-transform active:scale-95 haptic-tap"
+                    className="px-4 py-2 rounded-full text-sm font-medium transition-transform active:scale-95 haptic-tap cursor-pointer"
                     style={{
                       background: filters.tags.includes(tag) ? 'var(--accent)' : 'var(--bg-secondary)',
                       color: filters.tags.includes(tag) ? 'var(--accent-foreground, white)' : 'var(--text-secondary)'
@@ -143,7 +143,7 @@ export default function SearchPage() {
                   <button
                     key={tag}
                     onClick={() => toggleTag(tag)}
-                    className="flex items-center gap-1 px-2 py-1 rounded bg-accent-soft text-accent text-xs font-bold transition-opacity hover:opacity-80 haptic-tap"
+                    className="flex items-center gap-1 px-2 py-1 rounded bg-accent-soft text-accent text-xs font-bold transition-opacity hover:opacity-80 haptic-tap cursor-pointer"
                   >
                     #{tag}
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -155,7 +155,7 @@ export default function SearchPage() {
               <div className="self-start sm:self-auto flex items-center gap-3">
                 <button
                   onClick={toggleDensity}
-                  className="p-1.5 rounded-full transition-colors haptic-tap hover:bg-black/5 dark:hover:bg-white/5"
+                  className="p-1.5 rounded-full transition-colors haptic-tap cursor-pointer hover:bg-black/5 dark:hover:bg-white/5"
                   style={{ color: 'var(--text-secondary)' }}
                   title="Görünümü Değiştir"
                 >

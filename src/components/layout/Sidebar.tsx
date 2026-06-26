@@ -137,7 +137,7 @@ export default function Sidebar() {
         {prefs.pin && (
           <button
             onClick={() => updatePrefs({ isLocked: true })}
-            className={`flex items-center ${isCollapsed ? 'justify-center w-10 h-10' : 'px-4 py-2.5 gap-3'} rounded-xl text-sm font-medium transition-colors hover:bg-red-500/10 text-red-500 haptic-tap`}
+            className={`flex items-center ${isCollapsed ? 'justify-center w-10 h-10' : 'px-4 py-2.5 gap-3'} rounded-xl text-sm font-medium transition-colors hover:bg-red-500/10 text-red-500 haptic-tap cursor-pointer`}
             title={isCollapsed ? 'Kilitle' : 'Uygulamayı Kilitle'}
           >
             <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -150,7 +150,7 @@ export default function Sidebar() {
         {/* Toggle Sidebar */}
         <button
           onClick={() => updatePrefs({ sidebarCollapsed: !isCollapsed })}
-          className={`flex items-center ${isCollapsed ? 'justify-center w-10 h-10' : 'px-4 py-2.5 gap-3'} rounded-xl text-sm font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5 haptic-tap`}
+          className={`flex items-center ${isCollapsed ? 'justify-center w-10 h-10' : 'px-4 py-2.5 gap-3'} rounded-xl text-sm font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5 haptic-tap cursor-pointer`}
           style={{ color: 'var(--text-secondary)' }}
           title={isCollapsed ? 'Genişlet' : 'Daralt'}
         >

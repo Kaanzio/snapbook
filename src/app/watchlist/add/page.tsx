@@ -162,7 +162,7 @@ export default function WatchlistAddPage() {
         <div className="px-4 lg:px-6 py-6 mb-2 flex items-center gap-3">
           <button 
             onClick={() => selectedTMDB ? setSelectedTMDB(null) : router.push('/watchlist')} 
-            className="p-2 -ml-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors haptic-tap"
+            className="p-2 -ml-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors haptic-tap cursor-pointer"
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -219,7 +219,7 @@ export default function WatchlistAddPage() {
                     <div 
                       key={`${result.media_type}-${result.id}-${index}`} 
                       onClick={() => handleSelectResult(result)}
-                      className="group cursor-pointer rounded-2xl overflow-hidden relative aspect-[2/3] transition-transform hover:scale-105 haptic-tap shadow-sm"
+                      className="group cursor-pointer rounded-2xl overflow-hidden relative aspect-[2/3] transition-transform hover:scale-105 haptic-tap cursor-pointer shadow-sm"
                       style={{ background: 'var(--bg-secondary)' }}
                     >
                       {result.poster_path ? (
@@ -323,7 +323,7 @@ export default function WatchlistAddPage() {
                           key={key}
                           type="button"
                           onClick={() => setStatus(key)}
-                          className="flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all haptic-tap"
+                          className="flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all haptic-tap cursor-pointer"
                           style={{ 
                             borderColor: status === key ? info.color : 'transparent',
                             background: status === key ? `${info.color}15` : 'var(--bg-secondary)',
@@ -406,7 +406,7 @@ export default function WatchlistAddPage() {
                           return (
                             <label 
                               key={list.id} 
-                              className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all cursor-pointer haptic-tap`}
+                              className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all cursor-pointer haptic-tap cursor-pointer`}
                               style={{
                                 borderColor: isSelected ? 'var(--accent)' : 'transparent',
                                 background: isSelected ? 'rgba(var(--accent-rgb), 0.1)' : 'var(--bg-secondary)',
@@ -469,7 +469,7 @@ export default function WatchlistAddPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full py-4 rounded-xl font-bold text-white btn-accent disabled:opacity-50 transition-opacity haptic-tap flex items-center justify-center gap-2"
+                  className="w-full py-4 rounded-xl font-bold text-white btn-accent disabled:opacity-50 transition-opacity haptic-tap cursor-pointer flex items-center justify-center gap-2"
                 >
                   {saving ? 'Kaydediliyor...' : 'Listeme Ekle'}
                   {!saving && (

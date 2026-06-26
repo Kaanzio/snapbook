@@ -103,7 +103,7 @@ function CollectionDetailContent() {
           <div className="flex items-center gap-3">
             <Link
               href="/collections"
-              className="p-2 -ml-2 rounded-xl transition-colors text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 haptic-tap"
+              className="p-2 -ml-2 rounded-xl transition-colors text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 haptic-tap cursor-pointer"
               style={{ color: 'var(--text-secondary)' }}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -135,7 +135,7 @@ function CollectionDetailContent() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowFavorites(!showFavorites)}
-              className="p-2 rounded-xl transition-colors haptic-tap"
+              className="p-2 rounded-xl transition-colors haptic-tap cursor-pointer"
               style={{
                 background: showFavorites ? 'var(--accent)' : 'var(--bg-secondary)',
                 color: showFavorites ? 'var(--accent-foreground, white)' : 'var(--text-secondary)'
@@ -162,7 +162,7 @@ function CollectionDetailContent() {
 
             <button
               onClick={toggleDensity}
-              className="py-2 px-4 rounded-full transition-all duration-300 haptic-tap shadow-sm hover:scale-105 active:scale-95 inline-flex items-center gap-2 font-semibold text-sm bg-black/5 dark:bg-white/5"
+              className="py-2 px-4 rounded-full transition-all duration-300 haptic-tap cursor-pointer shadow-sm hover:scale-105 active:scale-95 inline-flex items-center gap-2 font-semibold text-sm bg-black/5 dark:bg-white/5"
               title="Görünümü Değiştir"
             >
               <svg className="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -177,7 +177,7 @@ function CollectionDetailContent() {
 
             <button
               onClick={() => setShowAddModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium btn-accent shadow-lg shadow-accent/20 haptic-tap"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium btn-accent shadow-lg shadow-accent/20 haptic-tap cursor-pointer"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -214,7 +214,7 @@ function CollectionDetailContent() {
               !showFavorites ? (
                 <button
                   onClick={() => setShowAddModal(true)}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold hover:scale-105 active:scale-95 transition-all shadow-md haptic-tap"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold hover:scale-105 active:scale-95 transition-all shadow-md haptic-tap cursor-pointer"
                   style={{ background: 'var(--accent)', color: 'var(--accent-foreground, white)' }}
                 >
                   Fotoğraf Ekle
@@ -236,7 +236,7 @@ function CollectionDetailContent() {
                 </div>
                 <button 
                   onClick={() => setIsSelectingCover(false)}
-                  className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-xs font-black uppercase tracking-wider shadow-sm hover:shadow-md transition-all haptic-tap"
+                  className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-xs font-black uppercase tracking-wider shadow-sm hover:shadow-md transition-all haptic-tap cursor-pointer"
                   style={{ color: 'var(--text-primary)' }}
                 >
                   İptal

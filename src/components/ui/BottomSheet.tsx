@@ -42,7 +42,7 @@ export default function BottomSheet({ isOpen, onClose, children, title }: Bottom
         style={{ background: 'var(--bg-card)', borderTop: '1px solid var(--border-primary)' }}
       >
         {/* Drag Handle */}
-        <div className="flex justify-center pt-3 pb-2 w-full haptic-tap" onClick={onClose}>
+        <div className="flex justify-center pt-3 pb-2 w-full haptic-tap cursor-pointer" onClick={onClose}>
           <div className="w-12 h-1.5 rounded-full opacity-50" style={{ background: 'var(--text-tertiary)' }} />
         </div>
         
@@ -52,7 +52,7 @@ export default function BottomSheet({ isOpen, onClose, children, title }: Bottom
             <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>{title}</h3>
             <button 
               onClick={onClose}
-              className="p-2 rounded-full transition-colors haptic-tap hover:bg-black/5 dark:hover:bg-white/5"
+              className="p-2 rounded-full transition-colors haptic-tap cursor-pointer hover:bg-black/5 dark:hover:bg-white/5"
               style={{ color: 'var(--text-secondary)' }}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

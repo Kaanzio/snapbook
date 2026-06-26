@@ -39,7 +39,7 @@ export default function AddToCollection({ isOpen, onClose, photo, collections }:
               <button
                 key={coll.id}
                 onClick={() => toggleCollection(coll.id)}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left border haptic-tap
+                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left border haptic-tap cursor-pointer
                   ${isSelected ? 'shadow-sm' : 'hover:opacity-80'}`}
                 style={{
                   background: isSelected ? 'var(--accent)' : 'var(--bg-card)',

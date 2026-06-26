@@ -140,7 +140,7 @@ export default function HomePage() {
                 {!isSelectionMode ? (
                   <button
                     onClick={() => setIsSelectionMode(true)}
-                    className="py-2.5 px-4 rounded-full transition-all duration-300 haptic-tap shadow-sm hover:scale-105 active:scale-95 inline-flex items-center gap-2 font-semibold text-sm bg-black/5 dark:bg-white/5"
+                    className="py-2.5 px-4 rounded-full transition-all duration-300 haptic-tap cursor-pointer shadow-sm hover:scale-105 active:scale-95 inline-flex items-center gap-2 font-semibold text-sm bg-black/5 dark:bg-white/5"
                     title="Seç"
                   >
                     <svg className="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -152,7 +152,7 @@ export default function HomePage() {
                   <>
                     <button
                       onClick={() => setSelectedPhotoIds(new Set(filteredPhotos.map(p => p.id)))}
-                      className="py-2.5 px-4 rounded-full transition-all duration-300 haptic-tap shadow-sm hover:scale-105 active:scale-95 inline-flex items-center gap-2 font-semibold text-sm bg-black/5 dark:bg-white/5"
+                      className="py-2.5 px-4 rounded-full transition-all duration-300 haptic-tap cursor-pointer shadow-sm hover:scale-105 active:scale-95 inline-flex items-center gap-2 font-semibold text-sm bg-black/5 dark:bg-white/5"
                     >
                       <span style={{ color: 'var(--text-primary)' }}>Tümünü Seç</span>
                     </button>
@@ -161,7 +161,7 @@ export default function HomePage() {
                         setIsSelectionMode(false);
                         setSelectedPhotoIds(new Set());
                       }}
-                      className="py-2.5 px-4 rounded-full transition-all duration-300 haptic-tap shadow-sm hover:scale-105 active:scale-95 inline-flex items-center gap-2 font-semibold text-sm bg-black/5 dark:bg-white/5"
+                      className="py-2.5 px-4 rounded-full transition-all duration-300 haptic-tap cursor-pointer shadow-sm hover:scale-105 active:scale-95 inline-flex items-center gap-2 font-semibold text-sm bg-black/5 dark:bg-white/5"
                     >
                       <span style={{ color: 'var(--text-primary)' }}>İptal</span>
                     </button>
@@ -171,7 +171,7 @@ export default function HomePage() {
                 {!isSelectionMode && (
                   <button
                     onClick={toggleDensity}
-                    className="py-2.5 px-4 rounded-full transition-all duration-300 haptic-tap shadow-sm hover:scale-105 active:scale-95 inline-flex items-center gap-2 font-semibold text-sm bg-black/5 dark:bg-white/5"
+                    className="py-2.5 px-4 rounded-full transition-all duration-300 haptic-tap cursor-pointer shadow-sm hover:scale-105 active:scale-95 inline-flex items-center gap-2 font-semibold text-sm bg-black/5 dark:bg-white/5"
                     title="Görünümü Değiştir"
                   >
                     <svg className="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -188,7 +188,7 @@ export default function HomePage() {
                 {!isSelectionMode && (
                   <button
                     onClick={() => setIsUploadOpen(true)}
-                    className="py-2.5 px-4 rounded-full transition-all duration-300 haptic-tap shadow-sm hover:scale-105 active:scale-95 inline-flex items-center gap-2 font-semibold text-sm"
+                    className="py-2.5 px-4 rounded-full transition-all duration-300 haptic-tap cursor-pointer shadow-sm hover:scale-105 active:scale-95 inline-flex items-center gap-2 font-semibold text-sm"
                     style={{ background: 'var(--accent)', color: 'var(--accent-foreground, white)' }}
                     title="Fotoğraf Ekle"
                   >
@@ -230,7 +230,7 @@ export default function HomePage() {
               photos.length === 0 ? (
                 <button
                   onClick={() => setIsUploadOpen(true)}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold hover:scale-105 active:scale-95 transition-all shadow-md haptic-tap"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold hover:scale-105 active:scale-95 transition-all shadow-md haptic-tap cursor-pointer"
                   style={{ background: 'var(--accent)', color: 'var(--accent-foreground, white)' }}
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -263,7 +263,7 @@ export default function HomePage() {
             <div className="flex items-center gap-1">
               <button
                 onClick={handleBulkDownload}
-                className="w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center transition-colors haptic-tap"
+                className="w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center transition-colors haptic-tap cursor-pointer"
                 style={{ color: 'var(--text-primary)' }}
                 title="İndir (ZIP)"
               >
@@ -273,7 +273,7 @@ export default function HomePage() {
               </button>
               <button
                 onClick={handleBulkDelete}
-                className="w-10 h-10 rounded-full hover:bg-red-500/10 flex items-center justify-center transition-colors haptic-tap"
+                className="w-10 h-10 rounded-full hover:bg-red-500/10 flex items-center justify-center transition-colors haptic-tap cursor-pointer"
                 style={{ color: 'var(--accent)' }}
                 title="Sil"
               >
@@ -290,7 +290,7 @@ export default function HomePage() {
       {!loading && !isSelectionMode && (
         <button
           onClick={() => setIsFilterOpen(true)}
-          className="fixed bottom-20 lg:bottom-8 right-6 z-40 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 haptic-tap"
+          className="fixed bottom-20 lg:bottom-8 right-6 z-40 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 haptic-tap cursor-pointer"
           style={{ background: 'var(--accent)', color: 'var(--accent-foreground, white)' }}
           title="Filtreler"
         >

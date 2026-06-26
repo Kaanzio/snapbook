@@ -69,7 +69,7 @@ export default function CollectionForm({
             <button
               type="button"
               onClick={onSelectCover}
-              className="w-full flex items-center justify-center gap-2 p-3 rounded-xl border border-dashed border-accent/40 bg-accent/5 text-accent text-sm font-bold hover:bg-accent/10 transition-all haptic-tap"
+              className="w-full flex items-center justify-center gap-2 p-3 rounded-xl border border-dashed border-accent/40 bg-accent/5 text-accent text-sm font-bold hover:bg-accent/10 transition-all haptic-tap cursor-pointer"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v12a2.25 2.25 0 002.25 2.25z" />

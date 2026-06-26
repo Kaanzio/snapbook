@@ -200,7 +200,7 @@ function PhotoDetailContent() {
         <div className="max-w-4xl mx-auto flex items-center justify-between p-2 rounded-2xl backdrop-blur-xl bg-white/60 dark:bg-black/60 shadow-sm border border-black/5 dark:border-white/5 pointer-events-auto">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-xl transition-colors text-slate-500 haptic-tap hover:bg-slate-100 dark:hover:bg-slate-800 inline-flex items-center justify-center"
+            className="w-10 h-10 rounded-xl transition-colors text-slate-500 haptic-tap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 inline-flex items-center justify-center"
             style={{ color: 'var(--text-secondary)' }}
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -251,7 +251,7 @@ function PhotoDetailContent() {
 
             <button
               onClick={handleDelete}
-              className="w-10 h-10 rounded-xl transition-colors text-red-500 hover:bg-red-500/10 haptic-tap inline-flex items-center justify-center"
+              className="w-10 h-10 rounded-xl transition-colors text-red-500 hover:bg-red-500/10 haptic-tap cursor-pointer inline-flex items-center justify-center"
               title="Sil"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -306,7 +306,7 @@ function PhotoDetailContent() {
               <button
                 onClick={handleAiTag}
                 disabled={isAiTagging || !isLocal}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all haptic-tap disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all haptic-tap cursor-pointer disabled:opacity-50"
                 style={{ background: 'var(--accent)', color: 'white' }}
               >
                 {isAiTagging ? (
@@ -332,7 +332,7 @@ function PhotoDetailContent() {
                     <button
                       key={cat.key}
                       onClick={() => setEditCategory(cat.key)}
-                      className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all haptic-tap
+                      className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all haptic-tap cursor-pointer
                         ${editCategory === cat.key
                           ? 'shadow-sm'
                           : 'hover:opacity-80'
@@ -370,7 +370,7 @@ function PhotoDetailContent() {
               <div className="flex gap-3 mt-4">
                 <button
                   onClick={handleSave}
-                  className="flex-1 py-3.5 rounded-2xl btn-accent text-sm font-semibold haptic-tap shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="flex-1 py-3.5 rounded-2xl btn-accent text-sm font-semibold haptic-tap cursor-pointer shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
                   Kaydet
                 </button>
@@ -381,7 +381,7 @@ function PhotoDetailContent() {
                     setEditTags([...photo.tags]);
                     setEditCategory(photo.category);
                   }}
-                  className="flex-1 py-3.5 rounded-2xl text-sm font-semibold transition-all haptic-tap hover:scale-[1.02] active:scale-[0.98]"
+                  className="flex-1 py-3.5 rounded-2xl text-sm font-semibold transition-all haptic-tap cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
                   style={{ color: 'var(--text-secondary)', background: 'var(--bg-secondary)' }}
                 >
                   İptal
@@ -460,7 +460,7 @@ function PhotoDetailContent() {
                 const success = await savePhotoToDevice(photo.id, photo.note || undefined);
                 if (success) showToast('Fotoğraf kaydedildi');
               }}
-              className="w-full flex items-center justify-center gap-2 p-3 rounded-xl text-xs font-medium transition-all haptic-tap mt-4"
+              className="w-full flex items-center justify-center gap-2 p-3 rounded-xl text-xs font-medium transition-all haptic-tap cursor-pointer mt-4"
               style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-primary)' }}
             >
               <svg className="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

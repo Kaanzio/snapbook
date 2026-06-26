@@ -66,7 +66,7 @@ export default function WatchCard({ item }: WatchCardProps) {
           const params = new URLSearchParams(searchParams.toString());
           params.set('v', item.id);
           return `${pathname}?${params.toString()}`;
-        })()} className="absolute inset-0 z-10 haptic-tap" />
+        })()} className="absolute inset-0 z-10 haptic-tap cursor-pointer" />
         {/* Poster Image */}
         {loading ? (
           <div className="absolute inset-0 skeleton" />
