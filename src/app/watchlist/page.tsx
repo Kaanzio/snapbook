@@ -497,7 +497,7 @@ function WatchlistContent() {
               <div className="flex flex-wrap items-center gap-2">
                 {/* All */}
                 <button
-                  onClick={() => { setStatusFilter('all'); setTypeFilter('all'); }}
+                  onClick={() => { setStatusFilter('all'); }}
                   className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
                     statusFilter === 'all' && typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
@@ -518,7 +518,7 @@ function WatchlistContent() {
                   return (
                     <button
                       key={key}
-                      onClick={() => { setStatusFilter(isActive ? 'all' : key); setTypeFilter('all'); }}
+                      onClick={() => { setStatusFilter(isActive ? 'all' : key); }}
                       className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
                         isActive ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
@@ -541,12 +541,29 @@ function WatchlistContent() {
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Tür</label>
               <div className="flex flex-wrap items-center gap-2">
+                {/* All Type */}
+                <button
+                  onClick={() => { setTypeFilter('all'); }}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                    typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                  }`}
+                  style={{
+                    background: typeFilter === 'all' ? 'var(--accent)' : 'transparent',
+                    color: typeFilter === 'all' ? 'var(--accent-foreground, white)' : 'var(--text-secondary)',
+                  }}
+                >
+                  <svg className={`w-4 h-4 ${typeFilter === 'all' ? 'opacity-100' : 'opacity-60'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25z" />
+                  </svg>
+                  Tümü
+                </button>
+
                 {(Object.entries(WATCH_TYPE_INFO) as [WatchItemType, { label: string; icon: string }][]).map(([key, info]) => {
                   const isActive = typeFilter === key;
                   return (
                     <button
                       key={key}
-                      onClick={() => { setTypeFilter(isActive ? 'all' : key); setStatusFilter('all'); }}
+                      onClick={() => { setTypeFilter(isActive ? 'all' : key); }}
                       className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
                         isActive ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
@@ -599,7 +616,7 @@ function WatchlistContent() {
               <div className="flex flex-wrap items-center gap-2">
                 {/* All */}
                 <button
-                  onClick={() => { setStatusFilter('all'); setTypeFilter('all'); }}
+                  onClick={() => { setStatusFilter('all'); }}
                   className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
                     statusFilter === 'all' && typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
@@ -620,7 +637,7 @@ function WatchlistContent() {
                   return (
                     <button
                       key={key}
-                      onClick={() => { setStatusFilter(isActive ? 'all' : key); setTypeFilter('all'); }}
+                      onClick={() => { setStatusFilter(isActive ? 'all' : key); }}
                       className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
                         isActive ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
@@ -643,12 +660,29 @@ function WatchlistContent() {
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Tür</label>
               <div className="flex flex-wrap items-center gap-2">
+                {/* All Type */}
+                <button
+                  onClick={() => { setTypeFilter('all'); }}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
+                    typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                  }`}
+                  style={{
+                    background: typeFilter === 'all' ? 'var(--accent)' : 'transparent',
+                    color: typeFilter === 'all' ? 'var(--accent-foreground, white)' : 'var(--text-secondary)',
+                  }}
+                >
+                  <svg className={`w-4 h-4 ${typeFilter === 'all' ? 'opacity-100' : 'opacity-60'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25z" />
+                  </svg>
+                  Tümü
+                </button>
+
                 {(Object.entries(WATCH_TYPE_INFO) as [WatchItemType, { label: string; icon: string }][]).map(([key, info]) => {
                   const isActive = typeFilter === key;
                   return (
                     <button
                       key={key}
-                      onClick={() => { setTypeFilter(isActive ? 'all' : key); setStatusFilter('all'); }}
+                      onClick={() => { setTypeFilter(isActive ? 'all' : key); }}
                       className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
                         isActive ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}

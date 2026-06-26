@@ -38,20 +38,22 @@ export default function BottomSheet({ isOpen, onClose, children, title }: Bottom
       
       {/* Sheet */}
       <div 
-        className={`relative w-full max-h-[85vh] flex flex-col bg-white dark:bg-slate-900 rounded-t-2xl shadow-xl transition-transform duration-300 ease-out transform ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
+        className={`relative w-full max-h-[85vh] flex flex-col rounded-t-2xl shadow-xl transition-transform duration-300 ease-out transform ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
+        style={{ background: 'var(--bg-card)', borderTop: '1px solid var(--border-primary)' }}
       >
         {/* Drag Handle */}
         <div className="flex justify-center pt-3 pb-2 w-full haptic-tap" onClick={onClose}>
-          <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
+          <div className="w-12 h-1.5 rounded-full opacity-50" style={{ background: 'var(--text-tertiary)' }} />
         </div>
         
         {/* Header */}
         {title && (
-          <div className="px-4 pb-3 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
-            <h3 className="font-bold text-lg text-slate-900 dark:text-white">{title}</h3>
+          <div className="px-4 pb-3 border-b flex justify-between items-center" style={{ borderColor: 'var(--border-secondary)' }}>
+            <h3 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>{title}</h3>
             <button 
               onClick={onClose}
-              className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors haptic-tap"
+              className="p-2 rounded-full transition-colors haptic-tap hover:bg-black/5 dark:hover:bg-white/5"
+              style={{ color: 'var(--text-secondary)' }}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
