@@ -63,7 +63,7 @@ export default function BottomSheet({ isOpen, onClose, children, title }: Bottom
         )}
         
         {/* Content */}
-        <div className="overflow-y-auto px-4 py-4 safe-area-bottom pb-16">
+        <div className="overflow-y-auto px-4 py-4 safe-area-bottom pb-32">
           {children}
         </div>
       </div>

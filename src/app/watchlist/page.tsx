@@ -182,7 +182,7 @@ function WatchlistContent() {
               {customLists.length > 1 && (
                 <button
                   onClick={() => setReorderMode(v => !v)}
-                  className={`p-2 rounded-xl transition-colors haptic-tap ${reorderMode ? 'text-accent' : ''}`}
+                  className={`flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2 p-0 rounded-xl transition-colors haptic-tap shrink-0 ${reorderMode ? 'text-accent' : ''}`}
                   style={{
                     background: reorderMode ? 'hsla(var(--accent-h),var(--accent-s),var(--accent-l),0.15)' : 'var(--bg-secondary)',
                     color: reorderMode ? 'var(--accent)' : 'var(--text-secondary)',
@@ -197,7 +197,7 @@ function WatchlistContent() {
               {/* New List */}
               <button
                 onClick={() => setIsCreateListModalOpen(true)}
-                className="px-3 py-2 rounded-xl text-sm font-bold transition-colors haptic-tap flex items-center gap-1.5"
+                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2 p-0 gap-1.5 rounded-xl text-sm font-bold transition-colors haptic-tap shrink-0"
                 style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
                 title="Yeni Liste Oluştur"
               >
@@ -209,7 +209,7 @@ function WatchlistContent() {
               {/* Add */}
               <Link
                 href="/watchlist/add"
-                className="flex p-2 rounded-xl transition-colors haptic-tap items-center"
+                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2 p-0 rounded-xl transition-colors haptic-tap shrink-0"
                 style={{ background: 'hsla(var(--accent-h),var(--accent-s),var(--accent-l),0.12)', color: 'var(--accent)' }}
                 title="Film veya Dizi Ekle"
               >
@@ -363,7 +363,7 @@ function WatchlistContent() {
                             const newName = await prompt('Listenin yeni adı:', title);
                             if (newName?.trim()) editCustomList(customListId, newName.trim());
                           }}
-                          className="p-1.5 rounded-lg transition-colors haptic-tap hover:bg-black/5 dark:hover:bg-white/5"
+                          className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors haptic-tap hover:bg-black/5 dark:hover:bg-white/5"
                           style={{ color: 'var(--text-tertiary)' }}
                           title="Düzenle"
                         >
@@ -378,7 +378,7 @@ function WatchlistContent() {
                               removeCustomList(customListId);
                             }
                           }}
-                          className="p-1.5 rounded-lg transition-colors haptic-tap hover:bg-red-500/10 hover:text-red-500"
+                          className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors haptic-tap hover:bg-red-500/10 hover:text-red-500"
                           style={{ color: 'var(--text-tertiary)' }}
                           title="Sil"
                         >
@@ -499,7 +499,7 @@ function WatchlistContent() {
                 <button
                   onClick={() => { setStatusFilter('all'); }}
                   className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
-                    statusFilter === 'all' && typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                    statusFilter === 'all' && typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
                   style={{
                     background: statusFilter === 'all' && typeFilter === 'all' ? 'var(--accent)' : 'transparent',
@@ -520,7 +520,7 @@ function WatchlistContent() {
                       key={key}
                       onClick={() => { setStatusFilter(isActive ? 'all' : key); }}
                       className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
-                        isActive ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                        isActive ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
                       style={{
                         background: isActive ? 'var(--accent)' : 'transparent',
@@ -545,7 +545,7 @@ function WatchlistContent() {
                 <button
                   onClick={() => { setTypeFilter('all'); }}
                   className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
-                    typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                    typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
                   style={{
                     background: typeFilter === 'all' ? 'var(--accent)' : 'transparent',
@@ -565,7 +565,7 @@ function WatchlistContent() {
                       key={key}
                       onClick={() => { setTypeFilter(isActive ? 'all' : key); }}
                       className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
-                        isActive ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                        isActive ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
                       style={{
                         background: isActive ? 'var(--accent)' : 'transparent',
@@ -585,7 +585,7 @@ function WatchlistContent() {
             {/* Sort Dropdown */}
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Sıralama</label>
-              <div className="relative flex items-center border rounded-xl haptic-tap transition-all hover:bg-black/5 dark:hover:bg-white/5 shrink-0 border-slate-200 dark:border-slate-800 w-max">
+              <div className="relative flex items-center border rounded-xl haptic-tap transition-all hover:bg-black/5 dark:hover:bg-white/5 shrink-0 border-black/10 dark:border-white/10 w-max">
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
@@ -618,7 +618,7 @@ function WatchlistContent() {
                 <button
                   onClick={() => { setStatusFilter('all'); }}
                   className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
-                    statusFilter === 'all' && typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                    statusFilter === 'all' && typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
                   style={{
                     background: statusFilter === 'all' && typeFilter === 'all' ? 'var(--accent)' : 'transparent',
@@ -639,7 +639,7 @@ function WatchlistContent() {
                       key={key}
                       onClick={() => { setStatusFilter(isActive ? 'all' : key); }}
                       className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
-                        isActive ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                        isActive ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
                       style={{
                         background: isActive ? 'var(--accent)' : 'transparent',
@@ -664,7 +664,7 @@ function WatchlistContent() {
                 <button
                   onClick={() => { setTypeFilter('all'); }}
                   className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
-                    typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                    typeFilter === 'all' ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
                   style={{
                     background: typeFilter === 'all' ? 'var(--accent)' : 'transparent',
@@ -684,7 +684,7 @@ function WatchlistContent() {
                       key={key}
                       onClick={() => { setTypeFilter(isActive ? 'all' : key); }}
                       className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-300 haptic-tap shrink-0 border ${
-                        isActive ? 'border-transparent shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-black/5 dark:hover:bg-white/5'
+                        isActive ? 'border-transparent shadow-sm' : 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
                       style={{
                         background: isActive ? 'var(--accent)' : 'transparent',
@@ -704,7 +704,7 @@ function WatchlistContent() {
             {/* Sort Dropdown */}
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Sıralama</label>
-              <div className="relative flex items-center border rounded-xl haptic-tap transition-all hover:bg-black/5 dark:hover:bg-white/5 shrink-0 border-slate-200 dark:border-slate-800 w-max">
+              <div className="relative flex items-center border rounded-xl haptic-tap transition-all hover:bg-black/5 dark:hover:bg-white/5 shrink-0 border-black/10 dark:border-white/10 w-max">
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
