@@ -134,8 +134,8 @@ function WatchlistContent() {
 
   const displayItems = [...filteredItems].sort((a, b) => {
     switch (sortBy) {
-      case 'date-desc': return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      case 'date-asc': return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      case 'date-desc': return (b.releaseYear || 0) - (a.releaseYear || 0) || new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      case 'date-asc': return (a.releaseYear || 0) - (b.releaseYear || 0) || new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
       case 'title-asc': return a.title.localeCompare(b.title, 'tr');
       case 'title-desc': return b.title.localeCompare(a.title, 'tr');
       case 'rating-desc': return (b.rating || 0) - (a.rating || 0);
