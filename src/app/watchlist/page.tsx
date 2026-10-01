@@ -315,8 +315,11 @@ function WatchlistContent() {
       {/* ─── CONTENT ─── */}
       <main className="py-2 lg:py-4">
         {activeTab === 'discover' ? (
-          <div className="px-4 lg:px-6">
-            <DiscoverView onOpenItemModal={(id) => router.push(`/watchlist?v=${id}`)} />
+          <div>
+            <DiscoverView
+              cardWidthClass={cardWidthClass}
+              onOpenItemModal={(id) => router.push(`/watchlist?v=${id}`)}
+            />
           </div>
         ) : (
           (() => {
