@@ -97,7 +97,7 @@ export default function WatchCard({ item }: WatchCardProps) {
 
       {/* 3-dot Menu */}
       <button 
-        className="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-black/50 text-white opacity-90 sm:opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-black/80 hover:scale-105 backdrop-blur-md pointer-events-auto z-20 shadow-md"
+        className="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-black/80 hover:scale-105 backdrop-blur-md pointer-events-auto z-20 shadow-md"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();

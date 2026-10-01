@@ -17,6 +17,7 @@ import { useDialog } from '@/components/providers/DialogProvider';
 import { WatchStatusIcon } from '@/components/watchlist/WatchIcons';
 import HeroBillboard from '@/components/watchlist/HeroBillboard';
 import DiscoverView from '@/components/watchlist/DiscoverView';
+import FloatingFilterSort from '@/components/ui/FloatingFilterSort';
 
 function WatchlistSlider({ groupItems, cardWidthClass }: { groupItems: WatchItem[], cardWidthClass: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -432,26 +433,26 @@ function WatchlistContent() {
                     <div className="flex items-center px-4 lg:px-6 mb-3 gap-2">
                       {/* Reorder arrows for custom lists */}
                       {reorderMode && customListId && sectionIndex !== undefined && (
-                        <div className="flex items-center gap-0.5 shrink-0 bg-black/5 dark:bg-white/5 p-0.5 rounded-lg">
+                        <div className="flex items-center justify-center gap-1 shrink-0 bg-black/5 dark:bg-white/10 p-1 rounded-xl">
                           <button
                             onClick={() => reorderCustomLists(sectionIndex, sectionIndex - 1)}
                             disabled={sectionIndex === 0}
-                            className="p-1 rounded disabled:opacity-20 hover:opacity-100 transition-opacity haptic-tap cursor-pointer"
+                            className="w-7 h-7 flex items-center justify-center rounded-lg disabled:opacity-20 hover:opacity-100 transition-all haptic-tap cursor-pointer hover:bg-black/10 dark:hover:bg-white/10"
                             style={{ color: 'var(--text-secondary)' }}
                             title="Yukarı Taşı"
                           >
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
                             </svg>
                           </button>
                           <button
                             onClick={() => reorderCustomLists(sectionIndex, sectionIndex + 1)}
                             disabled={sectionIndex === customLists.length - 1}
-                            className="p-1 rounded disabled:opacity-20 hover:opacity-100 transition-opacity haptic-tap cursor-pointer"
+                            className="w-7 h-7 flex items-center justify-center rounded-lg disabled:opacity-20 hover:opacity-100 transition-all haptic-tap cursor-pointer hover:bg-black/10 dark:hover:bg-white/10"
                             style={{ color: 'var(--text-secondary)' }}
                             title="Aşağı Taşı"
                           >
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                             </svg>
                           </button>
@@ -609,21 +610,23 @@ function WatchlistContent() {
           })()
         )}
 
-        {/* Floating Action Button for Filters (Only in lists view) */}
+        {/* Floating Filter & Sort Control (Only in lists view) */}
         {activeTab === 'lists' && (
-          <button
-            onClick={() => setIsFilterOpen(true)}
-            className="fixed bottom-20 lg:bottom-8 right-6 z-40 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 haptic-tap cursor-pointer"
-            style={{ background: 'var(--accent)', color: 'var(--accent-foreground, white)' }}
-            title="Filtreler"
-          >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
-            </svg>
-            {(statusFilter !== 'all' || typeFilter !== 'all') && (
-              <div className="absolute top-0 right-0 w-3.5 h-3.5 rounded-full bg-red-500 border-2" style={{ borderColor: 'var(--bg-primary)' }} />
-            )}
-          </button>
+          <FloatingFilterSort
+            sortOptions={[
+              { key: 'date-desc', label: 'En Yeni' },
+              { key: 'date-asc', label: 'En Eski' },
+              { key: 'title-asc', label: 'A → Z' },
+              { key: 'title-desc', label: 'Z → A' },
+              { key: 'rating-desc', label: 'Puan' },
+              { key: 'duration-desc', label: 'Süre (Uzun)' },
+              { key: 'duration-asc', label: 'Süre (Kısa)' },
+            ]}
+            currentSort={sortBy}
+            onSelectSort={(val) => setSortBy(val as typeof sortBy)}
+            onOpenFilter={() => setIsFilterOpen(true)}
+            hasActiveFilters={statusFilter !== 'all' || typeFilter !== 'all'}
+          />
         )}
 
       </main>

@@ -14,6 +14,7 @@ import { WatchStatus, WatchItemType, WATCH_STATUS_INFO, WATCH_TYPE_INFO } from '
 import Modal from '@/components/ui/Modal';
 import BottomSheet from '@/components/ui/BottomSheet';
 import { WatchStatusIcon } from '@/components/watchlist/WatchIcons';
+import FloatingFilterSort from '@/components/ui/FloatingFilterSort';
 
 function ListContent() {
   const { items, customLists, loading, getFilteredItems, editCustomList, removeCustomList } = useWatchlist();
@@ -326,19 +327,21 @@ function ListContent() {
         )}
       </main>
 
-      <button
-        onClick={() => setIsFilterOpen(true)}
-        className="fixed bottom-20 lg:bottom-8 right-6 z-40 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 haptic-tap cursor-pointer"
-        style={{ background: 'var(--accent)', color: 'var(--accent-foreground, white)' }}
-        title="Filtreler"
-      >
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
-        </svg>
-        {(statusFilter !== 'all' || typeFilter !== 'all') && (
-          <div className="absolute top-0 right-0 w-3.5 h-3.5 rounded-full bg-red-500 border-2" style={{ borderColor: 'var(--bg-primary)' }} />
-        )}
-      </button>
+      <FloatingFilterSort
+        sortOptions={[
+          { key: 'date-desc', label: 'En Yeni' },
+          { key: 'date-asc', label: 'En Eski' },
+          { key: 'title-asc', label: 'A → Z' },
+          { key: 'title-desc', label: 'Z → A' },
+          { key: 'rating-desc', label: 'Puan' },
+          { key: 'duration-desc', label: 'Süre (Uzun)' },
+          { key: 'duration-asc', label: 'Süre (Kısa)' },
+        ]}
+        currentSort={sortBy}
+        onSelectSort={(val) => setSortBy(val as typeof sortBy)}
+        onOpenFilter={() => setIsFilterOpen(true)}
+        hasActiveFilters={statusFilter !== 'all' || typeFilter !== 'all'}
+      />
 
       <div className="hidden lg:block">
         <Modal isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} title="Filtreler ve Sıralama">
