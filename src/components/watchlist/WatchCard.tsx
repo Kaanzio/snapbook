@@ -97,16 +97,17 @@ export default function WatchCard({ item }: WatchCardProps) {
 
       {/* 3-dot Menu */}
       <button 
-        className="absolute top-2 right-2 p-1.5 rounded-full bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-black/70 backdrop-blur-md pointer-events-auto z-20"
+        className="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-black/50 text-white opacity-90 sm:opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-black/80 hover:scale-105 backdrop-blur-md pointer-events-auto z-20 shadow-md"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
           setMenuOpen(!menuOpen);
           setListsSubmenu(false);
         }}
+        title="Seçenekler"
       >
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+        <svg className="w-4 h-4 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M10 3a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM10 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM10 14a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
         </svg>
       </button>
 

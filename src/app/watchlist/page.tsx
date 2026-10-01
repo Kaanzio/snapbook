@@ -128,6 +128,7 @@ function WatchlistContent() {
   const [activeTab, setActiveTab] = useState<'lists' | 'discover'>('lists');
   const [featuredIndex, setFeaturedIndex] = useState(0);
   const [reorderMode, setReorderMode] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const sortMenuRef = useRef<HTMLDivElement>(null);
 
   // Eligible items for Netflix Hero Billboard (prefer items with backdrops/posters)
@@ -179,135 +180,198 @@ function WatchlistContent() {
   return (
     <div className="min-h-screen page-enter pb-24">
       {/* ─── HEADER ─── */}
-      <header className="sticky top-0 z-30 themed-header shadow-sm pt-8 lg:pt-6 pb-3">
+      <header className="sticky top-0 z-30 themed-header shadow-sm pt-3 sm:pt-5 pb-2.5 sm:pb-3">
         <div className="px-4 lg:px-6">
 
-          {/* Title row */}
-          <div className="flex items-center justify-between mb-3.5">
+          {/* Title & Actions Row */}
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
             <div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight flex items-center gap-1.5" style={{ color: 'var(--text-primary)' }}>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight flex items-center gap-1.5" style={{ color: 'var(--text-primary)' }}>
                 Kırmızı Perde
               </h1>
-              <p className="text-sm mt-0.5 font-medium" style={{ color: 'var(--text-tertiary)' }}>
+              <p className="text-xs sm:text-sm font-medium" style={{ color: 'var(--text-tertiary)' }}>
                 {activeTab === 'discover' 
                   ? 'Dünya trendleri & popüler yapımlar' 
                   : (loading ? 'Yükleniyor...' : `${filteredItems.length} kayıt`)}
               </p>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               {activeTab === 'lists' && (
                 <>
                   {/* Reorder toggle */}
                   {customLists.length > 1 && (
                     <button
                       onClick={() => setReorderMode(v => !v)}
-                      className={`flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2 p-0 rounded-xl transition-colors haptic-tap cursor-pointer shrink-0 ${reorderMode ? 'text-accent' : ''}`}
+                      className={`flex items-center justify-center h-8 sm:h-9 px-2 sm:px-3 rounded-xl transition-all haptic-tap cursor-pointer shrink-0 ${reorderMode ? 'ring-2 ring-accent' : ''}`}
                       style={{
-                        background: reorderMode ? 'hsla(var(--accent-h),var(--accent-s),var(--accent-l),0.15)' : 'var(--bg-secondary)',
+                        background: reorderMode ? 'hsla(var(--accent-h),var(--accent-s),var(--accent-l),0.18)' : 'var(--bg-secondary)',
                         color: reorderMode ? 'var(--accent)' : 'var(--text-secondary)',
                       }}
-                      title="Listeleri Sırala"
+                      title={reorderMode ? "Sıralamayı Tamamla" : "Listeleri Sırala & Yönet"}
                     >
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+                      <svg className="w-4 h-4 sm:w-4.5 sm:h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
                       </svg>
+                      <span className="hidden sm:inline text-xs font-bold ml-1.5">
+                        {reorderMode ? 'Bitti' : 'Sırala'}
+                      </span>
                     </button>
                   )}
                   {/* New List */}
                   <button
                     onClick={() => setIsCreateListModalOpen(true)}
-                    className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2 p-0 gap-1.5 rounded-xl text-sm font-bold transition-colors haptic-tap cursor-pointer shrink-0"
+                    className="flex items-center justify-center h-8 sm:h-9 px-2.5 sm:px-3 rounded-xl text-xs sm:text-sm font-bold transition-colors haptic-tap cursor-pointer shrink-0"
                     style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
                     title="Yeni Liste Oluştur"
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19l-2.12-2.12a1.5 1.5 0 00-1.06-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
                     </svg>
-                    <span className="hidden sm:inline">Liste</span>
+                    <span className="text-xs font-bold ml-1">Liste</span>
                   </button>
                 </>
               )}
               {/* Add */}
               <Link
                 href="/watchlist/add"
-                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-2 p-0 rounded-xl transition-colors haptic-tap cursor-pointer shrink-0"
+                className="flex items-center justify-center h-8 sm:h-9 px-2.5 sm:px-3.5 rounded-xl transition-colors haptic-tap cursor-pointer shrink-0"
                 style={{ background: 'hsla(var(--accent-h),var(--accent-s),var(--accent-l),0.12)', color: 'var(--accent)' }}
                 title="Film veya Dizi Ekle"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                <span className="hidden sm:inline font-bold text-sm ml-1">Ekle</span>
+                <span className="font-bold text-xs ml-1">Ekle</span>
               </Link>
             </div>
           </div>
 
-          {/* Tab Selection & Search Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-            {/* Segmented Control Tabs */}
-            <div className="flex items-center p-1 rounded-2xl border border-black/5 dark:border-white/10 w-fit shrink-0" style={{ background: 'var(--bg-secondary)' }}>
-              <button
-                type="button"
-                onClick={() => setActiveTab('lists')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all haptic-tap cursor-pointer ${
-                  activeTab === 'lists'
-                    ? 'bg-accent text-white shadow-sm'
-                    : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
-                }`}
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-                <span>Listelerim</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('discover')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all haptic-tap cursor-pointer ${
-                  activeTab === 'discover'
-                    ? 'bg-accent text-white shadow-sm'
-                    : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
-                }`}
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
-                </svg>
-                <span>Keşfet ve Trendler</span>
-              </button>
-            </div>
-
-            {/* Search Bar (When in lists view) */}
-            {activeTab === 'lists' && (
-              <div className="relative group shrink-0 w-full sm:w-72 max-w-full">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300 group-focus-within:text-accent z-10" style={{ color: 'var(--text-tertiary)' }}>
+          {/* Row 2: Tabs & Search (Compact) */}
+          {isMobileSearchOpen ? (
+            <div className="flex items-center gap-2 pt-0.5 animate-[fadeIn_0.15s_ease-out]">
+              <div className="relative flex-1">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                   </svg>
                 </div>
                 <input
                   type="text"
+                  autoFocus
                   placeholder="Kütüphanemde ara..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2 rounded-xl text-sm font-medium outline-none transition-all duration-300 themed-input"
+                  className="w-full pl-9 pr-8 py-1.5 rounded-xl text-xs sm:text-sm font-medium outline-none themed-input"
                   style={{ color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
                 />
                 {searchQuery ? (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute inset-y-0 right-1.5 pr-2 pl-2 flex items-center haptic-tap cursor-pointer hover:scale-110 transition-transform z-10"
+                    className="absolute inset-y-0 right-1 px-1.5 flex items-center haptic-tap cursor-pointer"
                     style={{ color: 'var(--text-secondary)' }}
                   >
-                    <div className="w-4 h-4 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center backdrop-blur-sm">
-                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <div className="w-3.5 h-3.5 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center">
+                      <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </div>
                   </button>
                 ) : null}
               </div>
-            )}
-          </div>
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setIsMobileSearchOpen(false);
+                }}
+                className="px-2.5 py-1.5 text-xs font-bold rounded-xl transition-all haptic-tap cursor-pointer shrink-0"
+                style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
+              >
+                Kapat
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between gap-2 pt-0.5">
+              {/* Segmented Control Tabs */}
+              <div className="flex items-center p-0.5 sm:p-1 rounded-xl sm:rounded-2xl border border-black/5 dark:border-white/10 shrink-0" style={{ background: 'var(--bg-secondary)' }}>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('lists')}
+                  className={`flex items-center gap-1.5 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all haptic-tap cursor-pointer ${
+                    activeTab === 'lists'
+                      ? 'bg-accent text-white shadow-sm'
+                      : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
+                  }`}
+                >
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                  </svg>
+                  <span>Listelerim</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('discover')}
+                  className={`flex items-center gap-1.5 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all haptic-tap cursor-pointer ${
+                    activeTab === 'discover'
+                      ? 'bg-accent text-white shadow-sm'
+                      : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
+                  }`}
+                >
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
+                  </svg>
+                  <span className="sm:hidden">Keşfet</span>
+                  <span className="hidden sm:inline">Keşfet ve Trendler</span>
+                </button>
+              </div>
+
+              {/* Search on lists tab */}
+              {activeTab === 'lists' && (
+                <div className="flex items-center gap-2">
+                  {/* Mobile Search Toggle Button */}
+                  <button
+                    onClick={() => setIsMobileSearchOpen(true)}
+                    className="sm:hidden flex items-center justify-center w-8 h-8 rounded-xl transition-all haptic-tap cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 shrink-0"
+                    style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
+                    title="Ara"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                  </button>
+
+                  {/* Desktop Search Input */}
+                  <div className="hidden sm:block relative w-56 md:w-64">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Kütüphanemde ara..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-8 pr-7 py-1.5 rounded-xl text-xs font-medium outline-none themed-input"
+                      style={{ color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="absolute inset-y-0 right-1 px-1.5 flex items-center haptic-tap cursor-pointer"
+                        style={{ color: 'var(--text-secondary)' }}
+                      >
+                        <div className="w-3.5 h-3.5 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center">
+                          <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </div>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
         </div>
       </header>
@@ -368,12 +432,13 @@ function WatchlistContent() {
                     <div className="flex items-center px-4 lg:px-6 mb-3 gap-2">
                       {/* Reorder arrows for custom lists */}
                       {reorderMode && customListId && sectionIndex !== undefined && (
-                        <div className="flex flex-col gap-0.5 shrink-0">
+                        <div className="flex items-center gap-0.5 shrink-0 bg-black/5 dark:bg-white/5 p-0.5 rounded-lg">
                           <button
                             onClick={() => reorderCustomLists(sectionIndex, sectionIndex - 1)}
                             disabled={sectionIndex === 0}
-                            className="p-0.5 rounded disabled:opacity-20 hover:opacity-60 transition-opacity haptic-tap cursor-pointer"
-                            style={{ color: 'var(--text-tertiary)' }}
+                            className="p-1 rounded disabled:opacity-20 hover:opacity-100 transition-opacity haptic-tap cursor-pointer"
+                            style={{ color: 'var(--text-secondary)' }}
+                            title="Yukarı Taşı"
                           >
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
@@ -382,8 +447,9 @@ function WatchlistContent() {
                           <button
                             onClick={() => reorderCustomLists(sectionIndex, sectionIndex + 1)}
                             disabled={sectionIndex === customLists.length - 1}
-                            className="p-0.5 rounded disabled:opacity-20 hover:opacity-60 transition-opacity haptic-tap cursor-pointer"
-                            style={{ color: 'var(--text-tertiary)' }}
+                            className="p-1 rounded disabled:opacity-20 hover:opacity-100 transition-opacity haptic-tap cursor-pointer"
+                            style={{ color: 'var(--text-secondary)' }}
+                            title="Aşağı Taşı"
                           >
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -392,46 +458,39 @@ function WatchlistContent() {
                         </div>
                       )}
 
-                      {/* Drag handle when in reorder mode */}
-                      {reorderMode && customListId && (
-                        <svg className="w-4 h-4 shrink-0 opacity-40 cursor-grab" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
-                        </svg>
-                      )}
-
-                      <h2 className="text-sm font-bold tracking-widest uppercase flex items-center gap-1" style={{ color: 'var(--text-primary)' }}>
-                        {title}
+                      <h2 className="text-sm font-bold tracking-widest uppercase flex items-center gap-1.5 truncate" style={{ color: 'var(--text-primary)' }}>
+                        <span className="truncate">{title}</span>
                         {!reorderMode && (
-                          <svg className="w-3.5 h-3.5 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <svg className="w-3.5 h-3.5 opacity-40 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                           </svg>
                         )}
                       </h2>
-                      <span className="text-[10px] opacity-50 font-medium" style={{ color: 'var(--text-tertiary)' }}>
+                      <span className="text-[10px] opacity-50 font-medium shrink-0" style={{ color: 'var(--text-tertiary)' }}>
                         {groupItems.length}
                       </span>
 
                       {groupItems.length > 0 && !reorderMode && (
                         <Link 
                           href={`/watchlist/list?id=${customListId || 'unlisted'}`}
-                          className="ml-3 px-2.5 py-1 rounded-md text-xs font-bold transition-colors haptic-tap cursor-pointer"
+                          className="ml-auto sm:ml-3 px-2.5 py-1 rounded-md text-xs font-bold transition-colors haptic-tap cursor-pointer shrink-0"
                           style={{ color: 'var(--text-secondary)', background: 'var(--bg-secondary)' }}
                         >
                           Tümünü Gör
                         </Link>
                       )}
 
-                      {/* Custom list actions */}
-                      {customListId && !reorderMode && (
-                        <div className="ml-auto flex items-center gap-1 transition-opacity opacity-40 hover:opacity-100">
+                      {/* Custom list actions - ONLY active when reorderMode is enabled */}
+                      {customListId && reorderMode && (
+                        <div className="ml-auto flex items-center gap-1 shrink-0">
                           <button
                             onClick={async () => {
                               const newName = await prompt('Listenin yeni adı:', title);
                               if (newName?.trim()) editCustomList(customListId, newName.trim());
                             }}
-                            className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors haptic-tap cursor-pointer hover:bg-black/5 dark:hover:bg-white/5"
-                            style={{ color: 'var(--text-tertiary)' }}
-                            title="Düzenle"
+                            className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors haptic-tap cursor-pointer hover:bg-black/10 dark:hover:bg-white/10"
+                            style={{ color: 'var(--text-secondary)' }}
+                            title="Listeyi Yeniden Adlandır"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.89 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.89l12.685-12.685z" />
@@ -445,8 +504,8 @@ function WatchlistContent() {
                               }
                             }}
                             className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors haptic-tap cursor-pointer hover:bg-red-500/10 hover:text-red-500"
-                            style={{ color: 'var(--text-tertiary)' }}
-                            title="Sil"
+                            style={{ color: 'var(--text-secondary)' }}
+                            title="Listeyi Sil"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -459,7 +518,7 @@ function WatchlistContent() {
                       {reorderMode && customListId && sectionIndex === customLists.length - 1 && (
                         <button
                           onClick={() => setReorderMode(false)}
-                          className="ml-auto px-3 py-1 rounded-lg text-xs font-bold transition-colors haptic-tap cursor-pointer"
+                          className="ml-2 px-3 py-1 rounded-lg text-xs font-bold transition-colors haptic-tap cursor-pointer shrink-0"
                           style={{ background: 'var(--accent)', color: 'white' }}
                         >
                           Tamam
