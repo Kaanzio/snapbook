@@ -24,6 +24,7 @@ export default function HomePage() {
   const { prefs, updatePrefs } = usePreferences();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   
   // Selection State
   const [isSelectionMode, setIsSelectionMode] = useState(false);
@@ -119,125 +120,181 @@ export default function HomePage() {
       {/* Upload Modal */}
       {isUploadOpen && <UploadModal onClose={() => setIsUploadOpen(false)} />}
 
-      {/* ─── Unified Premium Sticky Header ─── */}
-      <header className="sticky top-0 z-30 transition-all duration-300 themed-header pt-4 lg:pt-6 pb-2.5 lg:pb-3.5">
-        <div className="px-4 lg:px-6 flex flex-col gap-3">
+      {/* ─── Unified Compact Header ─── */}
+      <header className="sticky top-0 z-30 transition-all duration-300 themed-header py-3.5 lg:py-4">
+        <div className="px-4 lg:px-6">
           
-          {/* Top Row: Title, Quick Count & Action Buttons */}
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-                Fotoğraflar
-              </h1>
-              <p className="text-xs font-semibold mt-0.5" style={{ color: 'var(--text-tertiary)' }}>
-                {loading ? 'Yükleniyor...' : `${filteredPhotos.length} / ${photos.length} anı`}
-              </p>
-            </div>
-            
-            {/* Header Right Actions */}
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              {!isSelectionMode ? (
-                <>
-                  {/* Select Mode Toggle */}
+          {/* Mobile Active Search View */}
+          {isMobileSearchOpen ? (
+            <div className="sm:hidden flex items-center gap-2 w-full animate-[fadeIn_0.2s_ease-out]">
+              <div className="relative flex-1">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  autoFocus
+                  placeholder="Fotoğraf veya not ara..."
+                  value={filters.searchQuery}
+                  onChange={(e) => setFilters(prev => ({ ...prev, searchQuery: e.target.value }))}
+                  className="w-full pl-9 pr-8 py-2 rounded-xl text-xs font-medium outline-none transition-all themed-input"
+                  style={{ color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
+                />
+                {filters.searchQuery && (
                   <button
-                    onClick={() => setIsSelectionMode(true)}
-                    className="flex items-center justify-center w-9 h-9 sm:w-auto sm:px-3 sm:py-2 rounded-xl transition-all haptic-tap cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 shrink-0"
-                    style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
-                    title="Fotoğraf Seç"
+                    onClick={() => setFilters(prev => ({ ...prev, searchQuery: '' }))}
+                    className="absolute inset-y-0 right-1.5 px-1.5 flex items-center haptic-tap cursor-pointer"
+                    style={{ color: 'var(--text-secondary)' }}
                   >
-                    <svg className="w-4 h-4 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="hidden sm:inline text-xs font-bold ml-1.5">Seç</span>
+                    <div className="w-4 h-4 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center">
+                      <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </div>
                   </button>
-
-                  {/* Grid Density Toggle */}
-                  <button
-                    onClick={toggleDensity}
-                    className="flex items-center justify-center w-9 h-9 sm:w-auto sm:px-3 sm:py-2 rounded-xl transition-all haptic-tap cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 shrink-0"
-                    style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
-                    title="Görünüm Yoğunluğu (Kompakt / Rahat / Büyük)"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      {prefs.gridDensity === 'compact' && <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />}
-                      {prefs.gridDensity === 'comfortable' && <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25z" />}
-                      {prefs.gridDensity === 'large' && <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h12A2.25 2.25 0 0120.25 6v12a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6z" />}
-                    </svg>
-                    <span className="hidden sm:inline text-xs font-bold ml-1.5">
-                      {prefs.gridDensity === 'compact' ? 'Kompakt' : prefs.gridDensity === 'comfortable' ? 'Rahat' : 'Büyük'}
-                    </span>
-                  </button>
-
-                  {/* Add Photo Button */}
-                  <button
-                    onClick={() => setIsUploadOpen(true)}
-                    className="flex items-center justify-center w-9 h-9 sm:w-auto sm:px-3.5 sm:py-2 rounded-xl transition-all haptic-tap cursor-pointer shadow-md hover:scale-105 active:scale-95 shrink-0"
-                    style={{ background: 'var(--accent)', color: 'var(--accent-foreground, #FFFFFF)' }}
-                    title="Fotoğraf Ekle"
-                  >
-                    <svg className="w-4 h-4 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    <span className="hidden sm:inline text-xs font-bold ml-1.5">Ekle</span>
-                  </button>
-                </>
-              ) : (
-                <>
-                  {/* Select All */}
-                  <button
-                    onClick={() => setSelectedPhotoIds(new Set(filteredPhotos.map(p => p.id)))}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all haptic-tap cursor-pointer"
-                    style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
-                  >
-                    Tümünü Seç
-                  </button>
-                  {/* Cancel Selection */}
-                  <button
-                    onClick={() => {
-                      setIsSelectionMode(false);
-                      setSelectedPhotoIds(new Set());
-                    }}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all haptic-tap cursor-pointer"
-                    style={{ background: 'var(--bg-secondary)', color: 'var(--accent)' }}
-                  >
-                    Vazgeç
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Search Row */}
-          <div className="w-full pt-1">
-            <div className="relative group w-full">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300 group-focus-within:text-accent z-10" style={{ color: 'var(--text-tertiary)' }}>
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                </svg>
+                )}
               </div>
-              <input
-                type="text"
-                placeholder="Fotoğraf veya not ara..."
-                value={filters.searchQuery}
-                onChange={(e) => setFilters(prev => ({ ...prev, searchQuery: e.target.value }))}
-                className="w-full pl-10 pr-10 py-2.5 rounded-xl text-xs sm:text-sm font-medium outline-none transition-all duration-300 themed-input"
-                style={{ color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
-              />
-              {filters.searchQuery ? (
-                <button
-                  onClick={() => setFilters(prev => ({ ...prev, searchQuery: '' }))}
-                  className="absolute inset-y-0 right-1.5 pr-2 pl-2 flex items-center haptic-tap cursor-pointer hover:scale-110 transition-transform z-10"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  <div className="w-4 h-4 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center backdrop-blur-sm">
-                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </div>
-                </button>
-              ) : null}
+              <button
+                onClick={() => {
+                  setFilters(prev => ({ ...prev, searchQuery: '' }));
+                  setIsMobileSearchOpen(false);
+                }}
+                className="px-3 py-2 text-xs font-bold rounded-xl transition-all haptic-tap cursor-pointer shrink-0"
+                style={{ background: 'var(--bg-secondary)', color: 'var(--accent)' }}
+              >
+                Kapat
+              </button>
             </div>
-          </div>
+          ) : (
+            /* Standard Header Row (Mobile & Desktop) */
+            <div className="flex items-center justify-between gap-3">
+              {/* Title & Count */}
+              <div className="min-w-0">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight flex items-center gap-2 truncate" style={{ color: 'var(--text-primary)' }}>
+                  Fotoğraflar
+                </h1>
+                <p className="text-[11px] sm:text-xs font-semibold mt-0.5 truncate" style={{ color: 'var(--text-tertiary)' }}>
+                  {loading ? 'Yükleniyor...' : `${filteredPhotos.length} / ${photos.length} anı`}
+                </p>
+              </div>
+
+              {/* Right Side: Inline Search Bar (Desktop) & Action Buttons */}
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                {!isSelectionMode ? (
+                  <>
+                    {/* Desktop Inline Search Bar */}
+                    <div className="hidden sm:block relative w-44 md:w-56 lg:w-64">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Fotoğraf veya not ara..."
+                        value={filters.searchQuery}
+                        onChange={(e) => setFilters(prev => ({ ...prev, searchQuery: e.target.value }))}
+                        className="w-full pl-8 pr-7 py-2 rounded-xl text-xs font-medium outline-none transition-all duration-300 themed-input"
+                        style={{ color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
+                      />
+                      {filters.searchQuery && (
+                        <button
+                          onClick={() => setFilters(prev => ({ ...prev, searchQuery: '' }))}
+                          className="absolute inset-y-0 right-1 px-1.5 flex items-center haptic-tap cursor-pointer"
+                          style={{ color: 'var(--text-secondary)' }}
+                        >
+                          <div className="w-3.5 h-3.5 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center">
+                            <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </div>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Mobile Search Button */}
+                    <button
+                      onClick={() => setIsMobileSearchOpen(true)}
+                      className="sm:hidden flex items-center justify-center w-9 h-9 rounded-xl transition-all haptic-tap cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 shrink-0"
+                      style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
+                      title="Ara"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                      </svg>
+                    </button>
+
+                    {/* Select Mode Toggle */}
+                    <button
+                      onClick={() => setIsSelectionMode(true)}
+                      className="flex items-center justify-center w-9 h-9 sm:w-auto sm:px-3 sm:py-2 rounded-xl transition-all haptic-tap cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 shrink-0"
+                      style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
+                      title="Fotoğraf Seç"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="hidden sm:inline text-xs font-bold ml-1.5">Seç</span>
+                    </button>
+
+                    {/* Grid Density Toggle */}
+                    <button
+                      onClick={toggleDensity}
+                      className="flex items-center justify-center w-9 h-9 sm:w-auto sm:px-3 sm:py-2 rounded-xl transition-all haptic-tap cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 shrink-0"
+                      style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
+                      title="Görünüm Yoğunluğu"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        {prefs.gridDensity === 'compact' && <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />}
+                        {prefs.gridDensity === 'comfortable' && <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25z" />}
+                        {prefs.gridDensity === 'large' && <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h12A2.25 2.25 0 0120.25 6v12a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6z" />}
+                      </svg>
+                      <span className="hidden sm:inline text-xs font-bold ml-1.5">
+                        {prefs.gridDensity === 'compact' ? 'Kompakt' : prefs.gridDensity === 'comfortable' ? 'Rahat' : 'Büyük'}
+                      </span>
+                    </button>
+
+                    {/* Add Photo Button */}
+                    <button
+                      onClick={() => setIsUploadOpen(true)}
+                      className="flex items-center justify-center w-9 h-9 sm:w-auto sm:px-3.5 sm:py-2 rounded-xl transition-all haptic-tap cursor-pointer shadow-md hover:scale-105 active:scale-95 shrink-0"
+                      style={{ background: 'var(--accent)', color: 'var(--accent-foreground, #FFFFFF)' }}
+                      title="Fotoğraf Ekle"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                      </svg>
+                      <span className="hidden sm:inline text-xs font-bold ml-1.5">Ekle</span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {/* Select All */}
+                    <button
+                      onClick={() => setSelectedPhotoIds(new Set(filteredPhotos.map(p => p.id)))}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all haptic-tap cursor-pointer"
+                      style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
+                    >
+                      Tümünü Seç
+                    </button>
+                    {/* Cancel Selection */}
+                    <button
+                      onClick={() => {
+                        setIsSelectionMode(false);
+                        setSelectedPhotoIds(new Set());
+                      }}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all haptic-tap cursor-pointer"
+                      style={{ background: 'var(--bg-secondary)', color: 'var(--accent)' }}
+                    >
+                      Vazgeç
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
 
         </div>
       </header>

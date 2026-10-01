@@ -78,12 +78,25 @@ export default function StickyNode({ id, data, selected }: NodeProps) {
           transform: `rotate(${(nodeData.rotation ?? 0)}deg)`,
         }}
       >
-        {/* Color cycle dot */}
-        <button
-          onClick={cycleColor}
-          className="absolute top-2 right-2 w-4 h-4 rounded-full opacity-0 group-hover:opacity-60 hover:!opacity-100 transition-opacity"
-          style={{ background: color.text }}
-        />
+        {/* Actions bar (Edit + Color cycle) */}
+        <div className={`absolute top-2 right-2 flex items-center gap-1.5 transition-opacity ${selected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+          <button
+            onClick={() => setIsEditing(true)}
+            className="w-5 h-5 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            style={{ color: color.text, background: 'rgba(0,0,0,0.06)' }}
+            title="Düzenle"
+          >
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+            </svg>
+          </button>
+          <button
+            onClick={cycleColor}
+            className="w-5 h-5 rounded-full border border-black/10 transition-all hover:scale-110"
+            style={{ background: color.text }}
+            title="Renk Değiştir"
+          />
+        </div>
 
         {isEditing ? (
           <textarea
@@ -94,11 +107,11 @@ export default function StickyNode({ id, data, selected }: NodeProps) {
             onKeyDown={(e) => e.key === 'Escape' && handleBlur()}
             className="w-full h-full bg-transparent resize-none focus:outline-none text-sm font-medium leading-relaxed"
             style={{ color: color.text }}
-            placeholder="Write something..."
+            placeholder="Bir not yazın..."
           />
         ) : (
-          <p className="text-sm font-medium whitespace-pre-wrap cursor-text leading-relaxed flex-1">
-            {text || 'Double-click to edit...'}
+          <p onClick={() => selected && setIsEditing(true)} className="text-sm font-medium whitespace-pre-wrap cursor-text leading-relaxed flex-1">
+            {text || 'Düzenlemek için dokunun...'}
           </p>
         )}
       </div>
