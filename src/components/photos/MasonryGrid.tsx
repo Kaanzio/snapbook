@@ -155,7 +155,6 @@ function FocusView({ photos, onPhotoClick }: { photos: PhotoMetadata[], onPhotoC
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-white font-bold text-lg">{current.note || 'İsimsiz'}</h3>
-                  <p className="text-white/70 text-sm">{current.tags.map(t => `#${t}`).join(' ')}</p>
                 </div>
                 <div className="text-white/50 text-xs font-mono">
                   {index + 1} / {photos.length}

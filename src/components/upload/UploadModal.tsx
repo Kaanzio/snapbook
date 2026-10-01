@@ -17,7 +17,6 @@ export default function UploadModal({ onClose }: UploadModalProps) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [isAiTagging, setIsAiTagging] = useState(false);
   const [formData, setFormData] = useState<UploadFormData>({
     category: 'other',
     note: '',
@@ -51,44 +50,6 @@ export default function UploadModal({ onClose }: UploadModalProps) {
 
     return () => urls.forEach(URL.revokeObjectURL);
   }, []);
-
-  const handleAiTag = async () => {
-    if (previews.length === 0) return;
-    setIsAiTagging(true);
-    try {
-      const response = await fetch(previews[0]);
-      const blob = await response.blob();
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64Data = reader.result as string;
-        try {
-          const { aiManager } = await import('@/lib/ai');
-          const { tags, category } = await aiManager.analyzeImage('new', base64Data);
-          
-          setFormData(prev => {
-            const newTags = tags && tags.length > 0 ? Array.from(new Set([...prev.tags, ...tags])) : prev.tags;
-            const newCategory = category || prev.category;
-            return { ...prev, tags: newTags, category: newCategory };
-          });
-
-          if ((tags && tags.length > 0) || category) {
-            showToast('Yapay Zeka analizi tamamlandı!');
-          } else {
-            showToast('Uygun etiket veya kategori bulunamadı.');
-          }
-        } catch (e: any) {
-          console.error("AI Error:", e);
-          showToast(`AI Hatası: ${e.message || 'Bilinmeyen hata'}`);
-        }
-        setIsAiTagging(false);
-      };
-      reader.readAsDataURL(blob);
-    } catch (err) {
-      console.error(err);
-      setIsAiTagging(false);
-      showToast('Görsel okunurken hata oluştu.');
-    }
-  };
 
   async function handleUpload() {
     if (selectedFiles.length === 0) return;
@@ -248,8 +209,6 @@ export default function UploadModal({ onClose }: UploadModalProps) {
               <MetadataForm
                 formData={formData}
                 onChange={setFormData}
-                onAiTagRequest={handleAiTag}
-                isAiTagging={isAiTagging}
               />
             </div>
           )}

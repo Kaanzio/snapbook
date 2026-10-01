@@ -105,45 +105,6 @@ function PhotoDetailContent() {
     notifyDataChange('photos');
   }
 
-  const handleAiTag = async () => {
-    if (!photo || !imageUrl) return;
-    setIsAiTagging(true);
-    try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64Data = reader.result as string;
-        try {
-          const { aiManager } = await import('@/lib/ai');
-          const { tags, category } = await aiManager.analyzeImage(photo.id, base64Data);
-          
-          if (tags && tags.length > 0) {
-            setEditTags(prev => Array.from(new Set([...prev, ...tags])));
-          }
-          if (category) {
-            setEditCategory(category);
-          }
-
-          if ((tags && tags.length > 0) || category) {
-            showToast('Yapay Zeka analizi tamamlandı!');
-          } else {
-            showToast('Uygun etiket veya kategori bulunamadı.');
-          }
-        } catch (e: any) {
-          console.error("AI Error:", e);
-          showToast(`AI Hatası: ${e.message || 'Bilinmeyen hata'}`);
-        }
-        setIsAiTagging(false);
-      };
-      reader.readAsDataURL(blob);
-    } catch (err) {
-      console.error(err);
-      setIsAiTagging(false);
-      showToast('Görsel okunurken hata oluştu.');
-    }
-  };
-
   async function handleSetAsCover() {
     if (!photo || photo.collection_ids.length === 0) return;
     
@@ -302,28 +263,6 @@ function PhotoDetailContent() {
           {/* Note */}
           {editing ? (
             <div className="space-y-4 animate-[fadeIn_0.2s_ease-out]">
-              {/* AI Button */}
-              <button
-                onClick={handleAiTag}
-                disabled={isAiTagging || !isLocal}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all haptic-tap cursor-pointer disabled:opacity-50"
-                style={{ background: 'var(--accent)', color: 'white' }}
-              >
-                {isAiTagging ? (
-                  <>
-                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Yapay Zeka ile Analiz Ediliyor...
-                  </>
-                ) : (
-                  <>
-                    ✨ Yapay Zeka ile Otomatik Doldur
-                  </>
-                )}
-              </button>
-
               {/* Category edit */}
               <div>
                 <label className="block text-xs font-medium text-slate-500 mb-2">Kategori</label>

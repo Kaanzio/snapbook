@@ -2,7 +2,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { UploadFormData, PhotoMetadata } from '@/types';
 import { getDeviceName } from './device';
 import { savePhoto, deleteLocalPhoto, createPhotoMetadata, notifyDataChange, updatePhotoMetadata } from './indexeddb';
-import { aiManager } from './ai';
 import { showToast } from '@/components/ui/Toast';
 
 export async function uploadPhoto(file: File, formData: UploadFormData): Promise<string> {
