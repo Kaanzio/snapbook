@@ -56,10 +56,17 @@ export default function MasonryGrid({
       {groups.map((group, index) => (
         <div key={group.title || `group-${index}`} className={group.title ? "mb-8" : "mb-2"}>
           {group.title && (
-            <div className="sticky top-[72px] z-20 backdrop-blur-md px-4 lg:px-6 py-2 mb-4" style={{ background: 'var(--bg-primary-transparent)' }}>
-              <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
+            <div 
+              className="sticky top-[68px] lg:top-[72px] z-20 backdrop-blur-2xl px-4 lg:px-6 py-2.5 mb-3 flex items-center justify-between border-b border-black/5 dark:border-white/5 transition-colors" 
+              style={{ background: 'var(--bg-nav)' }}
+            >
+              <h2 className="text-sm sm:text-base font-bold tracking-tight flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                 {group.title}
               </h2>
+              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-white/5" style={{ color: 'var(--text-secondary)' }}>
+                {group.items.length} fotoğraf
+              </span>
             </div>
           )}
           <motion.div layout className={gridClass}>
