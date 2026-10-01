@@ -130,7 +130,7 @@ function FocusView({ photos, onPhotoClick }: { photos: PhotoMetadata[], onPhotoC
 
         {/* Content */}
         <Link 
-          href={`/photo/?id=${current.id}`} 
+          href={`/photo?id=${current.id}`} 
           className="w-full h-full flex flex-col items-center justify-center group"
           onClick={(e) => {
             if (onPhotoClick) {

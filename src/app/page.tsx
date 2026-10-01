@@ -4,7 +4,6 @@ import { useState } from 'react';
 import JSZip from 'jszip';
 import { usePhotos } from '@/hooks/usePhotos';
 import { useCollections } from '@/hooks/useCollections';
-import { useCategories } from '@/hooks/useCategories';
 import { useSearch } from '@/hooks/useSearch';
 import { usePreferences } from '@/components/providers/PreferencesProvider';
 import MasonryGrid from '@/components/photos/MasonryGrid';
@@ -12,7 +11,6 @@ import FilterPanel from '@/components/search/FilterPanel';
 import EmptyState from '@/components/ui/EmptyState';
 import Modal from '@/components/ui/Modal';
 import BottomSheet from '@/components/ui/BottomSheet';
-import { CategoryIcon } from '@/components/ui/CategoryIcon';
 import UploadModal from '@/components/upload/UploadModal';
 import { deletePhotos } from '@/lib/storage';
 import { getPhoto } from '@/lib/indexeddb';
@@ -23,7 +21,6 @@ import { FilterState } from '@/types';
 export default function HomePage() {
   const { photos, loading } = usePhotos();
   const { collections } = useCollections();
-  const { categories } = useCategories();
   const { prefs, updatePrefs } = usePreferences();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -210,10 +207,9 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Search Row & Quick Filter Bar */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full pt-1">
-            {/* Integrated Compact Search Bar */}
-            <div className="relative group shrink-0 w-full sm:w-72 max-w-full">
+          {/* Search Row */}
+          <div className="w-full pt-1">
+            <div className="relative group w-full">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors duration-300 group-focus-within:text-accent z-10" style={{ color: 'var(--text-tertiary)' }}>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -224,7 +220,7 @@ export default function HomePage() {
                 placeholder="Fotoğraf veya not ara..."
                 value={filters.searchQuery}
                 onChange={(e) => setFilters(prev => ({ ...prev, searchQuery: e.target.value }))}
-                className="w-full pl-10 pr-10 py-2 rounded-xl text-xs sm:text-sm font-medium outline-none transition-all duration-300 themed-input"
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl text-xs sm:text-sm font-medium outline-none transition-all duration-300 themed-input"
                 style={{ color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
               />
               {filters.searchQuery ? (
@@ -240,67 +236,6 @@ export default function HomePage() {
                   </div>
                 </button>
               ) : null}
-            </div>
-
-            {/* Quick Category Carousel / Horizontal Pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
-              {/* Tümü */}
-              <button
-                onClick={() => setFilters(prev => ({ ...prev, category: 'all', starred: null }))}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 haptic-tap cursor-pointer shrink-0 border ${
-                  filters.category === 'all' && !filters.starred
-                    ? 'border-transparent shadow-sm'
-                    : 'border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5'
-                }`}
-                style={{
-                  background: filters.category === 'all' && !filters.starred ? 'var(--accent)' : 'var(--bg-secondary)',
-                  color: filters.category === 'all' && !filters.starred ? 'var(--accent-foreground, #FFFFFF)' : 'var(--text-secondary)',
-                }}
-              >
-                Tümü
-              </button>
-
-              {/* Favoriler Filter */}
-              <button
-                onClick={() => setFilters(prev => ({ ...prev, starred: prev.starred ? null : true }))}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 haptic-tap cursor-pointer shrink-0 border ${
-                  filters.starred
-                    ? 'border-transparent shadow-sm'
-                    : 'border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5'
-                }`}
-                style={{
-                  background: filters.starred ? 'var(--accent)' : 'var(--bg-secondary)',
-                  color: filters.starred ? 'var(--accent-foreground, #FFFFFF)' : 'var(--text-secondary)',
-                }}
-              >
-                <svg className={`w-3.5 h-3.5 ${filters.starred ? 'text-white fill-white' : 'text-amber-400 fill-amber-400'}`} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                </svg>
-                <span>Favoriler</span>
-              </button>
-
-              {/* Dynamic Categories */}
-              {categories.map((cat) => {
-                const isActive = filters.category === cat.key;
-                return (
-                  <button
-                    key={cat.key}
-                    onClick={() => setFilters(prev => ({ ...prev, category: isActive ? 'all' : cat.key }))}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 haptic-tap cursor-pointer shrink-0 border ${
-                      isActive
-                        ? 'border-transparent shadow-sm'
-                        : 'border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5'
-                    }`}
-                    style={{
-                      background: isActive ? 'var(--accent)' : 'var(--bg-secondary)',
-                      color: isActive ? 'var(--accent-foreground, #FFFFFF)' : 'var(--text-secondary)',
-                    }}
-                  >
-                    <CategoryIcon categoryKey={cat.key} className="w-3.5 h-3.5" />
-                    <span>{cat.label}</span>
-                  </button>
-                );
-              })}
             </div>
           </div>
 

@@ -9,7 +9,6 @@ import { deletePhoto } from '@/lib/storage';
 import { updatePhotoMetadata, updateCollection, notifyDataChange } from '@/lib/indexeddb';
 import { useCategories } from '@/hooks/useCategories';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
-import TagInput from '@/components/ui/TagInput';
 import StarToggle from '@/components/ui/StarToggle';
 import AddToCollection from '@/components/collections/AddToCollection';
 import { showToast } from '@/components/ui/Toast';
@@ -34,9 +33,7 @@ function PhotoDetailContent() {
 
   // Edit state
   const [editNote, setEditNote] = useState('');
-  const [editTags, setEditTags] = useState<string[]>([]);
   const [editCategory, setEditCategory] = useState<string>('other');
-  const [isAiTagging, setIsAiTagging] = useState(false);
   const editingRef = useRef(editing);
   
   useEffect(() => {
@@ -52,16 +49,20 @@ function PhotoDetailContent() {
     let cancelled = false;
 
     async function load() {
-      const data = await getPhotoMetadata(photoId!);
-      if (!cancelled && data) {
-        setPhoto(data);
-        if (!editingRef.current) {
-          setEditNote(data.note || '');
-          setEditTags([...data.tags]);
-          setEditCategory(data.category);
+      try {
+        const data = await getPhotoMetadata(photoId!);
+        if (!cancelled && data) {
+          setPhoto(data);
+          if (!editingRef.current) {
+            setEditNote(data.note || '');
+            setEditCategory(data.category || 'other');
+          }
         }
+      } catch (err) {
+        console.error('Error loading photo metadata:', err);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      if (!cancelled) setLoading(false);
     }
 
     load();
@@ -79,13 +80,12 @@ function PhotoDetailContent() {
     if (!photo) return;
 
     await updatePhotoMetadata(photo.id, {
-      note: editNote || null,
-      tags: editTags,
+      note: editNote.trim() || null,
+      tags: photo.tags || [],
       category: editCategory,
     });
     
     notifyDataChange('photos');
-
     setEditing(false);
     showToast('Değişiklikler kaydedildi');
   }
@@ -97,7 +97,7 @@ function PhotoDetailContent() {
     await deletePhoto(photo.id);
     showToast('Fotoğraf silindi');
     router.push('/');
-  }
+  };
 
   async function handleToggleStar() {
     if (!photo) return;
@@ -106,10 +106,8 @@ function PhotoDetailContent() {
   }
 
   async function handleSetAsCover() {
-    if (!photo || photo.collection_ids.length === 0) return;
+    if (!photo || !photo.collection_ids || photo.collection_ids.length === 0) return;
     
-    // Set as cover for the first collection it belongs to
-    // (If in multiple, we could add a selector, but for now we pick the first/main one)
     await updateCollection(photo.collection_ids[0], { cover_photo_id: photo.id });
     notifyDataChange('collections');
     showToast('Koleksiyon kapağı yapıldı');
@@ -135,7 +133,7 @@ function PhotoDetailContent() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
-          <p className="text-6xl mb-4">😕</p>
+          <p className="text-6xl mb-4">📷</p>
           <p className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Fotoğraf bulunamadı</p>
           <Link href="/" className="text-sm text-accent hover:underline mt-2 inline-block">
             Ana sayfaya dön
@@ -145,24 +143,33 @@ function PhotoDetailContent() {
     );
   }
 
-  const category = getCategoryInfo(photo.category);
-  const dateStr = photo.created_at.toLocaleDateString('tr-TR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  const category = getCategoryInfo(photo.category || 'other');
+  
+  // Safe date parsing to prevent crash if created_at is a string
+  let dateStr = '';
+  try {
+    const d = photo.created_at ? new Date(photo.created_at) : new Date();
+    dateStr = d.toLocaleDateString('tr-TR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch (e) {
+    dateStr = '';
+  }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-16">
       {/* Floating Header */}
       <div className="fixed top-2 right-0 z-40 px-2 sm:px-4 pointer-events-none transition-all duration-300" style={{ left: 'var(--sidebar-width, 0px)' }}>
-        <div className="max-w-4xl mx-auto flex items-center justify-between p-2 rounded-2xl backdrop-blur-xl bg-white/60 dark:bg-black/60 shadow-sm border border-black/5 dark:border-white/5 pointer-events-auto">
+        <div className="max-w-4xl mx-auto flex items-center justify-between p-2 rounded-2xl backdrop-blur-xl bg-white/70 dark:bg-black/70 shadow-sm border border-black/5 dark:border-white/5 pointer-events-auto">
           <button
             onClick={() => router.back()}
             className="w-10 h-10 rounded-xl transition-colors text-slate-500 haptic-tap cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 inline-flex items-center justify-center"
             style={{ color: 'var(--text-secondary)' }}
+            title="Geri"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -183,36 +190,9 @@ function PhotoDetailContent() {
               </svg>
             </button>
 
-            {photo.collection_ids.length > 0 && (
-              <button
-                onClick={handleSetAsCover}
-                className="w-10 h-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors inline-flex items-center justify-center"
-                style={{ color: 'var(--text-secondary)' }}
-                title="Koleksiyon kapağı yap"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v12a2.25 2.25 0 002.25 2.25z" />
-                </svg>
-              </button>
-            )}
-
-            <button
-              onClick={async () => {
-                const success = await savePhotoToDevice(photo.id, photo.note || undefined);
-                if (success) showToast('Fotoğraf kaydedildi');
-              }}
-              className="w-10 h-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors inline-flex items-center justify-center"
-              style={{ color: 'var(--text-secondary)' }}
-              title="Cihaza kaydet"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-              </svg>
-            </button>
-
             <button
               onClick={handleDelete}
-              className="w-10 h-10 rounded-xl transition-colors text-red-500 hover:bg-red-500/10 haptic-tap cursor-pointer inline-flex items-center justify-center"
+              className="w-10 h-10 rounded-xl hover:bg-red-500/10 text-red-500 transition-colors inline-flex items-center justify-center"
               title="Sil"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -223,22 +203,22 @@ function PhotoDetailContent() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto pt-20 px-2 sm:px-4 pb-10 space-y-6">
-        {/* Image */}
-        <div className="rounded-3xl overflow-hidden relative shadow-sm" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+      <div className="max-w-4xl mx-auto px-4 pt-16 sm:pt-20">
+        {/* Main Image */}
+        <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-black/10 dark:bg-black/40 mb-6 flex items-center justify-center min-h-[300px] max-h-[75vh]">
           {imageLoading ? (
-            <div className="aspect-[4/3] skeleton" />
-          ) : isLocal ? (
+            <div className="aspect-[4/3] w-full skeleton" />
+          ) : imageUrl ? (
             <img
-              src={imageUrl || undefined}
+              src={imageUrl}
               alt={photo.note || 'Fotoğraf'}
-              className="w-full h-auto max-h-[70vh] object-contain mx-auto"
+              className="w-full h-auto max-h-[75vh] object-contain"
             />
           ) : (
-            <div className="aspect-[4/3] flex flex-col items-center justify-center" style={{ background: 'var(--bg-card)' }}>
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mb-3" style={{ background: 'var(--bg-secondary)' }}>
-                <svg className="w-8 h-8" style={{ color: 'var(--text-tertiary)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+            <div className="text-center p-8">
+              <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center bg-black/5 dark:bg-white/5">
+                <svg className="w-6 h-6 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v12a2.25 2.25 0 002.25 2.25z" />
                 </svg>
               </div>
               <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Bu fotoğraf başka bir cihazda</p>
@@ -248,68 +228,58 @@ function PhotoDetailContent() {
         </div>
 
         {/* Info Card */}
-        <div className="themed-card p-5 sm:p-6 mb-20 animate-[fade-in_0.3s_ease-out] space-y-5">
+        <div className="themed-card p-5 sm:p-6 mb-12 space-y-5 rounded-3xl border border-black/5 dark:border-white/10">
           {/* Category & Date */}
           <div className="flex items-center justify-between">
             <span
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium"
-              style={{ backgroundColor: category.color + '15', color: category.color }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold"
+              style={{ backgroundColor: (category.color || 'var(--accent)') + '20', color: category.color || 'var(--accent)' }}
             >
               <CategoryIcon categoryKey={category.key} className="w-4 h-4 mr-1 inline-block" /> {category.label}
             </span>
-            <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{dateStr}</span>
+            <span className="text-xs font-medium" style={{ color: 'var(--text-tertiary)' }}>{dateStr}</span>
           </div>
 
-          {/* Note */}
+          {/* Note / Edit Section */}
           {editing ? (
-            <div className="space-y-4 animate-[fadeIn_0.2s_ease-out]">
+            <div className="space-y-4">
               {/* Category edit */}
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-2">Kategori</label>
+                <label className="block text-xs font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>Kategori</label>
                 <div className="flex flex-wrap gap-1.5">
                   {categories.map((cat) => (
                     <button
                       key={cat.key}
                       onClick={() => setEditCategory(cat.key)}
-                      className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all haptic-tap cursor-pointer
-                        ${editCategory === cat.key
-                          ? 'shadow-sm'
-                          : 'hover:opacity-80'
-                        }`}
+                      className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium transition-all haptic-tap cursor-pointer
+                        ${editCategory === cat.key ? 'shadow-sm' : 'hover:opacity-80'}`}
                       style={{
                         background: editCategory === cat.key ? 'var(--accent)' : 'var(--bg-secondary)',
                         color: editCategory === cat.key ? 'var(--accent-foreground, white)' : 'var(--text-secondary)',
                         border: editCategory === cat.key ? '1px solid var(--accent)' : '1px solid var(--border-primary)'
                       }}
                     >
-                      <CategoryIcon categoryKey={cat.key} className="w-4 h-4 inline-block mr-1" /> {cat.label}
+                      <CategoryIcon categoryKey={cat.key} className="w-3.5 h-3.5 inline-block mr-1" /> {cat.label}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>Not</label>
+                <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-secondary)' }}>Not</label>
                 <textarea
                   value={editNote}
                   onChange={(e) => setEditNote(e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2.5 rounded-xl themed-input text-sm resize-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl themed-input text-sm resize-none"
                   placeholder="Bir not ekleyin..."
                 />
               </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-medium text-slate-500">Etiketler</label>
-                </div>
-                <TagInput tags={editTags} onChange={setEditTags} />
-              </div>
-
-              <div className="flex gap-3 mt-4">
+              <div className="flex gap-2.5 pt-2">
                 <button
                   onClick={handleSave}
-                  className="flex-1 py-3.5 rounded-2xl btn-accent text-sm font-semibold haptic-tap cursor-pointer shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="flex-1 py-3 rounded-xl btn-accent text-xs font-bold haptic-tap cursor-pointer shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all"
                 >
                   Kaydet
                 </button>
@@ -317,10 +287,9 @@ function PhotoDetailContent() {
                   onClick={() => {
                     setEditing(false);
                     setEditNote(photo.note || '');
-                    setEditTags([...photo.tags]);
-                    setEditCategory(photo.category);
+                    setEditCategory(photo.category || 'other');
                   }}
-                  className="flex-1 py-3.5 rounded-2xl text-sm font-semibold transition-all haptic-tap cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                  className="flex-1 py-3 rounded-xl text-xs font-bold transition-all haptic-tap cursor-pointer hover:bg-black/5 dark:hover:bg-white/5"
                   style={{ color: 'var(--text-secondary)', background: 'var(--bg-secondary)' }}
                 >
                   İptal
@@ -330,25 +299,14 @@ function PhotoDetailContent() {
           ) : (
             <div>
               {photo.note ? (
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-primary)' }}>{photo.note}</p>
+                <p className="text-sm leading-relaxed font-medium" style={{ color: 'var(--text-primary)' }}>{photo.note}</p>
               ) : (
-                <p className="text-sm italic" style={{ color: 'var(--text-tertiary)' }}>Not eklenmemiş</p>
-              )}
-
-              {/* Tags */}
-              {photo.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  {photo.tags.map((tag) => (
-                    <span key={tag} className="px-2.5 py-1 rounded-lg text-xs font-medium" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-primary)' }}>
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
+                <p className="text-xs italic" style={{ color: 'var(--text-tertiary)' }}>Not eklenmemiş</p>
               )}
 
               <button
                 onClick={() => setEditing(true)}
-                className="mt-3 inline-flex items-center gap-1 text-xs font-medium transition-colors text-accent hover:opacity-80"
+                className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold transition-colors text-accent hover:opacity-80"
               >
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
@@ -358,13 +316,13 @@ function PhotoDetailContent() {
             </div>
           )}
 
-          {/* Info section */}
-          <div className="pt-4 space-y-2.5" style={{ borderTop: '1px solid var(--border-primary)' }}>
+          {/* Device & Location info */}
+          <div className="pt-4 space-y-2 border-t" style={{ borderColor: 'var(--border-primary)' }}>
             <div className="flex items-center gap-2 text-xs" style={{ color: 'var(--text-secondary)' }}>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
               </svg>
-              {photo.device_name}
+              <span>{photo.device_name || 'Bilinmeyen Cihaz'}</span>
             </div>
 
             {photo.latitude && photo.longitude && (
@@ -373,39 +331,44 @@ function PhotoDetailContent() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                 </svg>
-                {photo.latitude.toFixed(4)}, {photo.longitude.toFixed(4)}
+                <span>{photo.latitude.toFixed(4)}, {photo.longitude.toFixed(4)}</span>
                 <a
                   href={`https://www.google.com/maps?q=${photo.latitude},${photo.longitude}`}
                   target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-accent hover:underline"
+                  rel="noreferrer"
+                  className="text-accent hover:underline ml-1"
                 >
-                  Haritada göster
+                  (Haritada Aç)
                 </a>
               </div>
             )}
 
-            {photo.collection_ids.length > 0 && (
-              <div className="flex items-center gap-2 text-xs" style={{ color: 'var(--text-secondary)' }}>
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+            {/* Set as cover */}
+            {photo.collection_ids && photo.collection_ids.length > 0 && (
+              <button
+                onClick={handleSetAsCover}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:opacity-80 transition-opacity pt-1"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v12a2.25 2.25 0 002.25 2.25z" />
                 </svg>
-                {photo.collection_ids.length} koleksiyonda
-              </div>
+                Koleksiyon Kapağı Yap
+              </button>
             )}
 
+            {/* Save to device button */}
             <button
               onClick={async () => {
-                const success = await savePhotoToDevice(photo.id, photo.note || undefined);
+                const success = await savePhotoToDevice(photo.id, photo.note);
                 if (success) showToast('Fotoğraf kaydedildi');
               }}
-              className="w-full flex items-center justify-center gap-2 p-3 rounded-xl text-xs font-medium transition-all haptic-tap cursor-pointer mt-4"
+              className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl text-xs font-bold transition-all haptic-tap cursor-pointer mt-4"
               style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-primary)' }}
             >
-              <svg className="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <svg className="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
               </svg>
-              Fotoğrafı Galeriye Kaydet / Paylaş
+              Fotoğrafı Cihaza İndir
             </button>
           </div>
         </div>

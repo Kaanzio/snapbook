@@ -161,7 +161,7 @@ export async function importAllData(file: File, onProgress?: (progress: number) 
   notifyDataChange('watchlist');
 }
 
-export async function savePhotoToDevice(id: string, note?: string) {
+export async function savePhotoToDevice(id: string, note?: string | null) {
   const blob = await getPhoto(id);
   if (!blob) return;
 

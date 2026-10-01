@@ -22,8 +22,6 @@ export default function PhotoCard({
   photo, onClick, isSelected = false, isSelectionMode = false, onToggleSelect, onLongPress 
 }: PhotoCardProps) {
   const { imageUrl, isLocal, loading } = usePhotoImage(photo.id);
-  const { getCategoryInfo } = useCategories();
-  const category = getCategoryInfo(photo.category);
 
   // Simple long press handler for mobile
   let touchTimer: NodeJS.Timeout;
@@ -52,8 +50,8 @@ export default function PhotoCard({
       className="relative w-full h-full"
     >
       <Link 
-        href={`/photo/?id=${photo.id}`} 
-        className={`cinematic-card block relative aspect-square rounded-[18px] md:rounded-2xl overflow-hidden group haptic-tap cursor-pointer transition-all duration-300 ${
+        href={`/photo?id=${photo.id}`} 
+        className={`block relative aspect-square rounded-[18px] md:rounded-2xl overflow-hidden group haptic-tap cursor-pointer transition-all duration-300 ${
           isSelected 
             ? 'ring-4 ring-accent shadow-lg bg-accent/20' 
             : 'border border-black/5 dark:border-white/10 hover:shadow-xl bg-black/5'
@@ -81,15 +79,13 @@ export default function PhotoCard({
             <img
               src={imageUrl || undefined}
               alt={photo.note || 'Fotoğraf'}
-              className={`w-full h-full object-cover transition-transform duration-700 ease-out ${
-                isSelected ? 'scale-105' : 'group-hover:scale-105'
-              }`}
+              className="w-full h-full object-cover"
               loading="lazy"
             />
           )}
 
-          {/* Hover / Depth gradient */}
-          <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 transition-opacity duration-300 ${
+          {/* Depth gradient on hover / selection */}
+          <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 transition-opacity duration-300 pointer-events-none ${
             isSelected || isSelectionMode ? 'opacity-30' : 'opacity-0 group-hover:opacity-100'
           }`} />
 
@@ -107,19 +103,6 @@ export default function PhotoCard({
                   </svg>
                 )}
               </div>
-            </div>
-          )}
-
-          {/* Category Micro Badge (Bottom Left - subtle on hover or touch) */}
-          {!isSelectionMode && category.key !== 'other' && (
-            <div className="absolute bottom-2 left-2 z-10 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
-              <span
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-semibold backdrop-blur-md shadow-sm border border-white/10"
-                style={{ color: category.color, background: 'rgba(0, 0, 0, 0.65)' }}
-              >
-                <CategoryIcon categoryKey={category.key} className="w-3 h-3" />
-                <span className="truncate max-w-[80px]">{category.label}</span>
-              </span>
             </div>
           )}
 
@@ -141,19 +124,12 @@ export default function PhotoCard({
             </div>
           </div>
 
-          {/* Note or tags overlay on hover */}
-          {(photo.note || photo.tags.length > 0) && (
+          {/* Note overlay on hover (only if note exists) */}
+          {photo.note && (
             <div className="absolute bottom-0 left-0 right-0 p-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
-              {photo.note && (
-                <p className="text-[11px] font-medium text-white line-clamp-1 drop-shadow-md">
-                  {photo.note}
-                </p>
-              )}
-              {photo.tags.length > 0 && !photo.note && (
-                <p className="text-[10px] font-medium text-white/80 truncate drop-shadow-md">
-                  {photo.tags.map(t => `#${t}`).join(' ')}
-                </p>
-              )}
+              <p className="text-[11px] font-medium text-white line-clamp-1 drop-shadow-md">
+                {photo.note}
+              </p>
             </div>
           )}
         </div>

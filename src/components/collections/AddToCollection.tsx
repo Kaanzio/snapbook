@@ -14,10 +14,11 @@ interface AddToCollectionProps {
 
 export default function AddToCollection({ isOpen, onClose, photo, collections }: AddToCollectionProps) {
   async function toggleCollection(collId: string) {
-    const isInCollection = photo.collection_ids.includes(collId);
+    const collIds = photo.collection_ids || [];
+    const isInCollection = collIds.includes(collId);
     const newIds = isInCollection
-      ? photo.collection_ids.filter((id) => id !== collId)
-      : [...photo.collection_ids, collId];
+      ? collIds.filter((id) => id !== collId)
+      : [...collIds, collId];
 
     await updatePhotoMetadata(photo.id, { collection_ids: newIds });
     notifyDataChange('photos');
@@ -34,7 +35,7 @@ export default function AddToCollection({ isOpen, onClose, photo, collections }:
       ) : (
         <div className="space-y-1.5 max-h-[300px] overflow-y-auto">
           {collections.map((coll) => {
-            const isSelected = photo.collection_ids.includes(coll.id);
+            const isSelected = (photo.collection_ids || []).includes(coll.id);
             return (
               <button
                 key={coll.id}
