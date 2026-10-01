@@ -59,7 +59,7 @@ export default function WatchCard({ item }: WatchCardProps) {
       className="flex flex-col w-full h-full group relative shrink-0"
     >
       <div 
-        className="block relative rounded-xl overflow-hidden aspect-[2/3] transition-transform duration-300"
+        className="cinematic-card block relative rounded-2xl overflow-hidden aspect-[2/3] border border-black/5 dark:border-white/10 shadow-md group-hover:shadow-2xl transition-all duration-300"
         style={{ backgroundColor: 'var(--bg-secondary)' }}
       >
         <Link href={(() => {
@@ -83,6 +83,14 @@ export default function WatchCard({ item }: WatchCardProps) {
           </div>
         )}
         
+        {/* Rating Pill Overlay */}
+        {item.rating && item.rating > 0 ? (
+          <div className="absolute top-2.5 left-2.5 z-20 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[11px] font-bold text-amber-400 shadow-sm pointer-events-none">
+            <span>★</span>
+            <span className="text-white font-mono">{item.rating}</span>
+          </div>
+        ) : null}
+
         {/* Top Gradient for 3-dot menu visibility */}
         <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
       </div>
@@ -170,8 +178,11 @@ export default function WatchCard({ item }: WatchCardProps) {
       )}
 
       {/* Info Below Poster */}
-      <div className="mt-2.5 flex flex-col px-1">
-        <span className="text-xs font-semibold tracking-wide truncate" style={{ color: 'var(--text-secondary)' }}>
+      <div className="mt-2 flex flex-col px-0.5">
+        <h3 className="text-sm font-bold tracking-tight truncate group-hover:text-accent transition-colors" style={{ color: 'var(--text-primary)' }} title={item.title}>
+          {item.title}
+        </h3>
+        <span className="text-[11px] font-medium opacity-65 truncate mt-0.5" style={{ color: 'var(--text-secondary)' }}>
           {infoText}
         </span>
       </div>

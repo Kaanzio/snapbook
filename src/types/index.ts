@@ -70,6 +70,7 @@ export interface FilterState {
 export type ThemeMode = 'light' | 'dark' | 'oled' | 'system';
 export type GridDensity = 'comfortable' | 'compact' | 'large';
 export type FontSize = 'small' | 'medium' | 'large';
+export type VisualStyle = 'cinematic' | 'classic';
 
 export const ACCENT_PRESETS = [
   { name: 'Snapbook Kırmızısı', value: '#e50914' },
@@ -92,6 +93,7 @@ export interface AppPreferences {
   sidebarCollapsed?: boolean;
   pin?: string | null;
   isLocked?: boolean;
+  visualStyle?: VisualStyle;
 }
 
 export const DEFAULT_PREFERENCES: AppPreferences = {
@@ -103,6 +105,7 @@ export const DEFAULT_PREFERENCES: AppPreferences = {
   sidebarCollapsed: false,
   pin: null,
   isLocked: false,
+  visualStyle: 'cinematic',
 };
 
 // ==================== CANVAS MODE ====================

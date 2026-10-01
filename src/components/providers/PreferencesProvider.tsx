@@ -108,6 +108,11 @@ export default function PreferencesProvider({ children }: { children: ReactNode 
     html.classList.remove('theme-light', 'theme-dark', 'theme-oled');
     html.classList.add(`theme-${resolvedTheme}`);
 
+    // Manage visual style (Cinematic vs Classic)
+    const activeStyle = prefs.visualStyle || 'cinematic';
+    html.classList.remove('style-classic', 'style-cinematic');
+    html.classList.add(`style-${activeStyle}`);
+
     // Set accent color CSS custom properties
     html.style.setProperty('--accent-h', String(accentHSL.h));
     html.style.setProperty('--accent-s', `${accentHSL.s}%`);
@@ -133,7 +138,7 @@ export default function PreferencesProvider({ children }: { children: ReactNode 
     if (metaTheme) {
       metaTheme.setAttribute('content', themeColorMap[resolvedTheme]);
     }
-  }, [resolvedTheme, prefs.accentColor, prefs.fontSize, accentHSL, accentForeground, loaded]);
+  }, [resolvedTheme, prefs.accentColor, prefs.fontSize, prefs.visualStyle, accentHSL, accentForeground, loaded]);
 
   const updatePrefs = useCallback((updates: Partial<AppPreferences>) => {
     setPrefs((prev) => {
