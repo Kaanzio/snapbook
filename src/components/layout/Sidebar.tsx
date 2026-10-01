@@ -49,6 +49,8 @@ export default function Sidebar() {
   const { prefs, updatePrefs } = usePreferences();
   const isCollapsed = prefs.sidebarCollapsed;
 
+  if (pathname.startsWith('/canvas/view')) return null;
+
   return (
     <aside className={`hidden lg:flex flex-col ${isCollapsed ? 'w-16' : 'w-[260px]'} h-screen fixed left-0 top-0 z-40 transition-all duration-300`}
       style={{ background: 'var(--bg-primary)', borderRight: '1px solid var(--border-secondary)' }}>

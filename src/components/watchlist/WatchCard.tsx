@@ -59,7 +59,7 @@ export default function WatchCard({ item }: WatchCardProps) {
       className="flex flex-col w-full h-full group relative shrink-0"
     >
       <div 
-        className="cinematic-card block relative rounded-2xl overflow-hidden aspect-[2/3] border border-black/5 dark:border-white/10 shadow-md group-hover:shadow-2xl transition-all duration-300"
+        className="block relative rounded-2xl overflow-hidden aspect-[2/3] border border-black/5 dark:border-white/10 shadow-md hover:border-black/20 dark:hover:border-white/20 transition-all duration-300"
         style={{ backgroundColor: 'var(--bg-secondary)' }}
       >
         <Link href={(() => {
@@ -74,7 +74,7 @@ export default function WatchCard({ item }: WatchCardProps) {
           <img 
             src={imageUrl} 
             alt={item.title} 
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className="absolute inset-0 w-full h-full object-cover"
           />
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">

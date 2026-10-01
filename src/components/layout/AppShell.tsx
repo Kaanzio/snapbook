@@ -10,6 +10,7 @@ import { DialogProvider } from '@/components/providers/DialogProvider';
 import PageTransition from '@/components/ui/PageTransition';
 import InstallPrompt from '@/components/ui/InstallPrompt';
 
+import { usePathname } from 'next/navigation';
 import WelcomeScreen from './WelcomeScreen';
 
 interface AppShellProps {
@@ -18,7 +19,9 @@ interface AppShellProps {
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
   const { prefs, loaded } = usePreferences();
-  const sidebarWidth = prefs.sidebarCollapsed ? '64px' : '260px';
+  const pathname = usePathname();
+  const isCanvasView = pathname.startsWith('/canvas/view');
+  const sidebarWidth = isCanvasView ? '0px' : (prefs.sidebarCollapsed ? '64px' : '260px');
 
   // Wait for IndexedDB to load preferences to avoid hydration mismatch and wrong lock state
   if (!loaded) return null;
@@ -26,6 +29,19 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   // Show Welcome Screen if the app is explicitly locked, OR if no PIN is set yet (first launch or existing user without pin)
   if (prefs.isLocked || !prefs.pin) {
     return <WelcomeScreen />;
+  }
+
+  if (isCanvasView) {
+    return (
+      <main className="w-full h-full min-h-screen">
+        <style dangerouslySetInnerHTML={{__html: `
+          :root {
+            --sidebar-width: 0px;
+          }
+        `}} />
+        {children}
+      </main>
+    );
   }
 
   return (
