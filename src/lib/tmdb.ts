@@ -93,3 +93,83 @@ export function getTMDBBackdropUrl(path: string | null | undefined): string | nu
   if (!path) return null;
   return `https://image.tmdb.org/t/p/w780${path}`;
 }
+
+export function getTMDBHeroBackdropUrl(path: string | null | undefined): string | null {
+  if (!path) return null;
+  return `https://image.tmdb.org/t/p/w1280${path}`;
+}
+
+export async function getTrendingTMDB(page = 1): Promise<TMDBResult[]> {
+  const apiKey = getTmdbApiKey();
+  if (!apiKey) return [];
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/trending/all/week?api_key=${apiKey}&language=tr-TR&page=${page}`
+    );
+    const data = await response.json();
+    return (data.results || []).filter(
+      (item: TMDBResult) => item.media_type === 'movie' || item.media_type === 'tv'
+    );
+  } catch (error) {
+    console.error("TMDB Trending Hatası:", error);
+    return [];
+  }
+}
+
+export async function getPopularMoviesTMDB(page = 1): Promise<TMDBResult[]> {
+  const apiKey = getTmdbApiKey();
+  if (!apiKey) return [];
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/movie/popular?api_key=${apiKey}&language=tr-TR&page=${page}`
+    );
+    const data = await response.json();
+    return (data.results || []).map((item: any) => ({
+      ...item,
+      media_type: 'movie' as const,
+    }));
+  } catch (error) {
+    console.error("TMDB Popüler Film Hatası:", error);
+    return [];
+  }
+}
+
+export async function getPopularSeriesTMDB(page = 1): Promise<TMDBResult[]> {
+  const apiKey = getTmdbApiKey();
+  if (!apiKey) return [];
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/tv/popular?api_key=${apiKey}&language=tr-TR&page=${page}`
+    );
+    const data = await response.json();
+    return (data.results || []).map((item: any) => ({
+      ...item,
+      media_type: 'tv' as const,
+    }));
+  } catch (error) {
+    console.error("TMDB Popüler Dizi Hatası:", error);
+    return [];
+  }
+}
+
+export async function getTopRatedTMDB(page = 1): Promise<TMDBResult[]> {
+  const apiKey = getTmdbApiKey();
+  if (!apiKey) return [];
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/movie/top_rated?api_key=${apiKey}&language=tr-TR&page=${page}`
+    );
+    const data = await response.json();
+    return (data.results || []).map((item: any) => ({
+      ...item,
+      media_type: 'movie' as const,
+    }));
+  } catch (error) {
+    console.error("TMDB En İyiler Hatası:", error);
+    return [];
+  }
+}
