@@ -49,17 +49,17 @@ export default function HeroBillboard({
     : (getTMDBHeroBackdropUrl(tmdbItem?.backdrop_path) || getTMDBImageUrl(tmdbItem?.poster_path));
 
   return (
-    <div className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden mb-6 sm:mb-8 shadow-2xl border border-white/10 group select-none">
+    <div className="relative w-full rounded-2xl overflow-hidden mb-6 sm:mb-8 border border-black/10 dark:border-white/10 shadow-lg group select-none">
       {/* Background Container */}
-      <div className="relative w-full h-[360px] sm:h-[420px] md:h-[480px] lg:h-[520px] bg-black/80">
+      <div className="relative w-full h-[260px] sm:h-[320px] md:h-[360px] bg-black">
         <AnimatePresence mode="wait">
           {backdropSrc ? (
             <motion.img
               key={backdropSrc}
-              initial={{ opacity: 0, scale: 1.05 }}
+              initial={{ opacity: 0, scale: 1.03 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.6, ease: 'easeOut' }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
               src={backdropSrc}
               alt={title}
               className="absolute inset-0 w-full h-full object-cover object-center md:object-top"
@@ -70,103 +70,104 @@ export default function HeroBillboard({
         </AnimatePresence>
 
         {/* Cinematic Vignette & Fade Overlays */}
-        {/* 1. Left fade for text readability */}
+        {/* Left fade for desktop text readability */}
         <div 
           className="absolute inset-0 hidden md:block" 
           style={{
-            background: 'linear-gradient(to right, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.65) 40%, rgba(0, 0, 0, 0.1) 75%, transparent 100%)'
+            background: 'linear-gradient(to right, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.6) 45%, rgba(0, 0, 0, 0.15) 75%, transparent 100%)'
           }} 
         />
-        {/* 2. Full background darken for mobile */}
+        {/* Full background darken for mobile */}
         <div 
           className="absolute inset-0 md:hidden" 
           style={{
-            background: 'linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0.25) 100%)'
+            background: 'linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.6) 55%, rgba(0, 0, 0, 0.2) 100%)'
           }} 
         />
-        {/* 3. Bottom blend into page background */}
+        {/* Bottom subtle blend into border */}
         <div 
-          className="absolute inset-x-0 bottom-0 h-40" 
+          className="absolute inset-x-0 bottom-0 h-28" 
           style={{
-            background: 'linear-gradient(to top, var(--bg-primary) 0%, rgba(0,0,0,0.6) 50%, transparent 100%)'
+            background: 'linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 100%)'
           }} 
         />
 
         {/* Content Info */}
-        <div className="absolute inset-0 p-5 sm:p-8 md:p-12 flex flex-col justify-end z-10 max-w-2xl">
+        <div className="absolute inset-0 p-4 sm:p-7 md:p-8 flex flex-col justify-end z-10 max-w-xl">
           {/* Top Tag Badges */}
-          <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-3">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-white/20 text-white backdrop-blur-md border border-white/20">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <span className="px-2 py-0.5 rounded-md text-[11px] font-semibold uppercase tracking-wider bg-white/20 text-white backdrop-blur-md border border-white/20">
               {typeInfo.label}
             </span>
 
             {releaseYear && (
-              <span className="text-xs font-semibold text-white/80">
+              <span className="text-xs font-medium text-white/80">
                 {releaseYear}
               </span>
             )}
 
             {rating !== undefined && rating > 0 && (
-              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold">
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold">
                 <span>★</span>
                 <span>{rating}</span>
               </span>
             )}
 
             {isUserItem && item.genre && (
-              <span className="text-xs font-medium text-white/70 hidden sm:inline">
+              <span className="text-xs font-normal text-white/70 hidden sm:inline">
                 • {item.genre}
               </span>
             )}
 
             {isUserItem && item.duration && (
-              <span className="text-xs font-medium text-white/70 hidden sm:inline">
+              <span className="text-xs font-normal text-white/70 hidden sm:inline">
                 • {Math.floor(item.duration / 60) > 0 ? `${Math.floor(item.duration / 60)}s ` : ''}{item.duration % 60 > 0 ? `${item.duration % 60}dk` : ''}
               </span>
             )}
 
             {isUserItem && item.type === 'series' && item.totalSeasons && (
-              <span className="text-xs font-medium text-white/70 hidden sm:inline">
+              <span className="text-xs font-normal text-white/70 hidden sm:inline">
                 • {item.totalSeasons} Sezon
               </span>
             )}
           </div>
 
           {/* Title */}
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-lg mb-2 sm:mb-3 line-clamp-2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tight drop-shadow mb-1.5 line-clamp-2">
             {title}
           </h1>
 
           {/* Overview */}
           {overview && (
-            <p className="text-xs sm:text-sm text-white/80 line-clamp-2 sm:line-clamp-3 font-normal leading-relaxed drop-shadow-md mb-4 sm:mb-6 max-w-xl">
+            <p className="text-xs sm:text-sm text-white/80 line-clamp-2 font-normal leading-relaxed mb-3.5 max-w-lg">
               {overview}
             </p>
           )}
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             {isUserItem ? (
               <>
                 <button
                   type="button"
                   onClick={() => onOpenDetails?.(item.id)}
-                  className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl font-extrabold text-sm flex items-center gap-2 bg-white text-black hover:bg-white/90 active:scale-95 transition-all shadow-lg haptic-tap cursor-pointer"
+                  className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-1.5 transition-all shadow-sm haptic-tap cursor-pointer"
+                  style={{ background: 'var(--accent)', color: 'white' }}
                 >
-                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                   </svg>
-                  <span>Detayları İncele</span>
+                  <span>İncele</span>
                 </button>
 
                 {onNext && (
                   <button
                     type="button"
                     onClick={onNext}
-                    className="px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl font-bold text-sm flex items-center gap-2 bg-black/40 text-white hover:bg-black/60 active:scale-95 transition-all border border-white/20 backdrop-blur-md haptic-tap cursor-pointer"
-                    title="Başka bir rastgele öneri göster"
+                    className="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl font-medium text-xs sm:text-sm flex items-center gap-1.5 bg-black/40 text-white hover:bg-black/60 active:scale-95 transition-all border border-white/20 backdrop-blur-md haptic-tap cursor-pointer"
+                    title="Başka bir öneri göster"
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                     </svg>
                     <span>Başka Öneri</span>
@@ -176,8 +177,8 @@ export default function HeroBillboard({
             ) : (
               <>
                 {isAdded ? (
-                  <div className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl font-bold text-sm flex items-center gap-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 backdrop-blur-md">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <div className="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl font-medium text-xs sm:text-sm flex items-center gap-1.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 backdrop-blur-md">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
                     <span>Listende Kayıtlı</span>
@@ -187,12 +188,13 @@ export default function HeroBillboard({
                     type="button"
                     disabled={isAdding}
                     onClick={() => tmdbItem && onAddToList?.(tmdbItem)}
-                    className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl font-black text-sm flex items-center gap-2 bg-accent text-white hover:opacity-90 active:scale-95 transition-all shadow-lg haptic-tap cursor-pointer disabled:opacity-50"
+                    className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-1.5 transition-all shadow-sm haptic-tap cursor-pointer disabled:opacity-50"
+                    style={{ background: 'var(--accent)', color: 'white' }}
                   >
                     {isAdding ? (
                       <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
                     ) : (
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                       </svg>
                     )}
@@ -204,9 +206,9 @@ export default function HeroBillboard({
                   <button
                     type="button"
                     onClick={onNext}
-                    className="px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl font-bold text-sm flex items-center gap-2 bg-black/40 text-white hover:bg-black/60 active:scale-95 transition-all border border-white/20 backdrop-blur-md haptic-tap cursor-pointer"
+                    className="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl font-medium text-xs sm:text-sm flex items-center gap-1.5 bg-black/40 text-white hover:bg-black/60 active:scale-95 transition-all border border-white/20 backdrop-blur-md haptic-tap cursor-pointer"
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                     </svg>
                     <span>Sonraki Trend</span>

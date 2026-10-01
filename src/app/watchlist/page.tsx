@@ -249,24 +249,30 @@ function WatchlistContent() {
               <button
                 type="button"
                 onClick={() => setActiveTab('lists')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all haptic-tap cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all haptic-tap cursor-pointer ${
                   activeTab === 'lists'
-                    ? 'bg-accent text-white shadow-md'
+                    ? 'bg-accent text-white shadow-sm'
                     : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
                 }`}
               >
-                <span>📋 Listelerim</span>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+                <span>Listelerim</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('discover')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all haptic-tap cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all haptic-tap cursor-pointer ${
                   activeTab === 'discover'
-                    ? 'bg-accent text-white shadow-md'
+                    ? 'bg-accent text-white shadow-sm'
                     : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
                 }`}
               >
-                <span>🔥 Keşfet & Trendler</span>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
+                </svg>
+                <span>Keşfet ve Trendler</span>
               </button>
             </div>
 
@@ -524,9 +530,12 @@ function WatchlistContent() {
                   <div className="mt-4 flex justify-center gap-3">
                     <button 
                       onClick={() => setActiveTab('discover')} 
-                      className="btn-accent px-6 py-2.5 rounded-xl font-bold text-sm haptic-tap cursor-pointer inline-flex items-center gap-2"
+                      className="btn-accent px-5 py-2.5 rounded-xl font-semibold text-sm haptic-tap cursor-pointer inline-flex items-center gap-2"
                     >
-                      🔥 Trendleri Keşfet
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
+                      </svg>
+                      <span>Trendleri Keşfet</span>
                     </button>
                     <Link href="/watchlist/add" className="px-5 py-2.5 rounded-xl font-medium text-sm haptic-tap cursor-pointer inline-flex items-center gap-2" style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                       Manuel Ekle
