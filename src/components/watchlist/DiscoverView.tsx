@@ -371,7 +371,9 @@ export default function DiscoverView({
     return (match && match[2].length === 11) ? match[2] : null;
   };
 
-  const heroItem = trending.length > 0 ? trending[heroIndex % trending.length] : null;
+  const eligibleHeroTrending = trending.filter(t => !!t.backdrop_path);
+  const heroTrendingPool = eligibleHeroTrending.length > 0 ? eligibleHeroTrending : trending;
+  const heroItem = heroTrendingPool.length > 0 ? heroTrendingPool[heroIndex % heroTrendingPool.length] : null;
 
   // Trailer for previewItem
   const previewTrailerKey = (() => {
@@ -494,7 +496,7 @@ export default function DiscoverView({
             tmdbItem={heroItem}
             isAdded={isItemInWatchlist(heroItem.id)}
             onAddToList={handleOpenCard}
-            onNext={() => setHeroIndex(idx => (idx + 1) % trending.length)}
+            onNext={() => setHeroIndex(idx => (idx + 1) % heroTrendingPool.length)}
           />
         </div>
       )}
