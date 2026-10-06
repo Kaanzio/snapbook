@@ -44,49 +44,77 @@ export default function HeroBillboard({
 
   const overview = isUserItem ? item.description : tmdbItem?.overview;
 
-  const backdropSrc = isUserItem
+  const hasBackdrop = isUserItem ? !!item.backdropUrl : !!tmdbItem?.backdrop_path;
+  const rawBackdropSrc = isUserItem
     ? (item.backdropUrl || item.posterUrl)
     : (getTMDBHeroBackdropUrl(tmdbItem?.backdrop_path) || getTMDBImageUrl(tmdbItem?.poster_path));
 
+  // Seamlessly upgrade w780 to w1280 for sharp rendering on wide desktop monitors
+  const backdropSrc = rawBackdropSrc?.replace('/w780/', '/w1280/') || rawBackdropSrc;
+  const isPosterOnly = !hasBackdrop && !!(isUserItem ? item.posterUrl : tmdbItem?.poster_path);
+
   return (
     <div className="relative w-full rounded-2xl overflow-hidden mb-6 sm:mb-8 border border-black/10 dark:border-white/10 shadow-lg group select-none">
-      {/* Background Container */}
-      <div className="relative w-full h-[260px] sm:h-[320px] md:h-[360px] bg-black">
+      {/* Background Container - Mobile height 260px (preserved), Desktop enhanced to 380-420px */}
+      <div className="relative w-full h-[260px] sm:h-[320px] md:h-[380px] lg:h-[420px] bg-black">
         <AnimatePresence mode="wait">
           {backdropSrc ? (
-            <motion.img
-              key={backdropSrc}
-              initial={{ opacity: 0, scale: 1.03 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
-              src={backdropSrc}
-              alt={title}
-              className="absolute inset-0 w-full h-full object-cover object-center md:object-top"
-            />
+            isPosterOnly ? (
+              // When only a vertical poster is available, show blurred ambient backdrop
+              <div key={backdropSrc} className="absolute inset-0 overflow-hidden">
+                <motion.img
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                  src={backdropSrc}
+                  alt={title}
+                  className="w-full h-full object-cover object-center blur-2xl opacity-40 scale-125"
+                />
+              </div>
+            ) : (
+              // Standard wide backdrop image - perfectly centered on ALL devices (desktop + mobile)
+              <motion.img
+                key={backdropSrc}
+                initial={{ opacity: 0, scale: 1.03 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                src={backdropSrc}
+                alt={title}
+                className="absolute inset-0 w-full h-full object-cover object-center"
+              />
+            )
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 to-black" />
           )}
         </AnimatePresence>
 
+        {/* If poster only, show the crisp framed poster card on desktop on the right */}
+        {isPosterOnly && backdropSrc && (
+          <div className="hidden sm:block absolute right-8 lg:right-12 top-1/2 -translate-y-1/2 z-10 w-36 md:w-44 lg:w-48 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-white/15">
+            <img src={backdropSrc} alt={title} className="w-full h-full object-cover" />
+          </div>
+        )}
+
         {/* Cinematic Vignette & Fade Overlays */}
         {/* Left fade for desktop text readability */}
         <div 
-          className="absolute inset-0 hidden md:block" 
+          className="absolute inset-0 hidden md:block pointer-events-none" 
           style={{
-            background: 'linear-gradient(to right, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.6) 45%, rgba(0, 0, 0, 0.15) 75%, transparent 100%)'
+            background: 'linear-gradient(to right, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.65) 45%, rgba(0, 0, 0, 0.15) 75%, transparent 100%)'
           }} 
         />
         {/* Full background darken for mobile */}
         <div 
-          className="absolute inset-0 md:hidden" 
+          className="absolute inset-0 md:hidden pointer-events-none" 
           style={{
             background: 'linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.6) 55%, rgba(0, 0, 0, 0.2) 100%)'
           }} 
         />
         {/* Bottom subtle blend into border */}
         <div 
-          className="absolute inset-x-0 bottom-0 h-28" 
+          className="absolute inset-x-0 bottom-0 h-28 pointer-events-none" 
           style={{
             background: 'linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 100%)'
           }} 

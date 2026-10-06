@@ -132,8 +132,11 @@ function WatchlistContent() {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const sortMenuRef = useRef<HTMLDivElement>(null);
 
-  // Eligible items for Netflix Hero Billboard (prefer items with backdrops/posters)
-  const eligibleHeroItems = items.filter(i => !!i.backdropUrl || !!i.posterUrl);
+  // Eligible items for Netflix Hero Billboard (prioritize widescreen backdrops)
+  const backdropItems = items.filter(i => !!i.backdropUrl);
+  const eligibleHeroItems = backdropItems.length > 0 
+    ? backdropItems 
+    : items.filter(i => !!i.posterUrl);
   const heroItem = eligibleHeroItems.length > 0 
     ? eligibleHeroItems[featuredIndex % eligibleHeroItems.length]
     : (items.length > 0 ? items[featuredIndex % items.length] : null);
