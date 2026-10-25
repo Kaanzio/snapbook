@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   output: 'export',
@@ -16,7 +17,9 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
-  turbopack: {},
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
 };
 
 export default nextConfig;
