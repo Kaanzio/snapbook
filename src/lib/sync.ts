@@ -127,7 +127,6 @@ export class SyncManager {
     idb.notifyDataChange('photos');
     idb.notifyDataChange('collections');
     idb.notifyDataChange('canvases');
-    idb.notifyDataChange('watchlist');
     idb.notifyDataChange('categories');
   }
 
@@ -139,8 +138,6 @@ export class SyncManager {
       const meta = await idb.getAllPhotosMeta();
       const collections = await idb.getAllCollections();
       const canvases = await idb.getAllCanvases();
-      const watchlist = await idb.getAllWatchItems();
-      const customLists = await idb.getAllCustomLists();
       
       const photoIds = await idb.getAllLocalPhotoIds();
       const photos = [];
@@ -160,8 +157,6 @@ export class SyncManager {
         meta,
         collections,
         canvases,
-        watchlist,
-        customLists,
         photos
       };
 
@@ -190,16 +185,6 @@ export class SyncManager {
       if (payload.canvases) {
         for (const item of payload.canvases) {
           await idb.saveCanvas(item);
-        }
-      }
-      if (payload.watchlist) {
-        for (const item of payload.watchlist) {
-          await idb.createWatchItem(item);
-        }
-      }
-      if (payload.customLists) {
-        for (const item of payload.customLists) {
-          await idb.createCustomList(item);
         }
       }
       if (payload.photos) {

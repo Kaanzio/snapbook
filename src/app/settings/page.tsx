@@ -8,7 +8,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { deleteCustomCategory, notifyDataChange, getStorageUsage, clearAllDatabase } from '@/lib/indexeddb';
 import { showToast } from '@/components/ui/Toast';
 import { useDialog } from '@/components/providers/DialogProvider';
-import { exportAllData, importAllData, exportWatchBookFromSnapbook } from '@/lib/backup';
+import { exportAllData, importAllData } from '@/lib/backup';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
 
 export default function SettingsPage() {
@@ -21,28 +21,10 @@ export default function SettingsPage() {
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
-  const [tmdbKey, setTmdbKey] = useState('');
-  const [isTmdbEnabled, setIsTmdbEnabled] = useState(true);
 
   useEffect(() => {
     getStorageUsage().then(setStorage);
-    if (typeof window !== 'undefined') {
-      setTmdbKey(localStorage.getItem('snapbook_tmdb_api_key') || '');
-      setIsTmdbEnabled(localStorage.getItem('snapbook_tmdb_disabled') !== 'true');
-    }
   }, []);
-
-  const handleToggleTmdb = () => {
-    const newState = !isTmdbEnabled;
-    setIsTmdbEnabled(newState);
-    if (typeof window !== 'undefined') {
-      if (newState) {
-        localStorage.removeItem('snapbook_tmdb_disabled');
-      } else {
-        localStorage.setItem('snapbook_tmdb_disabled', 'true');
-      }
-    }
-  };
 
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -167,127 +149,6 @@ export default function SettingsPage() {
 
       <div className="max-w-2xl mx-auto p-4 lg:p-6 space-y-8">
       
-        {/* ==================== API INTEGRATION ==================== */}
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
-              </svg>
-              TMDB API Entegrasyonu
-            </h2>
-            <button
-              onClick={handleToggleTmdb}
-              className={`w-11 h-6 shrink-0 rounded-full transition-colors relative flex items-center ${isTmdbEnabled ? 'bg-green-500' : 'bg-slate-300 dark:bg-slate-700'}`}
-            >
-              <div className={`w-4 h-4 rounded-full bg-white absolute transition-all ${isTmdbEnabled ? 'right-1' : 'left-1'}`} />
-            </button>
-          </div>
-          
-          <div className={`p-4 rounded-2xl transition-all ${isTmdbEnabled ? 'opacity-100' : 'opacity-40 pointer-events-none grayscale'}`} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}>
-            <p className="text-xs mb-3 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              Snapbook, film ve dizi aramak için TMDB altyapısını kullanır. Eğer kendi API anahtarınızı buraya girerseniz, uygulama sadece <b>sizin cihazınızda</b> sizin şifrenizle çalışır.
-            </p>
-            <div className="flex gap-2">
-              <input
-                type="password"
-                placeholder="TMDB API Anahtarınızı yapıştırın..."
-                className="flex-1 px-4 py-2.5 rounded-xl text-sm transition-all focus:ring-2 focus:ring-accent outline-none"
-                style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-secondary)' }}
-                value={tmdbKey}
-                onChange={(e) => {
-                  setTmdbKey(e.target.value);
-                  if (typeof window !== 'undefined') {
-                    localStorage.setItem('snapbook_tmdb_api_key', e.target.value.trim());
-                  }
-                }}
-                disabled={!isTmdbEnabled}
-              />
-              {tmdbKey ? (
-                <button 
-                  onClick={() => {
-                    setTmdbKey('');
-                    if (typeof window !== 'undefined') {
-                      localStorage.removeItem('snapbook_tmdb_api_key');
-                    }
-                  }}
-                  className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 haptic-tap cursor-pointer whitespace-nowrap bg-red-500 text-white"
-                  title="Şifreyi Sil"
-                  disabled={!isTmdbEnabled}
-                >
-                  Şifreyi Sil
-                </button>
-              ) : (
-                <a 
-                  href="https://www.themoviedb.org/settings/api" 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80 haptic-tap cursor-pointer whitespace-nowrap"
-                  style={{ background: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-secondary)' }}
-                >
-                  Şifre Al
-                </a>
-              )}
-            </div>
-            <p className="text-[10px] mt-2 opacity-60" style={{ color: 'var(--text-tertiary)' }}>
-              Şifre tarayıcınızın gizli hafızasına kaydedilir, asla sunucuya veya başka bir yere gönderilmez.
-            </p>
-          </div>
-        </section>
-
-        {/* ==================== WATCHBOOK MIGRATION ==================== */}
-        <section>
-          <div className="p-5 rounded-2xl border" style={{ background: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
-            <div className="flex items-center gap-2.5 mb-2">
-              <div className="w-8 h-8 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center font-bold">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75 1.125V5.625m19.5 13.875c.621 0 1.125-.504 1.125-1.125m-1.125 1.125h-1.5c-.621 0-1.125-.504-1.125-1.125m3.75 1.125V5.625m-19.5 0A1.125 1.125 0 013.375 4.5h17.25c.621 0 1.125.504 1.125 1.125m-19.5 0v1.5c0 .621.504 1.125 1.125 1.125M20.625 4.5h.375v1.5c0 .621-.504 1.125-1.125 1.125m-16.5 0h16.5" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-bold text-sm" style={{ color: 'var(--text-primary)' }}>WatchBook'a Veri Aktarımı</h3>
-                <p className="text-xs text-[var(--text-tertiary)]">Kırmızı Perde dizi & film kayıtlarınızı ve TMDB anahtarınızı WatchBook'a taşıyın.</p>
-              </div>
-            </div>
-            
-            <p className="text-xs my-3 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              Snapbook'taki tüm izleme listenizi, özel listelerinizi ve TMDB anahtarınızı içeren hazır dosyayı tek tıkla indirip WatchBook Ayarlarından <b>Yedek Yükle</b> diyerek saniyeler içinde aktarabilirsiniz.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-2 pt-1">
-              <button
-                type="button"
-                onClick={async () => {
-                  try {
-                    await exportWatchBookFromSnapbook();
-                    showToast('watchbook-data.json dosyası indirildi!');
-                  } catch (e) {
-                    showToast('Aktarma dosyası hazırlanırken hata oluştu', 'error');
-                  }
-                }}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold text-white bg-red-600 hover:bg-red-700 transition-colors cursor-pointer"
-              >
-                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                </svg>
-                <span>WatchBook Yedeği İndir (.json)</span>
-              </button>
-              <a
-                href="http://localhost:3001/settings"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold border hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-                style={{ borderColor: 'var(--border-primary)', color: 'var(--text-primary)' }}
-              >
-                <span>WatchBook'u Aç</span>
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </a>
-            </div>
-          </div>
-        </section>
-
         {/* ==================== VISUAL STYLE ==================== */}
         <section>
           <h2 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>

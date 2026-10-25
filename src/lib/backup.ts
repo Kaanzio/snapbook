@@ -7,46 +7,14 @@ import {
   getAllCanvases,
   getPreferences,
   getCustomCategories,
-  getAllWatchItems,
-  getAllCustomLists,
   getAllLocalPhotoIds,
   createPhotoMetadata,
   createCollection,
   saveCanvas,
   savePreferences,
   saveCustomCategory,
-  createWatchItem,
-  createCustomList,
   notifyDataChange
 } from './indexeddb';
-
-export async function exportWatchBookFromSnapbook(): Promise<void> {
-  const watchItems = await getAllWatchItems();
-  const customLists = await getAllCustomLists();
-  const tmdbKey = typeof window !== 'undefined' ? localStorage.getItem('snapbook_tmdb_api_key') : null;
-  const listOrder = typeof window !== 'undefined' ? localStorage.getItem('snapbook-list-order') : null;
-
-  const exportData = {
-    app: 'watchbook',
-    source: 'snapbook-migration',
-    version: '1.0',
-    exportDate: new Date().toISOString(),
-    tmdbKey: tmdbKey || undefined,
-    items: watchItems,
-    customLists: customLists,
-    listOrder: listOrder ? JSON.parse(listOrder) : null,
-  };
-
-  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `watchbook-data.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
 
 export async function exportAllData() {
   const zip = new JSZip();
@@ -57,20 +25,16 @@ export async function exportAllData() {
   const canvases = await getAllCanvases();
   const preferences = await getPreferences();
   const categories = await getCustomCategories();
-  const watchItems = await getAllWatchItems();
-  const customLists = await getAllCustomLists();
   
   // 2. Create data.json with all non-binary data
   const backupData = {
     exportDate: new Date().toISOString(),
-    version: '1.1', // upgraded version
+    version: '1.2',
     photos,
     collections,
     canvases,
     preferences,
-    categories,
-    watchItems,
-    customLists
+    categories
   };
   
   zip.file('data.json', JSON.stringify(backupData, null, 2));
@@ -141,12 +105,6 @@ export async function importAllData(file: File, onProgress?: (progress: number) 
   if (data.categories && Array.isArray(data.categories)) {
     for (const item of data.categories) await saveCustomCategory(item);
   }
-  if (data.watchItems && Array.isArray(data.watchItems)) {
-    for (const item of data.watchItems) await createWatchItem(restoreDates(item));
-  }
-  if (data.customLists && Array.isArray(data.customLists)) {
-    for (const item of data.customLists) await createCustomList(restoreDates(item));
-  }
 
   // Restore Photos
   const photoFolder = loadedZip.folder('photos');
@@ -186,12 +144,11 @@ export async function importAllData(file: File, onProgress?: (progress: number) 
   notifyDataChange('canvases');
   notifyDataChange('preferences');
   notifyDataChange('categories');
-  notifyDataChange('watchlist');
 }
 
-export async function savePhotoToDevice(id: string, note?: string | null) {
+export async function savePhotoToDevice(id: string, note?: string | null): Promise<boolean> {
   const blob = await getPhoto(id);
-  if (!blob) return;
+  if (!blob) return false;
 
   let ext = 'jpg';
   if (blob.type === 'image/png') ext = 'png';
@@ -207,28 +164,11 @@ export async function savePhotoToDevice(id: string, note?: string | null) {
     a.download = filename;
     document.body.appendChild(a);
     a.click();
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 100);
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
     return true;
   } catch (err) {
-    console.error('Download failed', err);
-    if (navigator.share && navigator.canShare) {
-      try {
-        const file = new File([blob], filename, { type: blob.type });
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: 'Snapbook Fotoğraf',
-            text: note || '',
-          });
-          return true;
-        }
-      } catch (shareErr) {
-        console.error('Share fallback also failed', shareErr);
-      }
-    }
+    console.error('Error saving photo:', err);
+    return false;
   }
-  return false;
 }
