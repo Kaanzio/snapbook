@@ -20,6 +20,34 @@ import {
   notifyDataChange
 } from './indexeddb';
 
+export async function exportWatchBookFromSnapbook(): Promise<void> {
+  const watchItems = await getAllWatchItems();
+  const customLists = await getAllCustomLists();
+  const tmdbKey = typeof window !== 'undefined' ? localStorage.getItem('snapbook_tmdb_api_key') : null;
+  const listOrder = typeof window !== 'undefined' ? localStorage.getItem('snapbook-list-order') : null;
+
+  const exportData = {
+    app: 'watchbook',
+    source: 'snapbook-migration',
+    version: '1.0',
+    exportDate: new Date().toISOString(),
+    tmdbKey: tmdbKey || undefined,
+    items: watchItems,
+    customLists: customLists,
+    listOrder: listOrder ? JSON.parse(listOrder) : null,
+  };
+
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `watchbook-data.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 export async function exportAllData() {
   const zip = new JSZip();
   

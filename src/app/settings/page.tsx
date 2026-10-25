@@ -8,7 +8,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { deleteCustomCategory, notifyDataChange, getStorageUsage, clearAllDatabase } from '@/lib/indexeddb';
 import { showToast } from '@/components/ui/Toast';
 import { useDialog } from '@/components/providers/DialogProvider';
-import { exportAllData, importAllData } from '@/lib/backup';
+import { exportAllData, importAllData, exportWatchBookFromSnapbook } from '@/lib/backup';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
 
 export default function SettingsPage() {
@@ -232,6 +232,59 @@ export default function SettingsPage() {
             <p className="text-[10px] mt-2 opacity-60" style={{ color: 'var(--text-tertiary)' }}>
               Şifre tarayıcınızın gizli hafızasına kaydedilir, asla sunucuya veya başka bir yere gönderilmez.
             </p>
+          </div>
+        </section>
+
+        {/* ==================== WATCHBOOK MIGRATION ==================== */}
+        <section>
+          <div className="p-5 rounded-2xl border" style={{ background: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
+            <div className="flex items-center gap-2.5 mb-2">
+              <div className="w-8 h-8 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center font-bold">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75 1.125V5.625m19.5 13.875c.621 0 1.125-.504 1.125-1.125m-1.125 1.125h-1.5c-.621 0-1.125-.504-1.125-1.125m3.75 1.125V5.625m-19.5 0A1.125 1.125 0 013.375 4.5h17.25c.621 0 1.125.504 1.125 1.125m-19.5 0v1.5c0 .621.504 1.125 1.125 1.125M20.625 4.5h.375v1.5c0 .621-.504 1.125-1.125 1.125m-16.5 0h16.5" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-bold text-sm" style={{ color: 'var(--text-primary)' }}>WatchBook'a Veri Aktarımı</h3>
+                <p className="text-xs text-[var(--text-tertiary)]">Kırmızı Perde dizi & film kayıtlarınızı ve TMDB anahtarınızı WatchBook'a taşıyın.</p>
+              </div>
+            </div>
+            
+            <p className="text-xs my-3 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              Snapbook'taki tüm izleme listenizi, özel listelerinizi ve TMDB anahtarınızı içeren hazır dosyayı tek tıkla indirip WatchBook Ayarlarından <b>Yedek Yükle</b> diyerek saniyeler içinde aktarabilirsiniz.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-2 pt-1">
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await exportWatchBookFromSnapbook();
+                    showToast('watchbook-data.json dosyası indirildi!');
+                  } catch (e) {
+                    showToast('Aktarma dosyası hazırlanırken hata oluştu', 'error');
+                  }
+                }}
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold text-white bg-red-600 hover:bg-red-700 transition-colors cursor-pointer"
+              >
+                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                </svg>
+                <span>WatchBook Yedeği İndir (.json)</span>
+              </button>
+              <a
+                href="http://localhost:3001/settings"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold border hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                style={{ borderColor: 'var(--border-primary)', color: 'var(--text-primary)' }}
+              >
+                <span>WatchBook'u Aç</span>
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </a>
+            </div>
           </div>
         </section>
 
